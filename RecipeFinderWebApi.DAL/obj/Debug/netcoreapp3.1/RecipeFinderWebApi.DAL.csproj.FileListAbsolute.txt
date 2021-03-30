@@ -1,0 +1,15 @@
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.deps.json
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.runtimeconfig.json
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.runtimeconfig.dev.json
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.dll
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.pdb
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.dll
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.pdb
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.csprojAssemblyReference.cache
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.AssemblyInfoInputs.cache
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.AssemblyInfo.cs
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.csproj.CoreCompileInputs.cache
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.csproj.CopyComplete
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.dll
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.pdb
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.DAL\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.DAL.genruntimeconfig.cache

@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "RecipeFinderWabApi.Logic/1.0.0": {
+        "dependencies": {
+          "RecipeFinderWebApi.Exchange": "1.0.0"
+        },
+        "runtime": {
+          "RecipeFinderWabApi.Logic.dll": {}
+        }
+      },
+      "RecipeFinderWebApi.Exchange/1.0.0": {
+        "runtime": {
+          "RecipeFinderWebApi.Exchange.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "RecipeFinderWabApi.Logic/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RecipeFinderWebApi.Exchange/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

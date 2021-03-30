@@ -1,0 +1,9 @@
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.deps.json
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.dll
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.pdb
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.AssemblyInfoInputs.cache
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.AssemblyInfo.cs
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.csproj.CoreCompileInputs.cache
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.dll
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.pdb
+C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Exchange\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.csprojAssemblyReference.cache
