@@ -22,13 +22,13 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpPost]
-        public EncryptionObject Post(EncryptionObject encObj)
+        public ActionResult<EncryptionObject> Post(EncryptionObject encObj)
         {
             return enc.HashString(encObj);
         }
 
         [HttpGet("getsalt")]
-        public EncryptionObject CreateSalt()
+        public ActionResult<EncryptionObject> CreateSalt()
         {
             return new EncryptionObject() { Result = enc.CreateSalt(8), };
         }

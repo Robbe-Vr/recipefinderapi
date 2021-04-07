@@ -13,6 +13,7 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
         public Ingredient GetByName(string name);
 
         public int Create(Ingredient ingredient);
+        public Ingredient CreateGetId(Ingredient ingredient);
 
         public int Update(Ingredient ingredient);
 

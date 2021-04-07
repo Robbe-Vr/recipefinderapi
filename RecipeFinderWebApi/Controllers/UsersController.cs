@@ -23,43 +23,50 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
-        public IEnumerable<User> Get()
+        public ActionResult<IEnumerable<User>> Get()
         {
-            return handler.GetAll();
+            return handler.GetAll().ToArray();
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public User Get(string id)
+        public ActionResult<User> Get(string id)
         {
             return handler.GetById(id);
         }
 
         [HttpGet("byname/{name}")]
-        public User GetByName(string name)
+        public ActionResult<User> GetByName(string name)
         {
             return handler.GetByName(name);
         }
 
         // POST api/<UsersController>
         [HttpPost]
-        public void Post([FromBody] User value)
+        public ActionResult<int> Post([FromBody] User value)
         {
-            handler.Create(value);
+            return handler.Create(value);
+        }
+
+        // POST api/<UsersController>/getid
+        [HttpPost]
+        public ActionResult<User> CreateGetById([FromBody] User value)
+        {
+            return handler.CreateGetId(value);
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] User value)
+        public ActionResult<int> Put(int id, [FromBody] User value)
         {
-            handler.Update(value);
+            return handler.Update(value);
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public ActionResult<int> Delete(string id)
         {
-            handler.Delete(new User() { Id = id });
+            return handler.Delete(new User() { Id = id });
         }
     }
 }

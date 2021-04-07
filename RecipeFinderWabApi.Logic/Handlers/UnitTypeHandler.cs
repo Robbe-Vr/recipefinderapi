@@ -10,9 +10,12 @@ namespace RecipeFinderWabApi.Logic.Handlers
     {
         private IUnitTypeRepo _repo;
 
-        public UnitTypeHandler(IUnitTypeRepo repo)
+        private IIngredientUnitTypeRelationRepo _ingredient_relation_repo;
+        public UnitTypeHandler(IUnitTypeRepo repo, IIngredientUnitTypeRelationRepo ingredient_relation_repo)
         {
             _repo = repo;
+
+            _ingredient_relation_repo = ingredient_relation_repo;
         }
 
         public IEnumerable<UnitType> GetAll()
@@ -33,6 +36,23 @@ namespace RecipeFinderWabApi.Logic.Handlers
         public int Create(UnitType ingredient)
         {
             return _repo.Create(ingredient);
+        }
+
+        public int CreateIngredientRelation(Ingredient ingredient, UnitType category)
+        {
+            return _ingredient_relation_repo.CreateRelation(ingredient, category);
+        }
+
+        public int DeleteIngredientRelation(IngredientUnitTypeRelation relation)
+        {
+            return _ingredient_relation_repo.DeleteRelation(relation);
+        }
+
+        public int DeleteIngredientRelation(Ingredient ingredient, UnitType category)
+        {
+            var relation = _ingredient_relation_repo.GetByIngredientIdAndUnitTypeId(ingredient.Id, category.CountId);
+
+            return _ingredient_relation_repo.DeleteRelation(relation);
         }
 
         public int Update(UnitType ingredient)

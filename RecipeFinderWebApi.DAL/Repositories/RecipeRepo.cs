@@ -8,9 +8,11 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RecipeRepo : IRecipeRepo
+    public class RecipeRepo : AbstractRepo<Recipe>, IRecipeRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public RecipeRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<Recipe> GetAll()
         {
@@ -21,6 +23,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     .ThenInclude(x => x.Ingredient)
                 .Include(x => x.RequirementsList.Ingredients)
                     .ThenInclude(x => x.UnitType)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -33,6 +36,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     .ThenInclude(x => x.Ingredient)
                 .Include(x => x.RequirementsList.Ingredients)
                     .ThenInclude(x => x.UnitType)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
 
@@ -45,11 +49,18 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     .ThenInclude(x => x.Ingredient)
                 .Include(x => x.RequirementsList.Ingredients)
                     .ThenInclude(x => x.UnitType)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name & !x.Deleted);
         }
 
         public int Create(Recipe recipe)
         {
+            recipe.User = null;
+            recipe.RequirementsList = null;
+            recipe.Categories = null;
+
+            recipe.Id = Guid.NewGuid().ToString();
+
             context.Recipes.Add(recipe);
 
             return context.SaveChanges();

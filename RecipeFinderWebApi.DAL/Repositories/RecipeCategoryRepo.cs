@@ -9,14 +9,17 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RecipeCategoryRepo : IRecipeCategoryRepo
+    public class RecipeCategoryRepo : AbstractRepo<RecipeCategory>, IRecipeCategoryRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public RecipeCategoryRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<RecipeCategory> GetAll()
         {
             return context.RecipeCategories
                 .Include(x => x.Recipes)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -24,18 +27,22 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.RecipeCategories
                 .Include(x => x.Recipes)
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
         }
 
         public RecipeCategory GetByName(string name)
         {
             return context.RecipeCategories
                 .Include(x => x.Recipes)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name & !x.Deleted);
         }
 
         public int Create(RecipeCategory recipe)
         {
+            recipe.Recipes = null;
+
             context.RecipeCategories.Add(recipe);
 
             return context.SaveChanges();

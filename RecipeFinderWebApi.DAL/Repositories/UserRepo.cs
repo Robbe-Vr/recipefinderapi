@@ -8,14 +8,17 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UserRepo : IUserRepo
+    public class UserRepo : AbstractRepo<User>, IUserRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public UserRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<User> GetAll()
         {
             return context.Users
                 .Include(x => x.Roles)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -27,6 +30,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Kitchen.Ingredients)
                     .ThenInclude(x => x.UnitType)
                 .Include(x => x.Roles)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -37,6 +41,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     .ThenInclude(x => x.Ingredient)
                 .Include(x => x.Kitchen.Ingredients)
                     .ThenInclude(x => x.UnitType)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted).Kitchen;
         }
 
@@ -44,6 +49,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.Users
                 .Include(x => x.Roles)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
 
@@ -51,28 +57,96 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.Users
                 .Include(x => x.Roles)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
+        }
+
+        public IEnumerable<Role> GetRolesByUserId(string id)
+        {
+            return context.Users
+                .Include(x => x.Roles)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.Id == id && !x.Deleted)
+                .Roles;
         }
 
         public int Create(User user)
         {
+            user.Kitchen = null;
+            user.Roles = null;
+
+            user.Id = Guid.NewGuid().ToString();
+
             context.Users.Add(user);
 
             return context.SaveChanges();
         }
 
+        public User CreateGetId(User user)
+        {
+            user.Kitchen = null;
+            user.Roles = null;
+
+            user.Id = Guid.NewGuid().ToString();
+
+            context.Users.Add(user);
+
+           context.SaveChanges();
+
+            return user;
+        }
+
         public int Update(User user)
         {
-            context.Users.Update(user);
+            if (!Exists(user))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(user))
+            {
+                if (KeyIsAttached(user))
+                {
+                    User old = GetAttachedEntityByKey(user);
+
+                    old.Name = user.Name;
+                    old.NAME_NORMALIZED = user.NAME_NORMALIZED;
+                    old.Email = user.Email;
+                    old.EMAIL_NORMALIZED = user.EMAIL_NORMALIZED;
+                    old.EmailConfirmed = user.EmailConfirmed;
+                    old.EmailConfirmationToken = user.EmailConfirmationToken;
+                    old.DOB = user.DOB;
+                    old.ConcurrencyStamp = user.ConcurrencyStamp;
+                    old.SecurityStamp = user.SecurityStamp;
+                    old.PasswordHashed = user.PasswordHashed;
+                    old.PhoneNumber = user.PhoneNumber;
+                    old.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+                    old.LockoutEnabled = user.LockoutEnabled;
+                    old.LockoutEnd = user.LockoutEnd;
+                    old.AccessFailedCount = user.AccessFailedCount;
+                    old.Deleted = user.Deleted;
+                }
+                else context.Users.Update(user);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(User user)
         {
-            user.Deleted = true;
+            if (!Exists(user))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(user))
+            {
+                if (KeyIsAttached(user))
+                {
+                    user = GetAttachedEntityByKey(user);
+                }
+                else context.Users.Update(user);
+            }
 
-            context.Users.Update(user);
+            user.Deleted = true;
 
             return context.SaveChanges();
         }

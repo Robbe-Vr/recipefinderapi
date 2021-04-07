@@ -6,7 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using RecipeFinderWabApi.Logic.Handlers;
+using RecipeFinderWebApi.DAL;
 using RecipeFinderWebApi.DAL.Repositories;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,7 @@ namespace RecipeFinderWebApi.UI
                 options.AddPolicy(name: RFCorsPolicy,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder//.WithOrigins("http://localhost:3000")
                                             .AllowAnyOrigin()
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
@@ -58,18 +60,19 @@ namespace RecipeFinderWebApi.UI
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
-            services.AddScoped(x => new IngredientHandler(new IngredientRepo()));
-            services.AddScoped(x => new RecipeHandler(new RecipeRepo()));
-            services.AddScoped(x => new IngredientCategoryHandler(new IngredientCategoryRepo()));
-            services.AddScoped(x => new RecipeCategoryHandler(new RecipeCategoryRepo()));
-            services.AddScoped(x => new UnitTypeHandler(new UnitTypeRepo()));
-            services.AddScoped(x => new UserHandler(new UserRepo()));
-            services.AddScoped(x => new RoleHandler(new RoleRepo()));
-            services.AddScoped(x => new KitchenHandler(new KitchenRepo()));
-            services.AddScoped(x => new RequirementsListHandler(new RequirementsListRepo()));
-            services.AddScoped(x => new GroceryListHandler(new GroceryListRepo()));
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeHandler(new RecipeRepo(context), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new KitchenHandler(new KitchenRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RequirementsListHandler(new RequirementsListRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new GroceryListHandler(new GroceryListRepo(context)); });
 
 
         }

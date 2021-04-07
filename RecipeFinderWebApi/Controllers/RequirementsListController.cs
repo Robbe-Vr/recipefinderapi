@@ -30,15 +30,21 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET api/<RequirementsListsController>/5
         [HttpGet("{id}")]
-        public RequirementsList Get(string id)
+        public RequirementsListIngredient Get(int id)
         {
             return handler.GetById(id);
         }
 
-        [HttpGet("byname/{name}")]
-        public RequirementsList GetByName(string name)
+        [HttpGet("byrecipeid/{id}")]
+        public RequirementsList GetByRecipeId(string id)
         {
-            return handler.GetByName(name);
+            return handler.GetByRecipeId(id);
+        }
+
+        [HttpGet("byrecipename/{name}")]
+        public RequirementsList GetByRecipeName(string name)
+        {
+            return handler.GetByRecipeName(name);
         }
 
         // POST api/<RequirementsListsController>

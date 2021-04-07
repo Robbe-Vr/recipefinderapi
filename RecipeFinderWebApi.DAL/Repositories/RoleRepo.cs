@@ -8,47 +8,56 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RoleRepo : IRoleRepo
+    public class RoleRepo : AbstractRepo<Role>, IRoleRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public RoleRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<Role> GetAll()
         {
             return context.Roles
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
         public Role GetById(string id)
         {
             return context.Roles
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
 
         public Role GetByName(string name)
         {
             return context.Roles
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(Role user)
+        public int Create(Role role)
         {
-            context.Roles.Add(user);
+            role.Users = null;
+
+            role.Id = Guid.NewGuid().ToString();
+
+            context.Roles.Add(role);
 
             return context.SaveChanges();
         }
 
-        public int Update(Role user)
+        public int Update(Role role)
         {
-            context.Roles.Update(user);
+            context.Roles.Update(role);
 
             return context.SaveChanges();
         }
 
-        public int Delete(Role user)
+        public int Delete(Role role)
         {
-            user.Deleted = true;
+            role.Deleted = true;
 
-            context.Roles.Update(user);
+            context.Roles.Update(role);
 
             return context.SaveChanges();
         }

@@ -6,14 +6,14 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL
 {
-    public class RecipeFinderDbContextFactory : IDesignTimeDbContextFactory<RecipeFinderDBContext>
+    public class RecipeFinderDbContextFactory : IDesignTimeDbContextFactory<RecipeFinderDbContext>
     {
-        public RecipeFinderDBContext CreateDbContext(string[] args)
+        public RecipeFinderDbContext CreateDbContext(string[] args)
         {
             AppConfiguration appConfig = new AppConfiguration();
-            var opsBuilder = new DbContextOptionsBuilder<RecipeFinderDBContext>();
+            var opsBuilder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
             opsBuilder.UseSqlServer(appConfig.sqlConnectionString);
-            return new RecipeFinderDBContext(opsBuilder.Options);
+            return new RecipeFinderDbContext(opsBuilder.Options);
         }
     }
 

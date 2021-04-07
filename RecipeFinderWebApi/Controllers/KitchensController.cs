@@ -30,15 +30,21 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET api/<KitchensController>/5
         [HttpGet("{id}")]
-        public Kitchen Get(string id)
+        public KitchenIngredient Get(int id)
         {
             return handler.GetById(id);
         }
 
-        [HttpGet("byname/{name}")]
-        public Kitchen GetByName(string name)
+        [HttpGet("byuserid/{id}")]
+        public Kitchen GetByUserId(string id)
         {
-            return handler.GetByName(name);
+            return handler.GetByUserId(id);
+        }
+
+        [HttpGet("byusername/{name}")]
+        public Kitchen GetByUserName(string name)
+        {
+            return handler.GetByUserName(name);
         }
 
         // POST api/<KitchensController>

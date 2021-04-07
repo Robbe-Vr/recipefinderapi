@@ -6,27 +6,27 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.DAL
 {
-    public class RecipeFinderDBContext : DbContext
+    public class RecipeFinderDbContext : DbContext
     {
         public class OptionsBuild
         {
             public OptionsBuild()
             {
                 settings = new AppConfiguration();
-                opsBuilder = new DbContextOptionsBuilder<RecipeFinderDBContext>();
+                opsBuilder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
                 opsBuilder.UseSqlServer(settings.sqlConnectionString);
                 dbOptions = opsBuilder.Options;
             }
-            public DbContextOptionsBuilder<RecipeFinderDBContext> opsBuilder { get; set; }
+            public DbContextOptionsBuilder<RecipeFinderDbContext> opsBuilder { get; set; }
 
-            public DbContextOptions<RecipeFinderDBContext> dbOptions { get; set; }
+            public DbContextOptions<RecipeFinderDbContext> dbOptions { get; set; }
 
             private AppConfiguration settings { get; set; }
         }
 
         public static OptionsBuild ops = new OptionsBuild();
 
-        public RecipeFinderDBContext(DbContextOptions<RecipeFinderDBContext> options)
+        public RecipeFinderDbContext(DbContextOptions<RecipeFinderDbContext> options)
             : base(options)
         {
         }
@@ -34,75 +34,6 @@ namespace RecipeFinderWebApi.DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            // Relations
-            builder.Entity<Ingredient>()
-                .HasMany(i => i.Categories)
-                .WithMany(c => c.Ingredients)
-                .UsingEntity<IngredientCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId))
-                .HasKey(x => x.CountId);
-
-            builder.Entity<Ingredient>()
-                .HasMany(i => i.UnitTypes)
-                .WithMany(i => i.Ingredients)
-                .UsingEntity<IngredientUnitTypeRelation>(x => x.HasOne(x => x.UnitType).WithMany().HasForeignKey(x => x.UnitTypeId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId))
-                .HasKey(x => x.CountId);
-
-            builder.Entity<User>()
-                .HasMany(x => x.Roles)
-                .WithMany(x => x.Users)
-                .UsingEntity<UserRoleRelation>(x => x.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId), x => x.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId))
-                .HasKey(x => x.CountId);
-
-            builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
-            builder.Entity<KitchenIngredient>()
-                .HasOne(x => x.Ingredient)
-                .WithMany()
-                .HasForeignKey(x => x.IngredientId);
-
-            builder.Entity<KitchenIngredient>()
-                .HasOne(x => x.UnitType)
-                .WithMany()
-                .HasForeignKey(x => x.UnitTypeId);
-
-            builder.Entity<KitchenIngredient>()
-                .HasOne(x => x.User)
-                .WithMany()
-                .HasForeignKey(x => x.UserId);
-
-            builder.Entity<Kitchen>().HasKey(x => x.UserId);
-            builder.Entity<Kitchen>()
-                .HasOne(x => x.User)
-                .WithOne(x => x.Kitchen)
-                .HasForeignKey(typeof(Kitchen), nameof(Kitchen.UserId));
-
-            builder.Entity<RequirementsList>().HasKey(x => x.RecipeId);
-            builder.Entity<RequirementsList>()
-                .HasOne(x => x.Recipe)
-                .WithOne(x => x.RequirementsList)
-                .HasForeignKey(typeof(RequirementsList), nameof(RequirementsList.RecipeId));
-
-            builder.Entity<Recipe>()
-                .HasMany(r => r.Categories)
-                .WithMany(c => c.Recipes)
-                .UsingEntity<RecipeCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId), x => x.HasOne(x => x.Recipe).WithMany().HasForeignKey(x => x.RecipeId))
-                .HasKey(x => x.CountId);
-
-            builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
-            builder.Entity<RequirementsListIngredient>()
-                .HasOne(x => x.Ingredient)
-                .WithMany()
-                .HasForeignKey(x => x.IngredientId);
-
-            builder.Entity<RequirementsListIngredient>()
-                .HasOne(x => x.UnitType)
-                .WithMany()
-                .HasForeignKey(x => x.UnitTypeId);
-
-            builder.Entity<RequirementsListIngredient>()
-                .HasOne(x => x.Recipe)
-                .WithMany()
-                .HasForeignKey(x => x.RecipeId);
 
             // Table Names
             builder.Entity<IngredientCategoryRelation>().ToTable("CategoryIngredient");
@@ -118,31 +49,133 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<KitchenIngredient>().ToTable("Kitchens");
             builder.Entity<RequirementsListIngredient>().ToTable("IngredientLists");
 
+            // Relations
+            builder.Entity<Ingredient>()
+                .HasMany(i => i.Categories)
+                .WithMany(c => c.Ingredients)
+                .UsingEntity<IngredientCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
+                .HasKey(x => x.CountId);
+            builder.Entity<IngredientCategory>().HasKey(x => x.CountId);
+
+            builder.Entity<Ingredient>()
+                .HasMany(i => i.UnitTypes)
+                .WithMany(i => i.Ingredients)
+                .UsingEntity<IngredientUnitTypeRelation>(x => x.HasOne(x => x.UnitType).WithMany().HasForeignKey(x => x.UnitTypeId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
+                .HasKey(x => x.CountId);
+            builder.Entity<UnitType>().HasKey(x => x.CountId);
+
+            builder.Entity<User>()
+                .HasMany(x => x.Roles)
+                .WithMany(x => x.Users)
+                .UsingEntity<UserRoleRelation>(x => x.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId).HasPrincipalKey(x => x.Id), x => x.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).HasPrincipalKey(x => x.Id))
+                .HasKey(x => x.CountId);
+
+            builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
+            builder.Entity<KitchenIngredient>()
+                .HasOne(x => x.Ingredient)
+                .WithMany()
+                .HasForeignKey(x => x.IngredientId)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Entity<KitchenIngredient>()
+                .HasOne(x => x.UnitType)
+                .WithMany()
+                .HasForeignKey(x => x.UnitTypeId)
+                .HasPrincipalKey(x => x.CountId);
+
+            builder.Entity<KitchenIngredient>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Entity<Kitchen>().HasKey(x => x.UserId);
+            builder.Entity<Kitchen>()
+                .HasOne(x => x.User)
+                .WithOne(x => x.Kitchen)
+                .HasForeignKey(typeof(Kitchen), nameof(Kitchen.UserId))
+                .HasPrincipalKey(typeof(User), nameof(User.Id));
+
+            builder.Entity<RequirementsList>().HasKey(x => x.RecipeId);
+            builder.Entity<RequirementsList>()
+                .HasOne(x => x.Recipe)
+                .WithOne(x => x.RequirementsList)
+                .HasForeignKey(typeof(RequirementsList), nameof(RequirementsList.RecipeId))
+                .HasPrincipalKey(typeof(Recipe), nameof(Recipe.Id));
+
+            builder.Entity<Recipe>()
+                .HasMany(r => r.Categories)
+                .WithMany(c => c.Recipes)
+                .UsingEntity<RecipeCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Recipe).WithMany().HasForeignKey(x => x.RecipeId).HasPrincipalKey(x => x.Id))
+                .HasKey(x => x.CountId);
+            builder.Entity<RecipeCategory>().HasKey(x => x.CountId);
+
+            builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
+            builder.Entity<RequirementsListIngredient>()
+                .HasOne(x => x.Ingredient)
+                .WithMany()
+                .HasForeignKey(x => x.IngredientId)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Entity<RequirementsListIngredient>()
+                .HasOne(x => x.UnitType)
+                .WithMany()
+                .HasForeignKey(x => x.UnitTypeId)
+                .HasPrincipalKey(x => x.CountId);
+
+            builder.Entity<RequirementsListIngredient>()
+                .HasOne(x => x.Recipe)
+                .WithMany()
+                .HasForeignKey(x => x.RecipeId)
+                .HasPrincipalKey(x => x.Id);
+
             //Column Names
+            builder.Entity<IngredientCategoryRelation>().HasKey(x => x.CountId);
             builder.Entity<IngredientCategoryRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<IngredientCategoryRelation>()
                 .Property(x => x.CategoryId).HasColumnName("Category_id");
             builder.Entity<IngredientCategoryRelation>()
                 .Property(x => x.IngredientId).HasColumnName("Ingredient_id");
 
+            builder.Entity<RecipeCategoryRelation>().HasKey(x => x.CountId);
             builder.Entity<RecipeCategoryRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<RecipeCategoryRelation>()
                 .Property(x => x.CategoryId).HasColumnName("Category_id");
             builder.Entity<RecipeCategoryRelation>()
                 .Property(x => x.RecipeId).HasColumnName("Recipe_id");
 
+            builder.Entity<UnitType>().HasKey(x => x.CountId);
             builder.Entity<UnitType>()
                 .Property(x => x.AllowDecimals).HasColumnName("Allow_decimals");
 
+            builder.Entity<IngredientUnitTypeRelation>().HasKey(x => x.CountId);
             builder.Entity<IngredientUnitTypeRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<IngredientUnitTypeRelation>()
                 .Property(x => x.UnitTypeId).HasColumnName("Unit_type_id");
             builder.Entity<IngredientUnitTypeRelation>()
                 .Property(x => x.IngredientId).HasColumnName("Ingredient_id");
 
+            builder.Entity<Ingredient>().HasKey(x => new { x.CountId, x.Id });
+            builder.Entity<Ingredient>()
+                .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+            builder.Entity<Ingredient>()
+                .Property(x => x.ImageLocation).HasColumnName("Image_location");
+            builder.Entity<Ingredient>()
+                .Property(x => x.AverageWeightInKgPerUnit).HasColumnName("Average_weight_in_kg_per_unit");
+            builder.Entity<Ingredient>()
+                .Property(x => x.AverageVolumeInLiterPerUnit).HasColumnName("Average_volume_in_liter_per_unit");
+
+            builder.Entity<Recipe>().HasKey(x => new { x.CountId, x.Id });
+            builder.Entity<Recipe>()
+                .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<Recipe>()
                 .Property(x => x.PreparationSteps).HasColumnName("Preparation_steps");
             builder.Entity<Recipe>()
@@ -150,8 +183,10 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Recipe>()
                 .Property(x => x.UserId).HasColumnName("Added_by_id");
 
+            builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
             builder.Entity<KitchenIngredient>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<KitchenIngredient>()
                 .Property(x => x.UserId).HasColumnName("Owner_id");
             builder.Entity<KitchenIngredient>()
@@ -159,8 +194,10 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<KitchenIngredient>()
                 .Property(x => x.UnitTypeId).HasColumnName("Unit_type_id");
 
+            builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
             builder.Entity<RequirementsListIngredient>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<RequirementsListIngredient>()
                 .Property(x => x.RecipeId).HasColumnName("Recipe_id");
             builder.Entity<RequirementsListIngredient>()
@@ -168,6 +205,10 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<RequirementsListIngredient>()
                 .Property(x => x.UnitTypeId).HasColumnName("Unit_type_id");
 
+            builder.Entity<User>().HasKey(x => new { x.CountId, x.Id });
+            builder.Entity<User>()
+                .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<User>()
                 .Property(x => x.PasswordHashed).HasColumnName("Password_hashed");
             builder.Entity<User>()
@@ -193,13 +234,24 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<User>()
                 .Property(x => x.AccessFailedCount).HasColumnName("Access_failed_count");
 
+            builder.Entity<UserRoleRelation>().HasKey(x => x.CountId);
             builder.Entity<UserRoleRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<UserRoleRelation>()
                 .Property(x => x.UserId).HasColumnName("User_id");
             builder.Entity<UserRoleRelation>()
                 .Property(x => x.RoleId).HasColumnName("Role_id");
 
+            builder.Entity<Role>().HasKey(x => new { x.CountId, x.Id });
+            builder.Entity<Role>()
+                .Property(x => x.CountId).HasColumnName("Count_id");
+            //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+            builder.Entity<GroceryList>().HasKey(x => new { x.CountId, x.Id });
+            builder.Entity<GroceryList>()
+                .Property(g => g.CountId).HasColumnName("Count_id");
+                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<GroceryList>()
                 .Property(g => g.UserId).HasColumnName("User_id");
         }

@@ -8,9 +8,11 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RequirementsListRepo : IRequirementsListRepo
+    public class RequirementsListRepo : AbstractRepo<RequirementsListIngredient>, IRequirementsListRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public RequirementsListRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<RequirementsListIngredient> GetAll()
         {
@@ -19,16 +21,29 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public RequirementsList GetById(string id)
+        public RequirementsListIngredient GetById(int id)
+        {
+            return context.RequirementsLists
+                .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
+                .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
+                .Include(x => x.UnitType)
+                .Include(x => x.Recipe)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+        }
+
+        public RequirementsList GetByRecipeId(string id)
         {
             var ingredients = context.RequirementsLists
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
+                .AsNoTracking()
                 .Where(x => x.RecipeId == id && !x.Deleted);
 
             var recipe = ingredients.FirstOrDefault()?.Recipe;
@@ -41,13 +56,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
             };
         }
 
-        public RequirementsList GetByName(string name)
+        public RequirementsList GetByRecipeName(string name)
         {
             var ingredients = context.RequirementsLists
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
+                .AsNoTracking()
                 .Where(x => x.Recipe.Name == name && !x.Deleted);
 
             var recipe = ingredients.FirstOrDefault()?.Recipe;
@@ -62,6 +78,10 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(RequirementsListIngredient ingredient)
         {
+            ingredient.Ingredient = null;
+            ingredient.Recipe = null;
+            ingredient.UnitType = null;
+
             context.RequirementsLists.Add(ingredient);
 
             return context.SaveChanges();

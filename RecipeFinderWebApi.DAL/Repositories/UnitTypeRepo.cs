@@ -8,14 +8,17 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UnitTypeRepo : IUnitTypeRepo
+    public class UnitTypeRepo : AbstractRepo<UnitType>, IUnitTypeRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public UnitTypeRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<UnitType> GetAll()
         {
             return context.UnitTypes
                 .Include(x => x.Ingredients)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -23,35 +26,39 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.UnitTypes
                 .Include(x => x.Ingredients)
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
         }
 
         public UnitType GetByName(string name)
         {
             return context.UnitTypes
                 .Include(x => x.Ingredients)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(UnitType ingredient)
+        public int Create(UnitType unitType)
         {
-            context.UnitTypes.Add(ingredient);
+            unitType.Ingredients = null;
+
+            context.UnitTypes.Add(unitType);
 
             return context.SaveChanges();
         }
 
-        public int Update(UnitType ingredient)
+        public int Update(UnitType unitType)
         {
-            context.UnitTypes.Update(ingredient);
+            context.UnitTypes.Update(unitType);
 
             return context.SaveChanges();
         }
 
-        public int Delete(UnitType ingredient)
+        public int Delete(UnitType unitType)
         {
-            ingredient.Deleted = true;
+            unitType.Deleted = true;
 
-            context.UnitTypes.Update(ingredient);
+            context.UnitTypes.Update(unitType);
 
             return context.SaveChanges();
         }

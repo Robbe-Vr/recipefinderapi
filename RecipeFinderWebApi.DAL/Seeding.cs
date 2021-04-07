@@ -9,7 +9,7 @@ namespace RecipeFinderWebApi.DAL
 {
     public class Seeding
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        private RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions);
 
         public void Seed()
         {

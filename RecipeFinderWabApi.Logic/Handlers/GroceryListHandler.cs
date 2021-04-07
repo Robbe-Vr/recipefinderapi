@@ -20,6 +20,11 @@ namespace RecipeFinderWabApi.Logic.Handlers
             return _repo.GetAll();
         }
 
+        public IEnumerable<GroceryList> GetAllByUserId(string id)
+        {
+            return _repo.GetAllByUserId(id);
+        }
+
         public GroceryList GetById(string id)
         {
             return _repo.GetById(id);

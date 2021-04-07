@@ -24,7 +24,7 @@ namespace RecipeFinderWabApi.Logic
 
         public IEnumerable<KitchenIngredient> Calculate(WhatToBuyFilterObject filters)
         {
-            var currentKitchen = _kitchenRepo.GetById(filters.UserId);
+            var currentKitchen = _kitchenRepo.GetByUserId(filters.UserId);
 
             var toBuyIngredients = GetIngredients(currentKitchen.Ingredients, filters);
 

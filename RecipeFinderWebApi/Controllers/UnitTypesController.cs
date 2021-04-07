@@ -59,7 +59,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            handler.Delete(new UnitType() { Id = id });
+            handler.Delete(new UnitType() { CountId = id });
         }
     }
 }

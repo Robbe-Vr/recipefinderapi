@@ -8,9 +8,11 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class KitchenRepo : IKitchenRepo
+    public class KitchenRepo : AbstractRepo<KitchenIngredient>, IKitchenRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public KitchenRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<KitchenIngredient> GetAll()
         {
@@ -19,16 +21,29 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                 .Include(k => k.UnitType)
                 .Include(k => k.User)
+                .AsNoTracking()
                 .Where(k => !k.Deleted);
         }
 
-        public Kitchen GetById(string id)
+        public KitchenIngredient GetById(int id)
+        {
+            return context.Kitchens
+                .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
+                .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
+                .Include(k => k.UnitType)
+                .Include(k => k.User)
+                .AsNoTracking()
+                .FirstOrDefault(k => k.CountId == id && !k.Deleted);
+        }
+
+        public Kitchen GetByUserId(string id)
         {
             var ingredients = context.Kitchens
                 .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                 .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                 .Include(k => k.UnitType)
                 .Include(k => k.User)
+                .AsNoTracking()
                 .Where(k => k.UserId == id && !k.Deleted);
 
             var user = ingredients.FirstOrDefault()?.User;
@@ -37,17 +52,18 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 Ingredients = ingredients.ToArray(),
                 User = user,
-                UserId = user.Id,
+                UserId = id,
             };
         }
 
-        public Kitchen GetByName(string name)
+        public Kitchen GetByUserName(string name)
         {
             var ingredients = context.Kitchens
                  .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                  .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                  .Include(k => k.UnitType)
                  .Include(k => k.User)
+                 .AsNoTracking()
                  .Where(k => k.User.Name == name && !k.Deleted);
 
             var user = ingredients.FirstOrDefault().User;
@@ -62,6 +78,11 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(KitchenIngredient ingredient)
         {
+            ingredient.Ingredient = null;
+            ingredient.UnitType = null;
+            ingredient.User = null;
+            ingredient.Kitchens = null;
+
             context.Kitchens.Add(ingredient);
 
             return context.SaveChanges();

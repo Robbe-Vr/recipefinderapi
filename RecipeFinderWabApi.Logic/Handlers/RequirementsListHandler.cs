@@ -20,14 +20,19 @@ namespace RecipeFinderWabApi.Logic.Handlers
             return _repo.GetAll();
         }
 
-        public RequirementsList GetById(string id)
+        public RequirementsListIngredient GetById(int id)
         {
             return _repo.GetById(id);
         }
 
-        public RequirementsList GetByName(string name)
+        public RequirementsList GetByRecipeId(string id)
         {
-            return _repo.GetByName(name);
+            return _repo.GetByRecipeId(id);
+        }
+
+        public RequirementsList GetByRecipeName(string name)
+        {
+            return _repo.GetByRecipeName(name);
         }
 
         public int Create(RequirementsListIngredient ingredient)

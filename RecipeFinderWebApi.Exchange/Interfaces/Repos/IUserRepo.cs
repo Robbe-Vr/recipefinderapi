@@ -13,9 +13,14 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
         public Kitchen GetKitchenById(string id);
 
         public User GetById(string id);
+
         public User GetByName(string name);
 
+        public IEnumerable<Role> GetRolesByUserId(string id);
+
         public int Create(User user);
+
+        User CreateGetId(User user);
 
         public int Update(User user);
 

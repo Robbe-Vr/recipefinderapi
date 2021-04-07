@@ -8,14 +8,17 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class IngredientCategoryRepo : IIngredientCategoryRepo
+    public class IngredientCategoryRepo : AbstractRepo<IngredientCategory>, IIngredientCategoryRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public IngredientCategoryRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<IngredientCategory> GetAll()
         {
             return context.IngredientCategories
                 .Include(x => x.Ingredients)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
@@ -23,35 +26,39 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.IngredientCategories
                 .Include(x => x.Ingredients)
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
         }
 
         public IngredientCategory GetByName(string name)
         {
             return context.IngredientCategories
                 .Include(x => x.Ingredients)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(IngredientCategory ingredient)
+        public int Create(IngredientCategory category)
         {
-            context.IngredientCategories.Add(ingredient);
+            category.Ingredients = null;
+
+            context.IngredientCategories.Add(category);
 
             return context.SaveChanges();
         }
 
-        public int Update(IngredientCategory ingredient)
+        public int Update(IngredientCategory category)
         {
-            context.IngredientCategories.Update(ingredient);
+            context.IngredientCategories.Update(category);
 
             return context.SaveChanges();
         }
 
-        public int Delete(IngredientCategory ingredient)
+        public int Delete(IngredientCategory category)
         {
-            ingredient.Deleted = true;
+            category.Deleted = true;
 
-            context.IngredientCategories.Update(ingredient);
+            context.IngredientCategories.Update(category);
 
             return context.SaveChanges();
         }

@@ -36,6 +36,12 @@ namespace RecipeFinderWebApi.UI.Controllers
             return handler.GetById(id);
         }
 
+        [HttpGet("byuserid/{id}")]
+        public IEnumerable<GroceryList> GetByUserId(string id)
+        {
+            return handler.GetAllByUserId(id);
+        }
+
         [HttpGet("byname/{name}")]
         public GroceryList GetByName(string name)
         {

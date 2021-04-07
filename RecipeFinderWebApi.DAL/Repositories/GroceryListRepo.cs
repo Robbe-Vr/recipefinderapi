@@ -8,21 +8,33 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class GroceryListRepo : IGroceryListRepo
+    public class GroceryListRepo : AbstractRepo<GroceryList>, IGroceryListRepo
     {
-        private RecipeFinderDBContext context = new RecipeFinderDBContext(RecipeFinderDBContext.ops.dbOptions);
+        public GroceryListRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public IEnumerable<GroceryList> GetAll()
         {
             return context.GroceryLists
                 .Include(x => x.User)
+                .AsNoTracking()
                 .Where(x => !x.Deleted);
+        }
+
+        public IEnumerable<GroceryList> GetAllByUserId(string id)
+        {
+            return context.GroceryLists
+                .Include(x => x.User)
+                .AsNoTracking()
+                .Where(x => x.UserId == id && !x.Deleted);
         }
 
         public GroceryList GetById(string id)
         {
             return context.GroceryLists
                 .Include(x => x.User)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
 
@@ -30,28 +42,33 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.GroceryLists
                 .Include(x => x.User)
+                .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(GroceryList ingredient)
+        public int Create(GroceryList list)
         {
-            context.GroceryLists.Add(ingredient);
+            list.User = null;
+
+            list.Id = Guid.NewGuid().ToString();
+
+            context.GroceryLists.Add(list);
 
             return context.SaveChanges();
         }
 
-        public int Update(GroceryList ingredient)
+        public int Update(GroceryList list)
         {
-            context.GroceryLists.Update(ingredient);
+            context.GroceryLists.Update(list);
 
             return context.SaveChanges();
         }
 
-        public int Delete(GroceryList ingredient)
+        public int Delete(GroceryList list)
         {
-            ingredient.Deleted = true;
+            list.Deleted = true;
 
-            context.GroceryLists.Update(ingredient);
+            context.GroceryLists.Update(list);
 
             return context.SaveChanges();
         }

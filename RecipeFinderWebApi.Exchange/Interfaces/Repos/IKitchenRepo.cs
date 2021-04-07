@@ -9,8 +9,11 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
     {
         public IEnumerable<KitchenIngredient> GetAll();
 
-        public Kitchen GetById(string id);
-        public Kitchen GetByName(string name);
+        public KitchenIngredient GetById(int id);
+
+        public Kitchen GetByUserId(string id);
+
+        public Kitchen GetByUserName(string name);
 
         public int Create(KitchenIngredient ingredient);
 

@@ -10,9 +10,13 @@ namespace RecipeFinderWabApi.Logic.Handlers
     {
         private IRecipeCategoryRepo _repo;
 
-        public RecipeCategoryHandler(IRecipeCategoryRepo repo)
+        private IRecipeCategoryRelationRepo _recipe_relation_repo;
+
+        public RecipeCategoryHandler(IRecipeCategoryRepo repo, IRecipeCategoryRelationRepo recipe_relation_repo)
         {
             _repo = repo;
+
+            _recipe_relation_repo = recipe_relation_repo;
         }
 
         public IEnumerable<RecipeCategory> GetAll()
@@ -30,19 +34,36 @@ namespace RecipeFinderWabApi.Logic.Handlers
             return _repo.GetByName(name);
         }
 
-        public int Create(RecipeCategory ingredient)
+        public int Create(RecipeCategory category)
         {
-            return _repo.Create(ingredient);
+            return _repo.Create(category);
         }
 
-        public int Update(RecipeCategory ingredient)
+        public int CreateRecipeRelation(Recipe recipe, RecipeCategory category)
         {
-            return _repo.Update(ingredient);
+            return _recipe_relation_repo.CreateRelation(recipe, category);
         }
 
-        public int Delete(RecipeCategory ingredient)
+        public int DeleteRecipeRelation(RecipeCategoryRelation relation)
         {
-            return _repo.Delete(ingredient);
+            return _recipe_relation_repo.DeleteRelation(relation);
+        }
+
+        public int DeleteRecipeRelation(Recipe recipe, RecipeCategory category)
+        {
+            var relation = _recipe_relation_repo.GetByRecipeIdAndCategoryId(recipe.Id, category.CountId);
+
+            return _recipe_relation_repo.DeleteRelation(relation);
+        }
+
+        public int Update(RecipeCategory category)
+        {
+            return _repo.Update(category);
+        }
+
+        public int Delete(RecipeCategory category)
+        {
+            return _repo.Delete(category);
         }
     }
 }

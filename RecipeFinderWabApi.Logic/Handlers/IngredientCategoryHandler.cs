@@ -10,9 +10,13 @@ namespace RecipeFinderWabApi.Logic.Handlers
     {
         private IIngredientCategoryRepo _repo;
 
-        public IngredientCategoryHandler(IIngredientCategoryRepo repo)
+        private IIngredientCategoryRelationRepo _ingredient_relation_repo;
+
+        public IngredientCategoryHandler(IIngredientCategoryRepo repo, IIngredientCategoryRelationRepo ingredient_relation_repo)
         {
             _repo = repo;
+
+            _ingredient_relation_repo = ingredient_relation_repo;
         }
 
         public IEnumerable<IngredientCategory> GetAll()
@@ -43,6 +47,23 @@ namespace RecipeFinderWabApi.Logic.Handlers
         public int Delete(IngredientCategory ingredient)
         {
             return _repo.Delete(ingredient);
+        }
+
+        public int CreateIngredientRelation(Ingredient ingredient, IngredientCategory category)
+        {
+            return _ingredient_relation_repo.CreateRelation(ingredient, category);
+        }
+
+        public int DeleteIngredientRelation(IngredientCategoryRelation relation)
+        {
+            return _ingredient_relation_repo.DeleteRelation(relation);
+        }
+
+        public int DeleteIngredientRelation(Ingredient ingredient, IngredientCategory category)
+        {
+            var relation = _ingredient_relation_repo.GetByIngredientIdAndCategoryId(ingredient.Id, category.CountId);
+
+            return _ingredient_relation_repo.DeleteRelation(relation);
         }
     }
 }

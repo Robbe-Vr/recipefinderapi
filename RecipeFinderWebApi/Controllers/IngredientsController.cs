@@ -23,43 +23,49 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<IngredientsController>
         [HttpGet]
-        public IEnumerable<Ingredient> Get()
+        public ActionResult<IEnumerable<Ingredient>> Get()
         {
-            return handler.GetAll();
+            return handler.GetAll().ToArray();
         }
 
         // GET api/<IngredientsController>/5
         [HttpGet("{id}")]
-        public Ingredient Get(string id)
+        public ActionResult<Ingredient> Get(string id)
         {
             return handler.GetById(id);
         }
 
         [HttpGet("byname/{name}")]
-        public Ingredient GetByName(string name)
+        public ActionResult<Ingredient> GetByName(string name)
         {
             return handler.GetByName(name);
         }
 
         // POST api/<IngredientsController>
         [HttpPost]
-        public void Post([FromBody] Ingredient value)
+        public ActionResult<int> Post([FromBody] Ingredient value)
         {
-            handler.Create(value);
+            return handler.Create(value);
+        }
+
+        [HttpPost("getid")]
+        public ActionResult<Ingredient> CreateGetId([FromBody] Ingredient value)
+        {
+            return handler.CreateGetId(value);
         }
 
         // PUT api/<IngredientsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Ingredient value)
+        public ActionResult<int> Put(string id, [FromBody] Ingredient value)
         {
-            handler.Update(value);
+            return handler.Update(value);
         }
 
         // DELETE api/<IngredientsController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public ActionResult<int> Delete(string id)
         {
-            handler.Delete(new Ingredient() { Id = id });
+            return handler.Delete(new Ingredient() { Id = id });
         }
     }
 }
