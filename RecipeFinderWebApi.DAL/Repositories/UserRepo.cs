@@ -72,8 +72,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(User user)
         {
-            user.Kitchen = null;
             user.Roles = null;
+            user.Kitchen = null;
 
             user.Id = Guid.NewGuid().ToString();
 
@@ -84,8 +84,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public User CreateGetId(User user)
         {
-            user.Kitchen = null;
             user.Roles = null;
+            user.Kitchen = null;
 
             user.Id = Guid.NewGuid().ToString();
 
@@ -98,6 +98,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(User user)
         {
+            user.Roles = null;
+            user.Kitchen = null;
+
             if (!Exists(user))
             {
                 return 0;
@@ -106,7 +109,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 if (KeyIsAttached(user))
                 {
-                    User old = GetAttachedEntityByKey(user);
+                    User old = GetAttachedEntityByEntity(user);
 
                     old.Name = user.Name;
                     old.NAME_NORMALIZED = user.NAME_NORMALIZED;
@@ -133,6 +136,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Delete(User user)
         {
+            user.Roles = null;
+            user.Kitchen = null;
+
             if (!Exists(user))
             {
                 return 0;
@@ -141,7 +147,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 if (KeyIsAttached(user))
                 {
-                    user = GetAttachedEntityByKey(user);
+                    user = GetAttachedEntityByEntity(user);
                 }
                 else context.Users.Update(user);
             }

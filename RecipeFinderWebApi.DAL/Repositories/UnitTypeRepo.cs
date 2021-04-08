@@ -49,16 +49,44 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(UnitType unitType)
         {
-            context.UnitTypes.Update(unitType);
+            unitType.Ingredients = null;
+
+            if (!Exists(unitType))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(unitType))
+            {
+                if (KeyIsAttached(unitType))
+                {
+                    UnitType old = GetAttachedEntityByEntity(unitType);
+                    old.Name = unitType.Name;
+                }
+                else context.UnitTypes.Update(unitType);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(UnitType unitType)
         {
-            unitType.Deleted = true;
+            unitType.Ingredients = null;
 
-            context.UnitTypes.Update(unitType);
+            if (!Exists(unitType))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(unitType))
+            {
+                if (KeyIsAttached(unitType))
+                {
+                    unitType = GetAttachedEntityByEntity(unitType);
+                }
+            }
+
+            context.Entry(unitType).State = EntityState.Modified;
+
+            unitType.Deleted = true;
 
             return context.SaveChanges();
         }

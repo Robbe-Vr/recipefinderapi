@@ -11,22 +11,19 @@ using System.Linq;
 namespace RecipeFinderWebApi.UnitTests
 {
     [TestClass]
-    public class UserCRUDTests
+    public class GroceryListCRUDTests
     {
-        private UserHandler handler;
+        private GroceryListHandler handler;
+        private UserHandler userHandler;
 
-        private RoleHandler roleHandler;
-
+        private GroceryList groceryList;
         private User user;
 
-        private Role role1;
-        private Role role2;
-
-        public UserCRUDTests()
+        public GroceryListCRUDTests()
         {
         }
 
-        [TestInitialize]
+        [TestInitialize()]
         public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
@@ -35,24 +32,22 @@ namespace RecipeFinderWebApi.UnitTests
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
-            handler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
-            roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
+            handler = new GroceryListHandler(new GroceryListRepo(context));
+            userHandler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
+            RoleHandler roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
-            var users = handler.GetAll();
+            var groceryLists = handler.GetAll();
 
-            if (users.Any())
+            if (groceryLists.Any())
             {
-                foreach (var user in users)
+                foreach (var groceryList in groceryLists)
                 {
-                    handler.Delete(user);
+                    handler.Delete(groceryList);
                 }
             }
 
-            role1 = new Role() { Name = "Default" };
-            role2 = new Role() { Name = "Admin" };
-            roleHandler.Create(role1);
-            roleHandler.Create(role2);
-
+            Role role = new Role() { Name = "TestRole" };
+            roleHandler.Create(role);
             user = new User()
             {
                 Name = "Test",
@@ -67,8 +62,19 @@ namespace RecipeFinderWebApi.UnitTests
                 SecurityStamp = "",
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
-                Roles = new List<Role>() { roleHandler.GetByName(role1.Name) },
+                Roles = new List<Role>() { roleHandler.GetByName(role.Name) },
                 Kitchen = null,
+                Deleted = false,
+            };
+            userHandler.Create(user);
+            user = userHandler.GetByName(user.Name);
+
+            groceryList = new GroceryList()
+            {
+                Name = "Test",
+                Value = "1 - Test1 - Test2 | 2 - Test3 - Test4",
+                User = user,
+                UserId = user.Id,
                 Deleted = false,
             };
         }
@@ -76,9 +82,9 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetAll()
         {
-            var users = handler.GetAll();
+            var groceryLists = handler.GetAll();
 
-            Assert.AreEqual(users.Count(), 0);
+            Assert.AreEqual(groceryLists.Count(), 0);
         }
 
         [TestMethod]
@@ -128,51 +134,50 @@ namespace RecipeFinderWebApi.UnitTests
 
         public void Create()
         {
-            int expectedNewRows = 2;
+            int expectedNewRows = 1;
 
-            int newRows = handler.Create(user);
+            int newRows = handler.Create(groceryList);
 
-            Assert.IsTrue(newRows == expectedNewRows);
+            Assert.AreEqual(expectedNewRows, newRows);
         }
 
         public void GetByName()
         {
-            User bynameUser = handler.GetByName(user.Name);
+            GroceryList bynameGroceryList = handler.GetByName(groceryList.Name);
 
-            user.Id = bynameUser.Id;
+            groceryList.Id = bynameGroceryList.Id;
 
-            Assert.AreEqual(bynameUser.Name, user.Name);
+            Assert.AreEqual(bynameGroceryList.Name, groceryList.Name);
         }
 
         public void GetById()
         {
-            User byidUser = handler.GetById(user.Id);
+            GroceryList byidGroceryList = handler.GetById(groceryList.Id);
 
-            user = byidUser;
+            groceryList = byidGroceryList;
 
-            Assert.AreEqual(byidUser.Name, user.Name);
+            Assert.AreEqual(byidGroceryList.Name, groceryList.Name);
         }
 
         public void Update()
         {
             string updatedName = "TestUpdate";
 
-            user.Name = updatedName;
-            user.Roles.Add(roleHandler.GetByName(role2.Name));
+            groceryList.Name = updatedName;
 
-            int updatedRows = handler.Update(user);
+            int updatedRows = handler.Update(groceryList);
 
-            Assert.IsTrue(updatedRows > 0);
-            Assert.AreEqual(handler.GetById(user.Id).Name, updatedName);
+            Assert.AreEqual(1, updatedRows);
+            Assert.AreEqual(handler.GetById(groceryList.Id).Name, updatedName);
         }
 
         public void Delete()
         {
-            int removedRows = handler.Delete(user);
+            int removedRows = handler.Delete(groceryList);
 
-            Assert.IsTrue(removedRows > 0);
+            Assert.AreEqual(1, removedRows);
 
-            Assert.IsNull(handler.GetById(user.Id));
+            Assert.IsNull(handler.GetById(groceryList.Id));
         }
     }
 }

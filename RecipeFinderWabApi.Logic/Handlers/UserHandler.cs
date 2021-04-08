@@ -122,21 +122,24 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             user.CountId = currentState.CountId;
 
-            var Kitchen = currentState.Kitchen;
-            var Roles = currentState.Roles;
+            List<Role> Roles = new List<Role>();
+            Roles.AddRange(user.Roles);
+
+            Kitchen Kitchen = new Kitchen();
+            Kitchen.Ingredients = user.Kitchen?.Ingredients;
 
             changes += _repo.Update(user);
 
-            if (user.Roles.Count > 0)
+            if (Roles.Count > 0)
             {
-                IEnumerable<Role> toAddRoles = user.Roles.Where(x => !currentState.Roles.Contains(x));
+                IEnumerable<Role> toAddRoles = Roles.Where(x => !currentState.Roles.Contains(x));
 
                 foreach (Role role in toAddRoles)
                 {
                     changes += CreateRoleRelation(user, role);
                 }
 
-                IEnumerable<Role> toRemoveRoles = currentState.Roles.Where(x => !user.Roles.Contains(x));
+                IEnumerable<Role> toRemoveRoles = currentState.Roles.Where(x => !Roles.Contains(x));
 
                 foreach (Role role in toRemoveRoles)
                 {
@@ -144,20 +147,31 @@ namespace RecipeFinderWabApi.Logic.Handlers
                 }
             }
 
-            if (user.Kitchen != null && user.Kitchen.Ingredients.Count > 0)
+            if (Kitchen != null && Kitchen.Ingredients != null && Kitchen.Ingredients.Count > 0)
             {
-                IEnumerable<KitchenIngredient> toAddIngredients = user.Kitchen.Ingredients.Where(x => !currentState.Kitchen.Ingredients.Contains(x));
+                IEnumerable<KitchenIngredient> toAddIngredients = Kitchen.Ingredients.Where(x => !currentState.Kitchen.Ingredients.Contains(x));
 
                 foreach (KitchenIngredient ingredient in toAddIngredients)
                 {
                     changes += _kitchen_repo.Create(ingredient);
                 }
 
-                IEnumerable<KitchenIngredient> toRemoveIngredients = currentState.Kitchen.Ingredients.Where(x => !user.Kitchen.Ingredients.Contains(x));
+                IEnumerable<KitchenIngredient> toRemoveIngredients = currentState.Kitchen.Ingredients.Where(x => !Kitchen.Ingredients.Contains(x));
 
                 foreach (KitchenIngredient ingredient in toRemoveIngredients)
                 {
                     changes += _kitchen_repo.Delete(ingredient);
+                }
+
+                IEnumerable<KitchenIngredient> toUpdateIngredients = Kitchen.Ingredients.Where(x => currentState.Kitchen.Ingredients.Any(y => x.IngredientId == y.IngredientId && (x.Units != y.Units || x.UnitTypeId != y.UnitTypeId)));
+
+                foreach (KitchenIngredient ingredient in toUpdateIngredients)
+                {
+                    ingredient.UserId = currentState.Id;
+
+                    ingredient.CountId = currentState.Kitchen.Ingredients.FirstOrDefault(i => i.IngredientId == ingredient.IngredientId).CountId;
+
+                    changes += _kitchen_repo.Update(ingredient);
                 }
             }
 

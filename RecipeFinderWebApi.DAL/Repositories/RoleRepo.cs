@@ -48,16 +48,44 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(Role role)
         {
-            context.Roles.Update(role);
+            role.Users = null;
+
+            if (!Exists(role))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(role))
+            {
+                if (KeyIsAttached(role))
+                {
+                    Role old = GetAttachedEntityByEntity(role);
+                    old.Name = role.Name;
+                }
+                else context.Roles.Update(role);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(Role role)
         {
-            role.Deleted = true;
+            role.Users = null;
 
-            context.Roles.Update(role);
+            if (!Exists(role))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(role))
+            {
+                if (KeyIsAttached(role))
+                {
+                    role = GetAttachedEntityByEntity(role);
+                }
+            }
+
+            context.Entry(role).State = EntityState.Modified;
+
+            role.Deleted = true;
 
             return context.SaveChanges();
         }

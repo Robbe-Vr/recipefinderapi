@@ -68,16 +68,44 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(Recipe recipe)
         {
-            context.Recipes.Update(recipe);
+            if (!Exists(recipe))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(recipe))
+            {
+                if (KeyIsAttached(recipe))
+                {
+                    Recipe old = GetAttachedEntityByEntity(recipe);
+
+                    old.Name = recipe.Name;
+                    old.PreparationSteps = recipe.PreparationSteps;
+                    old.VideoTutorialLink = recipe.VideoTutorialLink;
+                    old.Description = recipe.Description;
+                }
+                else context.Recipes.Update(recipe);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(Recipe recipe)
         {
-            recipe.Deleted = true;
+            if (!Exists(recipe))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(recipe))
+            {
+                if (KeyIsAttached(recipe))
+                {
+                    recipe = GetAttachedEntityByEntity(recipe);
+                }
+            }
 
-            context.Recipes.Update(recipe);
+            context.Entry(recipe).State = EntityState.Modified;
+
+            recipe.Deleted = true;
 
             return context.SaveChanges();
         }

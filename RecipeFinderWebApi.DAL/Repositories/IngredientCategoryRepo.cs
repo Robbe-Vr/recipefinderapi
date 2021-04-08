@@ -49,16 +49,44 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(IngredientCategory category)
         {
-            context.IngredientCategories.Update(category);
+            category.Ingredients = null;
+
+            if (!Exists(category))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(category))
+            {
+                if (KeyIsAttached(category))
+                {
+                    IngredientCategory old = GetAttachedEntityByEntity(category);
+                    old.Name = category.Name;
+                }
+                else context.IngredientCategories.Update(category);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(IngredientCategory category)
         {
-            category.Deleted = true;
+            category.Ingredients = null;
 
-            context.IngredientCategories.Update(category);
+            if (!Exists(category))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(category))
+            {
+                if (KeyIsAttached(category))
+                {
+                    category = GetAttachedEntityByEntity(category);
+                }
+            }
+
+            context.Entry(category).State = EntityState.Modified;
+
+            category.Deleted = true;
 
             return context.SaveChanges();
         }

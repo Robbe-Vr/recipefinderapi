@@ -20,7 +20,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return context.Set<TEntity>().Local.Any(i => i.CountId == entity.CountId);
         }
 
-        public TEntity GetAttachedEntityByKey(TEntity entity)
+        public TEntity GetAttachedEntityByEntity(TEntity entity)
         {
             return context.Set<TEntity>().Local.FirstOrDefault(i => i.CountId == entity.CountId);
         }
