@@ -89,7 +89,7 @@ namespace RecipeFinderWebApi.UI
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(RFCorsPolicy);
 
             app.UseAuthorization();
 

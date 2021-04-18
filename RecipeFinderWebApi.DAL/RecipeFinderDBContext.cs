@@ -56,6 +56,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<IngredientCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<IngredientCategory>().HasKey(x => x.CountId);
+            builder.Entity<IngredientCategory>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<Ingredient>()
                 .HasMany(i => i.UnitTypes)
@@ -63,6 +64,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<IngredientUnitTypeRelation>(x => x.HasOne(x => x.UnitType).WithMany().HasForeignKey(x => x.UnitTypeId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<UnitType>().HasKey(x => x.CountId);
+            builder.Entity<UnitType>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<User>()
                 .HasMany(x => x.Roles)
@@ -109,6 +111,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<RecipeCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Recipe).WithMany().HasForeignKey(x => x.RecipeId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<RecipeCategory>().HasKey(x => x.CountId);
+            builder.Entity<RecipeCategory>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
             builder.Entity<RequirementsListIngredient>()

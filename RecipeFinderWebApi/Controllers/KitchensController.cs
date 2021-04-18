@@ -58,10 +58,29 @@ namespace RecipeFinderWebApi.UI.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] KitchenIngredient value)
         {
+            value.CountId = id;
+
+            handler.Update(value);
+        }
+
+        // PUT api/<KitchensController>/5
+        [HttpPut("{userId}/{ingredientId}")]
+        public void Put(string userId, string ingredientId, [FromBody] KitchenIngredient value)
+        {
+            value.UserId = userId;
+            value.IngredientId = ingredientId;
+
             handler.Update(value);
         }
 
         // DELETE api/<KitchensController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            handler.Delete(new KitchenIngredient() { CountId = id });
+        }
+
+        // DELETE api/<KitchensController>/5/5
         [HttpDelete("{userId}/{ingredientId}")]
         public void Delete(string userId, string ingredientId)
         {
