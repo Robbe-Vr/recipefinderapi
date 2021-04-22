@@ -56,6 +56,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<IngredientCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<IngredientCategory>().HasKey(x => x.CountId);
+            builder.Entity<IngredientCategory>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<Ingredient>()
                 .HasMany(i => i.UnitTypes)
@@ -63,6 +64,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<IngredientUnitTypeRelation>(x => x.HasOne(x => x.UnitType).WithMany().HasForeignKey(x => x.UnitTypeId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Ingredient).WithMany().HasForeignKey(x => x.IngredientId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<UnitType>().HasKey(x => x.CountId);
+            builder.Entity<UnitType>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<User>()
                 .HasMany(x => x.Roles)
@@ -109,6 +111,7 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<RecipeCategoryRelation>(x => x.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).HasPrincipalKey(x => x.CountId), x => x.HasOne(x => x.Recipe).WithMany().HasForeignKey(x => x.RecipeId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
             builder.Entity<RecipeCategory>().HasKey(x => x.CountId);
+            builder.Entity<RecipeCategory>().Property(x => x.CountId).HasColumnName("Id");
 
             builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
             builder.Entity<RequirementsListIngredient>()
@@ -254,6 +257,26 @@ namespace RecipeFinderWebApi.DAL
                 //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<GroceryList>()
                 .Property(g => g.UserId).HasColumnName("User_id");
+
+            builder.Entity<UserAction>()
+                .HasKey(a => a.CountId);
+            builder.Entity<UserAction>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId).HasPrincipalKey(nameof(User.CountId));
+
+            builder.Entity<UserAction>()
+                .Property(a => a.CountId).HasColumnName("Id");
+            builder.Entity<UserAction>()
+                .Property(a => a.RefObjectId).HasColumnName("ref_object_id");
+            builder.Entity<UserAction>()
+                .Property(a => a.RefObjectName).HasColumnName("ref_object_name");
+            builder.Entity<UserAction>()
+                .Property(a => a.ActionPerformedOnTable).HasColumnName("Action_performed_on_table");
+            builder.Entity<UserAction>()
+                .Property(a => a.RequestType).HasColumnName("Request_type");
+            builder.Entity<UserAction>()
+                .Property(a => a.UserId).HasColumnName("User_id");
         }
 
         public DbSet<Ingredient> Ingredients { get; set; }
@@ -271,10 +294,12 @@ namespace RecipeFinderWebApi.DAL
         public DbSet<UnitType> UnitTypes { get; set; }
         public DbSet<IngredientUnitTypeRelation> UnitTypesIngredient { get; set; }
 
+        public DbSet<GroceryList> GroceryLists { get; set; }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRoleRelation> UserRoles { get; set; }
 
-        public DbSet<GroceryList> GroceryLists { get; set; }
+        public DbSet<UserAction> UserActions { get; set; }
     }
 }

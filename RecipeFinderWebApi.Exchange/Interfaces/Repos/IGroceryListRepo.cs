@@ -15,10 +15,10 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 
         public GroceryList GetByName(string name);
 
-        public int Create(GroceryList ingredient);
+        public int Create(GroceryList list);
 
-        public int Update(GroceryList ingredient);
+        public int Update(GroceryList list);
 
-        public int Delete(GroceryList ingredient);
+        public int Delete(GroceryList list);
     }
 }

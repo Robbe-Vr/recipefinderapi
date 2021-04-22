@@ -12,10 +12,10 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
         public Role GetById(string id);
         public Role GetByName(string name);
 
-        public int Create(Role user);
+        public int Create(Role role);
 
-        public int Update(Role user);
+        public int Update(Role role);
 
-        public int Delete(Role user);
+        public int Delete(Role role);
     }
 }

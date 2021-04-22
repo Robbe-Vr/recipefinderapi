@@ -60,8 +60,22 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int DeleteRelation(IngredientUnitTypeRelation relation)
         {
-            context.UnitTypesIngredient
-                .Remove(relation);
+            if (!Exists(relation))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(relation))
+            {
+                if (KeyIsAttached(relation))
+                {
+                    relation = GetAttachedEntityByEntity(relation);
+                }
+            }
+
+            relation.Ingredient = null;
+            relation.UnitType = null;
+
+            context.Entry(relation).State = EntityState.Deleted;
 
             return context.SaveChanges();
         }

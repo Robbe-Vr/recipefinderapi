@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +23,25 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<EncryptionObject> Post(EncryptionObject encObj)
+        public IActionResult Post(EncryptionObject encObj)
         {
-            return enc.HashString(encObj);
+            return ResponseFilter.FilterActionResponse(
+                enc.HashString(encObj),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("getsalt")]
-        public ActionResult<EncryptionObject> CreateSalt()
+        public IActionResult CreateSalt()
         {
-            return new EncryptionObject() { Result = enc.CreateSalt(8), };
+            return ResponseFilter.FilterDataResponse(
+                new EncryptionObject() { Result = enc.CreateSalt(8), },
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

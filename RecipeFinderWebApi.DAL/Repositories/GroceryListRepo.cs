@@ -59,16 +59,46 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(GroceryList list)
         {
-            context.GroceryLists.Update(list);
+            list.User = null;
+
+            if (!Exists(list))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(list))
+            {
+                if (KeyIsAttached(list))
+                {
+                    GroceryList old = GetAttachedEntityByEntity(list);
+
+                    old.Name = list.Name;
+                    old.Value = list.Value;
+                    old.Deleted = list.Deleted;
+                }
+                else context.GroceryLists.Update(list);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(GroceryList list)
         {
-            list.Deleted = true;
+            list.User = null;
 
-            context.GroceryLists.Update(list);
+            if (!Exists(list))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(list))
+            {
+                if (KeyIsAttached(list))
+                {
+                    list = GetAttachedEntityByEntity(list);
+                }
+                else context.GroceryLists.Update(list);
+            }
+
+            list.Deleted = true;
 
             return context.SaveChanges();
         }

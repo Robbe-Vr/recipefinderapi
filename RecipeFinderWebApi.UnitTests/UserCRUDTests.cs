@@ -15,9 +15,19 @@ namespace RecipeFinderWebApi.UnitTests
     {
         private UserHandler handler;
 
+        private RoleHandler roleHandler;
+
         private User user;
 
+        private Role role1;
+        private Role role2;
+
         public UserCRUDTests()
+        {
+        }
+
+        [TestInitialize]
+        public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
             builder.UseInMemoryDatabase("RecipeFinderDB");
@@ -26,6 +36,7 @@ namespace RecipeFinderWebApi.UnitTests
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
             handler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
+            roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
             var users = handler.GetAll();
 
@@ -35,8 +46,12 @@ namespace RecipeFinderWebApi.UnitTests
                 {
                     handler.Delete(user);
                 }
-                users = null;
             }
+
+            role1 = new Role() { Name = "Default" };
+            role2 = new Role() { Name = "Admin" };
+            roleHandler.Create(role1);
+            roleHandler.Create(role2);
 
             user = new User()
             {
@@ -52,7 +67,7 @@ namespace RecipeFinderWebApi.UnitTests
                 SecurityStamp = "",
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
-                Roles = new List<Role>(),
+                Roles = new List<Role>() { roleHandler.GetByName(role1.Name) },
                 Kitchen = null,
                 Deleted = false,
             };
@@ -113,7 +128,7 @@ namespace RecipeFinderWebApi.UnitTests
 
         public void Create()
         {
-            int expectedNewRows = 1;
+            int expectedNewRows = 2;
 
             int newRows = handler.Create(user);
 
@@ -143,6 +158,7 @@ namespace RecipeFinderWebApi.UnitTests
             string updatedName = "TestUpdate";
 
             user.Name = updatedName;
+            user.Roles.Add(roleHandler.GetByName(role2.Name));
 
             int updatedRows = handler.Update(user);
 

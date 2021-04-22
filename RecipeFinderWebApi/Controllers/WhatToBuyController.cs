@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,14 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpPost]
-        public IEnumerable<KitchenIngredient> Post([FromBody] WhatToBuyFilterObject filters)
+        public IActionResult Post([FromBody] WhatToBuyFilterObject filters)
         {
-            return algorithm.Calculate(filters);
+            return ResponseFilter.FilterActionResponse(
+                algorithm.Calculate(filters),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }
