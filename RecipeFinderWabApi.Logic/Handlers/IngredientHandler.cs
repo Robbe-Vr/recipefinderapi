@@ -51,7 +51,7 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             if (Categories.Count > 0)
             {
-                foreach (IngredientCategory category in ingredient.Categories)
+                foreach (IngredientCategory category in Categories)
                 {
                     changes += CreateCategoryRelation(ingredient, category);
                 }
@@ -59,7 +59,7 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             if (UnitTypes.Count > 0)
             {
-                foreach (UnitType unitType in ingredient.UnitTypes)
+                foreach (UnitType unitType in UnitTypes)
                 {
                     changes += CreateUnitTypeRelation(ingredient, unitType);
                 }
@@ -105,18 +105,24 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             ingredient.CountId = currentState.CountId;
 
+            List<IngredientCategory> Categories = new List<IngredientCategory>();
+            Categories.AddRange(ingredient.Categories);
+
+            List<UnitType> UnitTypes = new List<UnitType>();
+            UnitTypes.AddRange(ingredient.UnitTypes);
+
             changes += _repo.Update(ingredient);
 
-            if (ingredient.Categories.Count > 0)
+            if (Categories.Count > 0)
             {
-                IEnumerable<IngredientCategory> toAddCategories = ingredient.Categories.Where(x => !currentState.Categories.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<IngredientCategory> toAddCategories = Categories.Where(x => !currentState.Categories.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (IngredientCategory category in toAddCategories)
                 {
                     changes += CreateCategoryRelation(ingredient, category);
                 }
 
-                IEnumerable<IngredientCategory> toRemoveCategories = currentState.Categories.Where(x => !ingredient.Categories.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<IngredientCategory> toRemoveCategories = currentState.Categories.Where(x => !Categories.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (IngredientCategory category in toRemoveCategories)
                 {
@@ -124,16 +130,16 @@ namespace RecipeFinderWabApi.Logic.Handlers
                 }
             }
 
-            if (ingredient.UnitTypes.Count > 0)
+            if (UnitTypes.Count > 0)
             {
-                IEnumerable<UnitType> toAddUnitTypes = ingredient.UnitTypes.Where(x => !currentState.UnitTypes.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<UnitType> toAddUnitTypes = UnitTypes.Where(x => !currentState.UnitTypes.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (UnitType unitType in toAddUnitTypes)
                 {
                     changes += CreateUnitTypeRelation(ingredient, unitType);
                 }
 
-                IEnumerable<UnitType> toRemoveUnitTypes = currentState.UnitTypes.Where(x => !ingredient.UnitTypes.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<UnitType> toRemoveUnitTypes = currentState.UnitTypes.Where(x => !UnitTypes.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (UnitType unitType in toRemoveUnitTypes)
                 {
@@ -149,15 +155,21 @@ namespace RecipeFinderWabApi.Logic.Handlers
             int changes = 0;
 
             var currentState = GetById(ingredient.Id);
-            
+
+            List<IngredientCategory> Categories = new List<IngredientCategory>();
+            Categories.AddRange(ingredient.Categories);
+
+            List<UnitType> UnitTypes = new List<UnitType>();
+            UnitTypes.AddRange(ingredient.UnitTypes);
+
             changes += _repo.Delete(currentState);
 
-            foreach (IngredientCategory category in currentState.Categories)
+            foreach (IngredientCategory category in Categories)
             {
                 changes += DeleteCategoryRelation(ingredient, category);
             }
 
-            foreach (UnitType unitType in currentState.UnitTypes)
+            foreach (UnitType unitType in UnitTypes)
             {
                 changes += DeleteUnitTypeRelation(ingredient, unitType);
             }

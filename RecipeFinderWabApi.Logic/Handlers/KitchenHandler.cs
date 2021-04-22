@@ -2,6 +2,7 @@
 using RecipeFinderWebApi.Exchange.Interfaces.Repos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RecipeFinderWabApi.Logic.Handlers
@@ -37,16 +38,70 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
         public int Create(KitchenIngredient ingredient)
         {
-            return _repo.Create(ingredient);
+            KitchenIngredient existing = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);
+            if (existing == null)
+            {
+                return _repo.Create(ingredient);
+            }
+            else
+            {
+                if (existing.UnitTypeId == ingredient.UnitTypeId)
+                {
+                    existing.Units += ingredient.Units;
+                }
+                else
+                {
+                    existing.UnitTypeId = ingredient.UnitTypeId;
+                    existing.Units = ingredient.Units;
+                }
+
+                return Update(existing);
+            }
         }
 
         public int Update(KitchenIngredient ingredient)
         {
+            if (ingredient.CountId < 1)
+            {
+                var actual = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);
+                if (actual == null) return 0;
+
+                actual.Units = ingredient.Units;
+                actual.UnitTypeId = ingredient.UnitTypeId;
+
+                ingredient = actual;
+            }
+            else
+            {
+                var actual = GetById(ingredient.CountId);
+                if (actual == null) return 0;
+
+                actual.Units = ingredient.Units;
+                actual.UnitTypeId = ingredient.UnitTypeId;
+
+                ingredient = actual;
+            }
+
             return _repo.Update(ingredient);
         }
 
         public int Delete(KitchenIngredient ingredient)
         {
+            if (ingredient.CountId < 1)
+            {
+                var actual = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);
+                if (actual == null) return 0;
+
+                ingredient = actual;
+            }
+            else
+            {
+                var actual = GetById(ingredient.CountId);
+                if (actual == null) return 0;
+
+                ingredient = actual;
+            }
+
             return _repo.Delete(ingredient);
         }
     }

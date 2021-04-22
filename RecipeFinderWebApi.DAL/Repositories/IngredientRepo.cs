@@ -43,8 +43,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(Ingredient ingredient)
         {
-            ingredient.Categories = null;
             ingredient.UnitTypes = null;
+            ingredient.Categories = null;
 
             ingredient.Id = Guid.NewGuid().ToString();
 
@@ -55,8 +55,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public Ingredient CreateGetId(Ingredient ingredient)
         {
-            ingredient.Categories = null;
             ingredient.UnitTypes = null;
+            ingredient.Categories = null;
 
             ingredient.Id = Guid.NewGuid().ToString();
 
@@ -69,6 +69,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(Ingredient ingredient)
         {
+            ingredient.UnitTypes = null;
+            ingredient.Categories = null;
+
             if (!Exists(ingredient))
             {
                 return 0;
@@ -77,7 +80,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 if (KeyIsAttached(ingredient))
                 {
-                    Ingredient old = GetAttachedEntityByKey(ingredient);
+                    Ingredient old = GetAttachedEntityByEntity(ingredient);
 
                     old.Name = ingredient.Name;
                     old.ImageLocation = ingredient.ImageLocation;
@@ -93,6 +96,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Delete(Ingredient ingredient)
         {
+            ingredient.UnitTypes = null;
+            ingredient.Categories = null;
+
             if (!Exists(ingredient))
             {
                 return 0;
@@ -101,7 +107,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 if (KeyIsAttached(ingredient))
                 {
-                    ingredient = GetAttachedEntityByKey(ingredient);
+                    ingredient = GetAttachedEntityByEntity(ingredient);
                 }
                 else context.Ingredients.Update(ingredient);
             }

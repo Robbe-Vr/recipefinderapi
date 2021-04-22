@@ -51,7 +51,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return new RequirementsList()
             {
                 Recipe = recipe,
-                RecipeId = recipe.Id,
+                RecipeId = recipe?.Id,
                 Ingredients = ingredients.ToArray(),
             };
         }
@@ -71,7 +71,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return new RequirementsList()
             {
                 Recipe = recipe,
-                RecipeId = recipe.Id,
+                RecipeId = recipe?.Id,
                 Ingredients = ingredients.ToArray(),
             };
         }
@@ -89,16 +89,48 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(RequirementsListIngredient ingredient)
         {
-            context.RequirementsLists.Update(ingredient);
+            ingredient.Ingredient = null;
+            ingredient.Recipe = null;
+            ingredient.UnitType = null;
+
+            if (!Exists(ingredient))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(ingredient))
+            {
+                if (KeyIsAttached(ingredient))
+                {
+                    RequirementsListIngredient old = GetAttachedEntityByEntity(ingredient);
+                    old.Units = ingredient.Units;
+                    old.UnitTypeId = ingredient.UnitTypeId;
+                }
+                else context.RequirementsLists.Update(ingredient);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(RequirementsListIngredient ingredient)
         {
-            ingredient.Deleted = true;
+            ingredient.Ingredient = null;
+            ingredient.Recipe = null;
+            ingredient.UnitType = null;
 
-            context.RequirementsLists.Update(ingredient);
+            if (!Exists(ingredient))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(ingredient))
+            {
+                if (KeyIsAttached(ingredient))
+                {
+                    ingredient = GetAttachedEntityByEntity(ingredient);
+                }
+                else context.RequirementsLists.Update(ingredient);
+            }
+
+            ingredient.Deleted = true;
 
             return context.SaveChanges();
         }

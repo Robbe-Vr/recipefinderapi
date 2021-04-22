@@ -39,27 +39,55 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .FirstOrDefault(x => x.Name == name & !x.Deleted);
         }
 
-        public int Create(RecipeCategory recipe)
+        public int Create(RecipeCategory category)
         {
-            recipe.Recipes = null;
+            category.Recipes = null;
 
-            context.RecipeCategories.Add(recipe);
+            context.RecipeCategories.Add(category);
 
             return context.SaveChanges();
         }
 
-        public int Update(RecipeCategory recipe)
+        public int Update(RecipeCategory category)
         {
-            context.RecipeCategories.Update(recipe);
+            category.Recipes = null;
+
+            if (!Exists(category))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(category))
+            {
+                if (KeyIsAttached(category))
+                {
+                    RecipeCategory old = GetAttachedEntityByEntity(category);
+                    old.Name = category.Name;
+                }
+                else context.RecipeCategories.Update(category);
+            }
 
             return context.SaveChanges();
         }
 
-        public int Delete(RecipeCategory recipe)
+        public int Delete(RecipeCategory category)
         {
-            recipe.Deleted = true;
+            category.Recipes = null;
 
-            context.RecipeCategories.Update(recipe);
+            if (!Exists(category))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(category))
+            {
+                if (KeyIsAttached(category))
+                {
+                    category = GetAttachedEntityByEntity(category);
+                }
+            }
+
+            context.Entry(category).State = EntityState.Modified;
+
+            category.Deleted = true;
 
             return context.SaveChanges();
         }

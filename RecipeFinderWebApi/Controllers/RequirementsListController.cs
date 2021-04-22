@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,49 +24,84 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<RequirementsListsController>
         [HttpGet]
-        public IEnumerable<RequirementsListIngredient> Get()
+        public IActionResult Get()
         {
-            return handler.GetAll();
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // GET api/<RequirementsListsController>/5
         [HttpGet("{id}")]
-        public RequirementsListIngredient Get(int id)
+        public IActionResult Get(int id)
         {
-            return handler.GetById(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetById(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byrecipeid/{id}")]
-        public RequirementsList GetByRecipeId(string id)
+        public IActionResult GetByRecipeId(string id)
         {
-            return handler.GetByRecipeId(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByRecipeId(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byrecipename/{name}")]
-        public RequirementsList GetByRecipeName(string name)
+        public IActionResult GetByRecipeName(string name)
         {
-            return handler.GetByRecipeName(name);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByRecipeName(name),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // POST api/<RequirementsListsController>
         [HttpPost]
-        public void Post([FromBody] RequirementsListIngredient value)
+        public IActionResult Post([FromBody] RequirementsListIngredient value)
         {
-            handler.Create(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Create(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // PUT api/<RequirementsListsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] RequirementsListIngredient value)
+        public IActionResult Put(int id, [FromBody] RequirementsListIngredient value)
         {
-            handler.Update(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Update(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // DELETE api/<RequirementsListsController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
-            handler.Delete(new RequirementsListIngredient() { RecipeId = id });
+            return ResponseFilter.FilterActionResponse(
+                handler.Delete(new RequirementsListIngredient() { RecipeId = id }),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

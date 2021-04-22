@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,49 +24,84 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<IngredientsController>
         [HttpGet]
-        public ActionResult<IEnumerable<Ingredient>> Get()
+        public IActionResult Get()
         {
-            return handler.GetAll().ToArray();
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // GET api/<IngredientsController>/5
         [HttpGet("{id}")]
-        public ActionResult<Ingredient> Get(string id)
+        public IActionResult Get(string id)
         {
-            return handler.GetById(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetById(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byname/{name}")]
-        public ActionResult<Ingredient> GetByName(string name)
+        public IActionResult GetByName(string name)
         {
-            return handler.GetByName(name);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByName(name),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // POST api/<IngredientsController>
         [HttpPost]
-        public ActionResult<int> Post([FromBody] Ingredient value)
+        public IActionResult Post([FromBody] Ingredient value)
         {
-            return handler.Create(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Create(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpPost("getid")]
-        public ActionResult<Ingredient> CreateGetId([FromBody] Ingredient value)
+        public IActionResult CreateGetId([FromBody] Ingredient value)
         {
-            return handler.CreateGetId(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.CreateGetId(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // PUT api/<IngredientsController>/5
         [HttpPut("{id}")]
-        public ActionResult<int> Put(string id, [FromBody] Ingredient value)
+        public IActionResult Put(string id, [FromBody] Ingredient value)
         {
-            return handler.Update(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Update(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // DELETE api/<IngredientsController>/5
         [HttpDelete("{id}")]
-        public ActionResult<int> Delete(string id)
+        public IActionResult Delete(string id)
         {
-            return handler.Delete(new Ingredient() { Id = id });
+            return ResponseFilter.FilterActionResponse(
+                handler.Delete(new Ingredient() { Id = id }),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

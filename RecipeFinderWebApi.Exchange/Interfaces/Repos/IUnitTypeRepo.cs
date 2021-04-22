@@ -12,10 +12,10 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
         public UnitType GetById(int id);
         public UnitType GetByName(string name);
 
-        public int Create(UnitType ingredient);
+        public int Create(UnitType unitType);
 
-        public int Update(UnitType ingredient);
+        public int Update(UnitType unitType);
 
-        public int Delete(UnitType ingredient);
+        public int Delete(UnitType unitType);
     }
 }

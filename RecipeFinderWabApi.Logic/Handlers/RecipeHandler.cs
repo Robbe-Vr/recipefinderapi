@@ -26,17 +26,38 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
         public IEnumerable<Recipe> GetAll()
         {
-            return _repo.GetAll();
+            IEnumerable<Recipe> recipes = _repo.GetAll();
+
+            foreach (Recipe recipe in recipes)
+            {
+                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(recipe.Id);
+            }
+
+            return recipes;
         }
 
         public Recipe GetById(string id)
         {
-            return _repo.GetById(id);
+            Recipe recipe = _repo.GetById(id);
+
+            if (recipe != null)
+            {
+                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(id);
+            }
+
+            return recipe;
         }
 
         public Recipe GetByName(string name)
         {
-            return _repo.GetByName(name);
+            Recipe recipe = _repo.GetByName(name);
+
+            if (recipe != null)
+            {
+                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(recipe.Id);
+            }
+
+            return recipe;
         }
 
         public int Create(Recipe recipe)
@@ -46,11 +67,16 @@ namespace RecipeFinderWabApi.Logic.Handlers
             RequirementsList requirementsList = new RequirementsList();
             requirementsList.Ingredients = recipe.RequirementsList?.Ingredients;
 
+            List<RecipeCategory> Categories = new List<RecipeCategory>();
+            Categories.AddRange(recipe.Categories);
+
             changes += _repo.Create(recipe);
 
-            if (recipe.Categories.Count > 0)
+            recipe = _repo.GetByName(recipe.Name);
+
+            if (Categories.Count > 0)
             {
-                foreach (RecipeCategory category in recipe.Categories)
+                foreach (RecipeCategory category in Categories)
                 {
                     changes += CreateCategoryRelation(recipe, category);
                 }
@@ -60,6 +86,8 @@ namespace RecipeFinderWabApi.Logic.Handlers
             {
                 foreach(RequirementsListIngredient ingredient in requirementsList.Ingredients)
                 {
+                    ingredient.RecipeId = recipe.Id;
+
                     changes += _requirementsList_repo.Create(ingredient);
                 }
             }
@@ -75,21 +103,24 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             recipe.CountId = currentState.CountId;
 
+            List<RecipeCategory> Categories = new List<RecipeCategory>();
+            Categories.AddRange(recipe.Categories);
+
             RequirementsList requirementsList = new RequirementsList();
             requirementsList.Ingredients = recipe.RequirementsList?.Ingredients;
 
             changes += _repo.Update(recipe);
 
-            if (recipe.Categories.Count > 0)
+            if (Categories.Count > 0)
             {
-                IEnumerable<RecipeCategory> toAddCategories = recipe.Categories.Where(x => !currentState.Categories.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<RecipeCategory> toAddCategories = Categories.Where(x => !currentState.Categories.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (RecipeCategory category in toAddCategories)
                 {
                     changes += CreateCategoryRelation(recipe, category);
                 }
 
-                IEnumerable<RecipeCategory> toRemoveCategories = currentState.Categories.Where(x => !recipe.Categories.Select(x => x.CountId).Contains(x.CountId));
+                IEnumerable<RecipeCategory> toRemoveCategories = currentState.Categories.Where(x => !Categories.Select(x => x.CountId).Contains(x.CountId));
 
                 foreach (RecipeCategory category in toRemoveCategories)
                 {
@@ -103,6 +134,8 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
                 foreach (RequirementsListIngredient ingredient in toAddIngredients)
                 {
+                    ingredient.RecipeId = currentState.Id;
+
                     changes += _requirementsList_repo.Create(ingredient);
                 }
 
@@ -110,13 +143,19 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
                 foreach (RequirementsListIngredient ingredient in toRemoveIngredients)
                 {
+                    ingredient.RecipeId = currentState.Id;
+
                     changes += _requirementsList_repo.Delete(ingredient);
                 }
 
-                IEnumerable<RequirementsListIngredient> toUpdateIngredients = requirementsList.Ingredients.Where(x => currentState.RequirementsList.Ingredients.Any(y => x.IngredientId == y.IngredientId && x.Units == y.Units && x.UnitTypeId == y.UnitTypeId));
+                IEnumerable<RequirementsListIngredient> toUpdateIngredients = requirementsList.Ingredients.Where(x => currentState.RequirementsList.Ingredients.Any(y => x.IngredientId == y.IngredientId && (x.Units != y.Units || x.UnitTypeId != y.UnitTypeId)));
 
                 foreach (RequirementsListIngredient ingredient in toUpdateIngredients)
                 {
+                    ingredient.RecipeId = currentState.Id;
+
+                    ingredient.CountId = currentState.RequirementsList.Ingredients.FirstOrDefault(i => i.IngredientId == ingredient.IngredientId).CountId;
+
                     changes += _requirementsList_repo.Update(ingredient);
                 }
             }
@@ -130,11 +169,25 @@ namespace RecipeFinderWabApi.Logic.Handlers
 
             var currentState = GetById(recipe.Id);
 
+            List<RecipeCategory> Categories = new List<RecipeCategory>();
+            Categories.AddRange(currentState.Categories);
+
+            RequirementsList requirementsList = new RequirementsList();
+            requirementsList.Ingredients = recipe.RequirementsList?.Ingredients;
+
             changes += _repo.Delete(currentState);
 
-            foreach (RecipeCategory category in currentState.Categories)
+            foreach (RecipeCategory category in Categories)
             {
                 changes += DeleteCategoryRelation(recipe, category);
+            }
+
+            if (requirementsList != null && requirementsList.Ingredients != null)
+            {
+                foreach (RequirementsListIngredient ingredient in requirementsList.Ingredients)
+                {
+                    changes += _requirementsList_repo.Delete(ingredient);
+                }
             }
 
             return changes;

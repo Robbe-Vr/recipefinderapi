@@ -78,9 +78,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(KitchenIngredient ingredient)
         {
+            ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
-            ingredient.User = null;
             ingredient.Kitchens = null;
 
             context.Kitchens.Add(ingredient);
@@ -90,16 +90,50 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(KitchenIngredient ingredient)
         {
-            context.Kitchens.Update(ingredient);
+            ingredient.User = null;
+            ingredient.Ingredient = null;
+            ingredient.UnitType = null;
+            ingredient.Kitchens = null;
+
+            if (!Exists(ingredient))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(ingredient))
+            {
+                if (KeyIsAttached(ingredient))
+                {
+                    KitchenIngredient old = GetAttachedEntityByEntity(ingredient);
+                    old.Units = ingredient.Units;
+                    old.UnitTypeId = ingredient.UnitTypeId;
+                }
+                else context.Kitchens.Update(ingredient);
+            }
 
             return context.SaveChanges();
         }
 
         public int Delete(KitchenIngredient ingredient)
         {
-            ingredient.Deleted = true;
+            ingredient.User = null;
+            ingredient.Ingredient = null;
+            ingredient.UnitType = null;
+            ingredient.Kitchens = null;
 
-            context.Kitchens.Update(ingredient);
+            if (!Exists(ingredient))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(ingredient))
+            {
+                if (KeyIsAttached(ingredient))
+                {
+                    ingredient = GetAttachedEntityByEntity(ingredient);
+                }
+                else context.Kitchens.Update(ingredient);
+            }
+
+            ingredient.Deleted = true;
 
             return context.SaveChanges();
         }
