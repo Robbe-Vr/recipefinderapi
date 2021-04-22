@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,50 +24,84 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<GroceryListsController>
         [HttpGet]
-        public ActionResult<IEnumerable<GroceryList>> Get()
+        public IActionResult Get()
         {
-            return Ok(handler.GetAll());
-            //return StatusCode(418, new { Error = "Error occured." });
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // GET api/<GroceryListsController>/5
         [HttpGet("{id}")]
-        public GroceryList Get(string id)
+        public IActionResult Get(string id)
         {
-            return handler.GetById(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetById(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byuserid/{id}")]
-        public IEnumerable<GroceryList> GetByUserId(string id)
+        public IActionResult GetByUserId(string id)
         {
-            return handler.GetAllByUserId(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAllByUserId(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byname/{name}")]
-        public GroceryList GetByName(string name)
+        public IActionResult GetByName(string name)
         {
-            return handler.GetByName(name);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByName(name),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // POST api/<GroceryListsController>
         [HttpPost]
-        public void Post([FromBody] GroceryList value)
+        public IActionResult Post([FromBody] GroceryList value)
         {
-            handler.Create(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Create(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // PUT api/<GroceryListsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] GroceryList value)
+        public IActionResult Put(int id, [FromBody] GroceryList value)
         {
-            handler.Update(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Update(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // DELETE api/<GroceryListsController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
-            handler.Delete(new GroceryList() { Id = id });
+            return ResponseFilter.FilterActionResponse(
+                handler.Delete(new GroceryList() { Id = id }),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

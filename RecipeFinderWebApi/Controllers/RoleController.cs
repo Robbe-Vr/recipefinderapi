@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,43 +24,73 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<RolesController>
         [HttpGet]
-        public IEnumerable<Role> Get()
+        public IActionResult Get()
         {
-            return handler.GetAll();
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // GET api/<RolesController>/5
         [HttpGet("{id}")]
-        public Role Get(string id)
+        public IActionResult Get(string id)
         {
-            return handler.GetById(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetById(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byname/{name}")]
-        public Role GetByName(string name)
+        public IActionResult GetByName(string name)
         {
-            return handler.GetByName(name);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByName(name),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // POST api/<RolesController>
         [HttpPost]
-        public void Post([FromBody] Role value)
+        public IActionResult Post([FromBody] Role value)
         {
-            handler.Create(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Create(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // PUT api/<RolesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Role value)
+        public IActionResult Put(int id, [FromBody] Role value)
         {
-            handler.Update(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Update(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // DELETE api/<RolesController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
-            handler.Delete(new Role() { Id = id });
+            return ResponseFilter.FilterActionResponse(
+                handler.Delete(new Role() { Id = id }),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

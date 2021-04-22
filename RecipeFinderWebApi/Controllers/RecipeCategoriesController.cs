@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.UI.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,43 +24,73 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // GET: api/<RecipeCategorysController>
         [HttpGet]
-        public IEnumerable<RecipeCategory> Get()
+        public IActionResult Get()
         {
-            return handler.GetAll();
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // GET api/<RecipeCategorysController>/5
         [HttpGet("{id}")]
-        public RecipeCategory Get(int id)
+        public IActionResult Get(int id)
         {
-            return handler.GetById(id);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetById(id),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         [HttpGet("byname/{name}")]
-        public RecipeCategory GetByName(string name)
+        public IActionResult GetByName(string name)
         {
-            return handler.GetByName(name);
+            return ResponseFilter.FilterDataResponse(
+                handler.GetByName(name),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // POST api/<RecipeCategorysController>
         [HttpPost]
-        public void Post([FromBody] RecipeCategory value)
+        public IActionResult Post([FromBody] RecipeCategory value)
         {
-            handler.Create(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Create(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // PUT api/<RecipeCategorysController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] RecipeCategory value)
+        public IActionResult Put(int id, [FromBody] RecipeCategory value)
         {
-            handler.Update(value);
+            return ResponseFilter.FilterActionResponse(
+                handler.Update(value),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
 
         // DELETE api/<RecipeCategorysController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
-            handler.Delete(new RecipeCategory() { CountId = id });
+            return ResponseFilter.FilterActionResponse(
+                handler.Delete(new RecipeCategory() { CountId = id }),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
         }
     }
 }

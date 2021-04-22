@@ -12,10 +12,10 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
         public IngredientCategory GetById(int id);
         public IngredientCategory GetByName(string name);
 
-        public int Create(IngredientCategory ingredient);
+        public int Create(IngredientCategory category);
 
-        public int Update(IngredientCategory ingredient);
+        public int Update(IngredientCategory category);
 
-        public int Delete(IngredientCategory ingredient);
+        public int Delete(IngredientCategory category);
     }
 }
