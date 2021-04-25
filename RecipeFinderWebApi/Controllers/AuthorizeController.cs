@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using RecipeFinderWabApi.Logic.Handlers;
 using RecipeFinderWabApi.Logic.signInHandlers;
 using RecipeFinderWebApi.UI.ViewModels;
@@ -76,7 +77,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
             Trace.WriteLine("User '" + model.Input.EmailOrUsername + "' has logged in succesfully!");
 
-            return Redirect(model.ReturnUrl + "?AccessToken=" + result[1] + "&RefreshToken=" + result[2]);
+            return Redirect(model.ReturnUrl + "?Code=" + result[0] + "&UserId=" + result[1]);
         }
 
         public IActionResult Register(string returnUrl = null, string errorMessage = null)
@@ -146,32 +147,71 @@ namespace RecipeFinderWebApi.UI.Controllers
             }
             else
             {
-                signInHandler.Login(user.Name, model.Input.Password);
+                string[] result = signInHandler.Login(user.Name, model.Input.Password);
+
+                if (result == null)
+                {
+                    string errorMessage = "Either the name or password is incorrect!";
+
+                    return RedirectToAction(nameof(Login), new { errorMessage, returnUrl = model.ReturnUrl });
+                }
 
                 Trace.WriteLine("New user '" + model.Input.Name + "' has registered in succesfully!");
                 model.ReturnUrl = model.ReturnUrl == null ? "/UserHome/Index" : model.ReturnUrl;
-                return Redirect(model.ReturnUrl);
+                return Redirect(model.ReturnUrl + "?Code=" + result[0] + "&UserId=" + result[1]);
             }
         }
 
-        [HttpPost]
-        public IActionResult ValidateAccesstoken([FromBody] string accessToken)
+        [HttpPost("Validate")]
+        public IActionResult ValidateAccesstoken([FromBody] TokensObject tokens)
         {
-            return Ok(true);
+            if (!String.IsNullOrEmpty(tokens.AccessToken))
+            {
+                return Ok(new { valid = signInHandler.ValidateAccessToken(tokens.AccessToken) });
+            }
+            else return StatusCode(404);
         }
 
-        [HttpPost]
-        public IActionResult RefreshAccesstoken([FromBody] string refreshToken)
+        [HttpPost("Refresh")]
+        public IActionResult RefreshAccesstoken([FromBody] TokensObject tokens)
         {
-            return Ok(signInHandler.GetAccessToken(refreshToken));
+            if (!String.IsNullOrEmpty(tokens.RefreshToken))
+            {
+                return Ok(new { access_token = signInHandler.RefreshAccessToken(tokens.RefreshToken) });
+            }
+            else return StatusCode(404);
         }
 
-        [HttpGet("{accessToken}")]
-        public IActionResult GetUserByAccesstoken(string accessToken)
+        [HttpGet("token")]
+        public IActionResult GetTokens([FromBody] TokensObject tokens)
         {
-            if (String.IsNullOrEmpty(accessToken)) { return StatusCode(404); }
+            if (!String.IsNullOrEmpty(tokens.UserId) &&
+                !String.IsNullOrEmpty(tokens.Code))
+            {
+                string[] authTokens = signInHandler.RequestTokens(tokens.UserId, tokens.Code);
 
-            return Ok(signInHandler.GetUserByAccessToken(accessToken));
+                return Ok(new { access_token = authTokens[1], refresh_token = authTokens[0] });
+            }
+            else return StatusCode(404);
+        }
+
+        [HttpGet("Me")]
+        public IActionResult GetUserByAccesstoken([FromBody] TokensObject tokens)
+        {
+            if (!String.IsNullOrEmpty(tokens.AccessToken))
+            {
+                return Ok(signInHandler.GetUserByAccessToken(tokens.AccessToken));
+            }
+            else return StatusCode(404);
+        }
+
+        public class TokensObject
+        {
+            public string AccessToken { get; set; }
+            public string RefreshToken { get; set; }
+
+            public string Code { get; set; }
+            public string UserId { get; set; }
         }
     }
 }

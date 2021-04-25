@@ -4,6 +4,7 @@ using RecipeFinderWebApi.Logic.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace RecipeFinderWabApi.Logic.signInHandlers
@@ -52,7 +53,10 @@ namespace RecipeFinderWabApi.Logic.signInHandlers
 
         private bool ValidateUser(User user)
         {
-            return true;
+            return
+                (!String.IsNullOrEmpty(user.Name) && user.Name.Length > 2 && user.Name.ToCharArray().Any(c => true)) &&
+                (!String.IsNullOrEmpty(user.Email) && user.Email.Length > 4 && user.Email.Count(c => c == '@') == 1 && user.Email.Count(c => c == '.') >= 1 && user.Email.IndexOf("@") > 2 && user.Email.LastIndexOf('.') > user.Email.IndexOf('@')) &&
+                (user.DOB <= DateTime.Now.AddYears(-13));
         }
 
         public string[] Login(string name, string password)
@@ -64,12 +68,9 @@ namespace RecipeFinderWabApi.Logic.signInHandlers
 
                 if (targetUser.PasswordHashed != enc.HashString(new EncryptionObject() { Text = password, Salt = targetUser.Salt })?.Result) return null;
 
-                string refreshToken = GetRefreshToken(targetUser.Id);
-                string accessToken = GetAccessToken(refreshToken);
+                string authToken = TokenManager.RegisterUser(targetUser.Id);
 
-                TokenManager.RegisterUserTokens(targetUser.Id, accessToken, refreshToken);
-
-                return new string[] { targetUser.Id, accessToken, refreshToken };
+                return new string[] { authToken, targetUser.Id };
             }
             catch (Exception e)
             {
@@ -78,19 +79,33 @@ namespace RecipeFinderWabApi.Logic.signInHandlers
             }
         }
 
-        public string GetRefreshToken(string userId)
+        public string[] RequestTokens(string userId, string authToken)
         {
-            return "OIHDFiuFGUIODS9823p4trFESDR";
+            string[] tokens = TokenManager.GetTokens(userId, authToken);
+
+            if (tokens[0] != "FAIL")
+            {
+                return tokens;
+            }
+            else
+            {
+                return tokens;
+            }
         }
 
-        public string GetAccessToken(string refreshToken)
+        public string RefreshAccessToken(string refreshToken)
         {
-            return "OIHDFiuFGUIODS9823p4trFESDR";
+            return TokenManager.RefreshAccessToken(refreshToken);
         }
 
         public User GetUserByAccessToken(string accessToken)
         {
-            return _user_repo.GetByName("Recipe Finder admin");
+            return _user_repo.GetById(TokenManager.GetUserIdByAccessToken(accessToken));
+        }
+
+        public bool ValidateAccessToken(string accessToken)
+        {
+            return TokenManager.ValidateAccessToken(accessToken);
         }
     }
 }

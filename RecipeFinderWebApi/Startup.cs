@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -51,13 +54,17 @@ namespace RecipeFinderWebApi.UI
                     });
             });
 
-            services.AddAntiforgery(options =>
+            services.AddAuthentication(options =>
             {
-                options.Cookie.Name = "_af_recipefinder";
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
-                options.HeaderName = "X-XSRF-TOKEN";
-            });
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = "RecipeFinder";
+            })
+                .AddCookie()
+                .AddOAuth("RecipeFinder", options =>
+                {
+                    
+                });
 
             services.AddMvc();
 
@@ -143,7 +150,7 @@ namespace RecipeFinderWebApi.UI
 
                 if (context.Request.Path.StartsWithSegments("/api") && context.Request.Headers.ContainsKey("RecipeFinder_AccessToken"))
                 {
-                    string userId = TokenManager.GetUserIdByToken(context.Request.Headers["RecipeFinder_AccessToken"]);
+                    string userId = TokenManager.GetUserIdByAccessToken(context.Request.Headers["RecipeFinder_AccessToken"]);
                     if (!String.IsNullOrEmpty(userId))
                     {
                         User user = userHandler.GetById(userId);

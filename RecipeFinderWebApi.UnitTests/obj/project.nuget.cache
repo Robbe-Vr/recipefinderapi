@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lPJuvMWWR2KKB9QOS+ioxCNcX1kpVhJPe/w3LUnu4v50QCxQTIyy+/dRNRvjU+WcTQelz44WMZkiPYsisKk5gg==",
+  "dgSpecHash": "MD6o+ZMgc6QjC0SMLkg/J15kBG39nFd1PYOtWub5kQF4wh06Nhc8PR9jnp66i4na5aBGzt/1Fn3QbuJppFLpSg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.UnitTests\\RecipeFinderWebApi.UnitTests.csproj",
   "expectedPackageFiles": [
@@ -65,6 +65,7 @@
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\Robbe\\.nuget\\packages\\mlkpwgen\\0.3.0\\mlkpwgen.0.3.0.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\mstest.testadapter\\2.1.1\\mstest.testadapter.2.1.1.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\mstest.testframework\\2.1.1\\mstest.testframework.2.1.1.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
