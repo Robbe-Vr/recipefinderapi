@@ -136,7 +136,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<IngredientCategoryRelation>().HasKey(x => x.CountId);
             builder.Entity<IngredientCategoryRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<IngredientCategoryRelation>()
                 .Property(x => x.CategoryId).HasColumnName("Category_id");
             builder.Entity<IngredientCategoryRelation>()
@@ -145,7 +144,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<RecipeCategoryRelation>().HasKey(x => x.CountId);
             builder.Entity<RecipeCategoryRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<RecipeCategoryRelation>()
                 .Property(x => x.CategoryId).HasColumnName("Category_id");
             builder.Entity<RecipeCategoryRelation>()
@@ -158,7 +156,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<IngredientUnitTypeRelation>().HasKey(x => x.CountId);
             builder.Entity<IngredientUnitTypeRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<IngredientUnitTypeRelation>()
                 .Property(x => x.UnitTypeId).HasColumnName("Unit_type_id");
             builder.Entity<IngredientUnitTypeRelation>()
@@ -167,7 +164,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Ingredient>().HasKey(x => new { x.CountId, x.Id });
             builder.Entity<Ingredient>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<Ingredient>()
                 .Property(x => x.ImageLocation).HasColumnName("Image_location");
             builder.Entity<Ingredient>()
@@ -178,7 +174,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Recipe>().HasKey(x => new { x.CountId, x.Id });
             builder.Entity<Recipe>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<Recipe>()
                 .Property(x => x.PreparationSteps).HasColumnName("Preparation_steps");
             builder.Entity<Recipe>()
@@ -189,7 +184,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
             builder.Entity<KitchenIngredient>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<KitchenIngredient>()
                 .Property(x => x.UserId).HasColumnName("Owner_id");
             builder.Entity<KitchenIngredient>()
@@ -200,7 +194,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
             builder.Entity<RequirementsListIngredient>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<RequirementsListIngredient>()
                 .Property(x => x.RecipeId).HasColumnName("Recipe_id");
             builder.Entity<RequirementsListIngredient>()
@@ -211,7 +204,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<User>().HasKey(x => new { x.CountId, x.Id });
             builder.Entity<User>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<User>()
                 .Property(x => x.PasswordHashed).HasColumnName("Password_hashed");
             builder.Entity<User>()
@@ -240,7 +232,6 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<UserRoleRelation>().HasKey(x => x.CountId);
             builder.Entity<UserRoleRelation>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<UserRoleRelation>()
                 .Property(x => x.UserId).HasColumnName("User_id");
             builder.Entity<UserRoleRelation>()
@@ -249,12 +240,10 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Role>().HasKey(x => new { x.CountId, x.Id });
             builder.Entity<Role>()
                 .Property(x => x.CountId).HasColumnName("Count_id");
-            //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
             builder.Entity<GroceryList>().HasKey(x => new { x.CountId, x.Id });
             builder.Entity<GroceryList>()
                 .Property(g => g.CountId).HasColumnName("Count_id");
-                //.Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             builder.Entity<GroceryList>()
                 .Property(g => g.UserId).HasColumnName("User_id");
 

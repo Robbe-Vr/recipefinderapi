@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RecipeFinderWabApi.Logic.Handlers;
+using RecipeFinderWebApi.Logic.Handlers;
 using RecipeFinderWebApi.DAL;
 using RecipeFinderWebApi.DAL.Repositories;
 using RecipeFinderWebApi.Exchange.DTOs;

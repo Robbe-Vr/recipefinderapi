@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RecipeFinderWabApi.UI.Models
+namespace RecipeFinderWebApi.UI.Models
 {
     public class ErrorModel
     {

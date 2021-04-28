@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "et7+FGQm4k6FqkzSenNhKRY2kq1TOIedyKrngCellpiYgKXdLPGHlGyAh9AijI6BfEOU6RKLPGtwdsd3MSZu3Q==",
+  "dgSpecHash": "kf6iKJogXdbXUXt4p5eh3xrbqYyunjpOznf0hnl5sErefs9E9clZpASefWfFlFjOxTc+vNN7wZ8gry8brQLzEg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWabApi.Logic.csproj",
+  "projectFilePath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWebApi.Logic.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\Robbe\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RecipeFinderWabApi.UI.Models;
+using RecipeFinderWebApi.UI.Models;
 using RecipeFinderWebApi.Exchange.Management;
 using System;
 using System.Collections;

@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <form method="post">
             <h4>Create a new account.</h4>
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -19,6 +19,7 @@
                     <div class="text-danger">@Model.ErrorMessage</div>
                 }
             }
+            <input hidden asp-for="ReturnUrl" value="@Model.ReturnUrl">
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
                 <input asp-for="Input.Email" class="form-control" />

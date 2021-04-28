@@ -4586,9 +4586,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWabApi.Logic.csproj",
-      "projectName": "RecipeFinderWabApi.Logic",
-      "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWabApi.Logic.csproj",
+      "projectUniqueName": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWebApi.Logic.csproj",
+      "projectName": "RecipeFinderWebApi.Logic",
+      "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\RecipeFinderWebApi.Logic.csproj",
       "packagesPath": "C:\\Users\\Robbe\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWabApi.Logic\\obj\\",
       "projectStyle": "PackageReference",

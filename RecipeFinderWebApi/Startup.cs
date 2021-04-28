@@ -12,19 +12,24 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using RecipeFinderWabApi.Logic.Handlers;
-using RecipeFinderWabApi.Logic.signInHandlers;
+using RecipeFinderWebApi.Logic.Handlers;
 using RecipeFinderWebApi.DAL;
 using RecipeFinderWebApi.DAL.Repositories;
 using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.Exchange.Management;
-using RecipeFinderWebApi.Logic.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using IdentityServer4;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using IdentityServer4.Models;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using RecipeFinderWebApi.UI.Auth;
 
 namespace RecipeFinderWebApi.UI
 {
@@ -47,24 +52,11 @@ namespace RecipeFinderWebApi.UI
                 options.AddPolicy(name: RFCorsPolicy,
                     builder =>
                     {
-                        builder//.WithOrigins("http://localhost:3000")
-                                            .AllowAnyOrigin()
+                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
                     });
             });
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = "RecipeFinder";
-            })
-                .AddCookie()
-                .AddOAuth("RecipeFinder", options =>
-                {
-                    
-                });
 
             services.AddMvc();
 
@@ -110,84 +102,87 @@ namespace RecipeFinderWebApi.UI
 
             app.UseCors(RFCorsPolicy);
 
-            app.UseAuthorization();
+            
 
             app.Use((HttpContext context, Func<Task> next) =>
             {
-                var dbContext = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions);
-
-                UserHandler userHandler = new UserHandler(new UserRepo(dbContext), new UserRoleRelationRepo(dbContext), new KitchenRepo(dbContext));
-
-                RequestInfoManager.LogUserAction = new Func<int>(() =>
-                {
-                    if (RequestInfoManager.IsCompleted)
-                    {
-                        UserActionHandler handler = new UserActionHandler(new UserActionRepo(dbContext), new UserRepo(dbContext));
-
-                        return handler.Create(RequestInfoManager.Action);
-                    }
-
-                    return 0;
-                });
-
-                Func<Stream, object> StreamToObject = (Stream stream) =>
-                {
-                    try
-                    {
-                        if (!stream.CanRead) return new object { };
-
-                        byte[] buffer = new byte[context.Response.Body.Length];
-                        context.Response.Body.Read(buffer, 0, buffer.Length);
-
-                        return JsonConvert.DeserializeObject(Convert.ToBase64String(buffer));
-                    }
-                    catch (Exception e)
-                    {
-                        Trace.WriteLine(e.Message);
-                        return new object { };
-                    }
-                };
-
-                if (context.Request.Path.StartsWithSegments("/api") && context.Request.Headers.ContainsKey("RecipeFinder_AccessToken"))
-                {
-                    string userId = TokenManager.GetUserIdByAccessToken(context.Request.Headers["RecipeFinder_AccessToken"]);
-                    if (!String.IsNullOrEmpty(userId))
-                    {
-                        User user = userHandler.GetById(userId);
-                        if (user != null)
-                        {
-                            RequestInfoManager.Action.User = user;
-                            RequestInfoManager.Action.UserId = user.CountId;
-
-                            RequestInfoManager.Action.Endpoint = context.Request.Path.Value;
-                            RequestInfoManager.Action.RequestType = context.Request.Method.ToUpper();
-                            RequestInfoManager.Action.ActionPerformedOnTable = context.Request.Path.Value.Split('/')[2];
-                            RequestInfoManager.Action.Description = $"User {RequestInfoManager.Action.User.Name}/{RequestInfoManager.Action.UserId} executed a {RequestInfoManager.Action.RequestType} on '{RequestInfoManager.Action.Endpoint}'. " +
-                                                 $"Request targeted at table {context.Request.Path.Value.Split('/')[2]}. " +
-                                                 $"Request Body: ( {JsonConvert.SerializeObject(StreamToObject(context.Request.Body))} ).";
-                        }
-                    }
-                }
-
-                context.Response.OnCompleted(() =>
-                {
-                    RequestInfoManager.Action.Success = context.Response.StatusCode >= 200 && context.Response.StatusCode <= 299;
-
-                    object targetObj = context.Request.Method == "GET" ?
-                        StreamToObject(context.Response.Body) : StreamToObject(context.Request.Body);
-                    RequestInfoManager.Action.RefObject = targetObj;
-
-                    RequestInfoManager.LogUserAction();
-
-                    return Task.CompletedTask;
-                });
-
                 return next();
             });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private void tokenValidated(HttpContext context)
+        {
+            var dbContext = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions);
+
+            UserHandler userHandler = new UserHandler(new UserRepo(dbContext), new UserRoleRelationRepo(dbContext), new KitchenRepo(dbContext));
+
+            RequestInfoManager.LogUserAction = new Func<int>(() =>
+            {
+                if (RequestInfoManager.IsCompleted)
+                {
+                    UserActionHandler handler = new UserActionHandler(new UserActionRepo(dbContext), new UserRepo(dbContext));
+
+                    return handler.Create(RequestInfoManager.Action);
+                }
+
+                return 0;
+            });
+
+            Func<Stream, object> StreamToObject = (Stream stream) =>
+            {
+                try
+                {
+                    if (!stream.CanRead) return new object { };
+
+                    byte[] buffer = new byte[context.Response.Body.Length];
+                    context.Response.Body.Read(buffer, 0, buffer.Length);
+
+                    return JsonConvert.DeserializeObject(Convert.ToBase64String(buffer));
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e.Message);
+                    return new object { };
+                }
+            };
+
+            if (context.Request.Path.StartsWithSegments("/api") && context.Request.Headers.ContainsKey("RecipeFinder_AccessToken"))
+            {
+                string userId = "";
+                if (!String.IsNullOrEmpty(userId))
+                {
+                    User user = userHandler.GetById(userId);
+                    if (user != null)
+                    {
+                        RequestInfoManager.Action.User = user;
+                        RequestInfoManager.Action.UserId = user.CountId;
+
+                        RequestInfoManager.Action.Endpoint = context.Request.Path.Value;
+                        RequestInfoManager.Action.RequestType = context.Request.Method.ToUpper();
+                        RequestInfoManager.Action.ActionPerformedOnTable = context.Request.Path.Value.Split('/')[2];
+                        RequestInfoManager.Action.Description = $"User {RequestInfoManager.Action.User.Name}/{RequestInfoManager.Action.UserId} executed a {RequestInfoManager.Action.RequestType} on '{RequestInfoManager.Action.Endpoint}'. " +
+                                             $"Request targeted at table {context.Request.Path.Value.Split('/')[2]}. " +
+                                             $"Request Body: ( {JsonConvert.SerializeObject(StreamToObject(context.Request.Body))} ).";
+                    }
+                }
+            }
+
+            context.Response.OnCompleted(() =>
+            {
+                RequestInfoManager.Action.Success = context.Response.StatusCode >= 200 && context.Response.StatusCode <= 299;
+
+                object targetObj = context.Request.Method == "GET" ?
+                    StreamToObject(context.Response.Body) : StreamToObject(context.Request.Body);
+                RequestInfoManager.Action.RefObject = targetObj;
+
+                RequestInfoManager.LogUserAction();
+
+                return Task.CompletedTask;
             });
         }
     }

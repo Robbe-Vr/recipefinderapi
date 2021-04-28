@@ -13,12 +13,7 @@
                 <h4>Use a local account to log in.</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
-                @{
-                    if (Model.ErrorMessage != null)
-                    {
-                        <div class="text-danger">@Model.ErrorMessage</div>
-                    }
-                }
+                <input hidden asp-for="Input.ReturnUrl" value="@Model.Input.ReturnUrl">
                 <div class="form-group">
                     <label asp-for="Input.EmailOrUsername"></label>
                     <input asp-for="Input.EmailOrUsername" class="form-control" />
@@ -63,8 +58,8 @@
         <section>
             <h4>Use another service to log in.</h4>
             <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            @*{
+                if ((Model.ExternalProviders?.Count() ?? 0) == 0)
                 {
                     <div>
                         <p>
@@ -75,18 +70,18 @@
                 }
                 else
                 {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.Input.ReturnUrl" method="post" class="form-horizontal">
                         <div>
                             <p>
-                                @foreach (var provider in Model.ExternalLogins)
+                                @foreach (var provider in Model.ExternalProviders)
                                 {
-                                    <button type="submit" class="btn btn-info mb-3" style="width:auto" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    <button type="submit" class="btn btn-info mb-3" style="width:auto" name="provider" value="@provider.DisplayName" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
                                 }
                             </p>
                         </div>
                     </form>
                 }
-            }
+            }*@
         </section>
     </div>
 </div>

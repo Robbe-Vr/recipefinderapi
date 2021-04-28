@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecipeFinderWabApi.Logic\RecipeFinderWabApi.Logic.csproj" />
+    <ProjectReference Include="..\RecipeFinderWebApi.Logic\RecipeFinderWebApi.Logic.csproj" />
     <ProjectReference Include="..\RecipeFinderWebApi.DAL\RecipeFinderWebApi.DAL.csproj" />
     <ProjectReference Include="..\RecipeFinderWebApi.Exchange\RecipeFinderWebApi.Exchange.csproj" />
   </ItemGroup>

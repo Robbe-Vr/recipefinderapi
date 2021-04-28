@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWebApi.UI", "RecipeFinderWebApi\RecipeFinderWebApi.UI.csproj", "{E96E46DF-625C-44AE-9A48-F505E7B66F7D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWabApi.Logic", "RecipeFinderWabApi.Logic\RecipeFinderWabApi.Logic.csproj", "{FA869404-26DA-4C42-BB55-44775C9E60EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWebApi.Logic", "RecipeFinderWebApi.Logic\RecipeFinderWebApi.Logic.csproj", "{FA869404-26DA-4C42-BB55-44775C9E60EF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWebApi.DAL", "RecipeFinderWebApi.DAL\RecipeFinderWebApi.DAL.csproj", "{4F5E27E2-CCC5-4598-B48F-7444FEF460E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWebApi.Exchange", "RecipeFinderWebApi.Exchange\RecipeFinderWebApi.Exchange.csproj", "{06B7251D-B54C-40DF-A339-C2368CF32A5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeFinderWebApi.UnitTests", "RecipeFinderWebApi.UnitTests\RecipeFinderWebApi.UnitTests.csproj", "{D9B26026-98A9-4010-B421-6543A2069C5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeFinderWebApi.UnitTests", "RecipeFinderWebApi.UnitTests\RecipeFinderWebApi.UnitTests.csproj", "{D9B26026-98A9-4010-B421-6543A2069C5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

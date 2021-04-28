@@ -986,6 +986,19 @@
           }
         }
       },
+      "MlkPwgen/0.3.0": {
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "System.Runtime.Serialization.Json": "4.3.0",
+          "System.Runtime.Serialization.Primitives": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.4/MlkPwgen.dll": {
+            "assemblyVersion": "0.3.0.0",
+            "fileVersion": "0.3.0.0"
+          }
+        }
+      },
       "MSTest.TestAdapter/2.1.1": {
         "dependencies": {
           "NETStandard.Library": "1.6.1",
@@ -2047,6 +2060,7 @@
       },
       "RecipeFinderWabApi.Logic/1.0.0": {
         "dependencies": {
+          "MlkPwgen": "0.3.0",
           "RecipeFinderWebApi.Exchange": "1.0.0"
         },
         "runtime": {
@@ -2508,6 +2522,13 @@
       "sha512": "sha512-mtVirZr++rq+XCDITMUdnETD59XoeMxSpLRIII7JRI6Yj0LEDiO1pPn0ktlnIj12Ix8bfvQqQDMMIF9wC98oCA==",
       "path": "microsoft.win32.systemevents/4.7.0",
       "hashPath": "microsoft.win32.systemevents.4.7.0.nupkg.sha512"
+    },
+    "MlkPwgen/0.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Tr6dsJpWeFBvp3T/DepiKPtEraCLGeEqNKpqFKPW5kEzooiLP+Rz/FeNQsISL2UJu80A4buamvJ+Yic9Jc4UyA==",
+      "path": "mlkpwgen/0.3.0",
+      "hashPath": "mlkpwgen.0.3.0.nupkg.sha512"
     },
     "MSTest.TestAdapter/2.1.1": {
       "type": "package",

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using RecipeFinderWabApi.Logic.Handlers;
+using RecipeFinderWebApi.Logic.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

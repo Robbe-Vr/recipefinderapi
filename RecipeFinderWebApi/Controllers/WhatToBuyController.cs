@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RecipeFinderWabApi.Logic;
+using RecipeFinderWebApi.Logic;
 using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.UI.Filters;
 using System;

@@ -1,15 +1,25 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IdentityServer4;
+using IdentityServer4.Events;
+using IdentityServer4.Extensions;
+using IdentityServer4.Models;
+using IdentityServer4.Test;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using RecipeFinderWabApi.Logic.Handlers;
-using RecipeFinderWabApi.Logic.signInHandlers;
+using Microsoft.AspNetCore.Http;
+using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.Logic.Handlers;
+using RecipeFinderWebApi.UI.Auth;
 using RecipeFinderWebApi.UI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
@@ -18,13 +28,13 @@ namespace RecipeFinderWebApi.UI.Controllers
     [Route("api/[controller]/{action}")]
     public class AuthorizeController : Controller
     {
-        private SignInHandler signInHandler;
-        private UserHandler userHandler;
+        private readonly UserHandler userHandler;
+        private readonly SignInHandler signInHandler;
 
-        public AuthorizeController(SignInHandler signInHandler, UserHandler userHandler)
+        public AuthorizeController(UserHandler userHandler, SignInHandler signInHandler)
         {
-            this.signInHandler = signInHandler;
             this.userHandler = userHandler;
+            this.signInHandler = signInHandler;
         }
 
         public IActionResult Index()
@@ -37,50 +47,56 @@ namespace RecipeFinderWebApi.UI.Controllers
             return View();
         }
 
-        public IActionResult Login(string returnUrl = null, string errorMessage = null)
+        public IActionResult Login(string returnUrl = null)
         {
             LoginViewModel model = new LoginViewModel();
 
             if (returnUrl == null)
             {
-                model.ReturnUrl = Url.Content("~/");
+                model.Input = new LoginViewModel.LoginCredentials() { ReturnUrl = Url.Content("~/") };
             }
-            else model.ReturnUrl = returnUrl;
-
-            if (errorMessage != null)
-            {
-                model.ErrorMessage = errorMessage;
-                ModelState.AddModelError(string.Empty, errorMessage);
-            }
+            else model.Input = new LoginViewModel.LoginCredentials() { ReturnUrl = returnUrl };
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, bool cancel = false)
         {
-            if(!ModelState.IsValid)
+            if (cancel)
+            {
+                return Redirect(model.Input.ReturnUrl ?? Url.Content("~/"));
+            }
+            
+            if (!ModelState.IsValid)
             {
                 string errorMessage = "Entered fields are invalid!";
 
                 return RedirectToAction(nameof(Login), new { errorMessage });
             }
 
-            string[] result = signInHandler.Login(model.Input.EmailOrUsername, model.Input.Password);
-
-            if (result == null)
-            {
-                string errorMessage = "Either the name or password is incorrect!";
-
-                return RedirectToAction(nameof(Login), new { errorMessage, returnUrl = model.ReturnUrl });
-            }
-
+            User user = signInHandler.Login(model.Input.EmailOrUsername, model.Input.Password);
             Trace.WriteLine("User '" + model.Input.EmailOrUsername + "' has logged in succesfully!");
 
-            return Redirect(model.ReturnUrl + "?Code=" + result[0] + "&UserId=" + result[1]);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Either name or password is incorrect.");
+
+                return View(model);
+            }
+
+            if (!String.IsNullOrEmpty(model.Input.ReturnUrl))
+            {
+                return Redirect(model.Input.ReturnUrl + "?Token=" + signInHandler.GetToken(user.Id) + "&UserId=" + user.Id);
+            }
+
+            ModelState.AddModelError(String.Empty, "Invalid return url! exit this website manually.");
+
+            return View(model);
         }
 
-        public IActionResult Register(string returnUrl = null, string errorMessage = null)
+        public IActionResult Register(string returnUrl = null)
         {
             RegisterViewModel model = new RegisterViewModel();
 
@@ -90,128 +106,191 @@ namespace RecipeFinderWebApi.UI.Controllers
             }
             else model.ReturnUrl = returnUrl;
 
-            if (errorMessage != null)
-            {
-                model.ErrorMessage = errorMessage;
-                ModelState.AddModelError(string.Empty, errorMessage);
-            }
-
             return View(model);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 string errorMessage = "Entered fields are invalid!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
 
             if (model.Input.Password != model.Input.ConfirmPassword)
             {
                 string errorMessage = "Passwords are not equal!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
 
             if (model.Input.DOB > DateTime.Now.AddYears(-16))
             {
                 string errorMessage = "You are not allowed to use this app under 16!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
 
             if ((userHandler.GetByName(model.Input.Name)) != null)
             {
                 string errorMessage = "Username already exists!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
 
             if ((userHandler.GetByName(model.Input.Email)) != null)
             {
                 string errorMessage = "A user with this email address already exists!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
 
-            var user = signInHandler.Register(model.Input.Name, model.Input.Email, model.Input.Password, model.Input.DOB);
+            var newUser = signInHandler.Register(model.Input.Name, model.Input.Email, model.Input.Password, model.Input.DOB);
 
-            if (user == null)
+            if (newUser == null)
             {
                 string errorMessage = "Registration failed!";
 
-                return RedirectToAction(nameof(Register), new { errorMessage, returnUrl = model.ReturnUrl });
+                ModelState.AddModelError(String.Empty, errorMessage);
+
+                return View(model);
             }
             else
             {
-                string[] result = signInHandler.Login(user.Name, model.Input.Password);
+                User user = signInHandler.Login(newUser.Name, model.Input.Password);
 
-                if (result == null)
+                if (user == null)
                 {
-                    string errorMessage = "Either the name or password is incorrect!";
-
-                    return RedirectToAction(nameof(Login), new { errorMessage, returnUrl = model.ReturnUrl });
+                    return RedirectToAction(nameof(Login), new { returnUrl = model.ReturnUrl });
                 }
 
                 Trace.WriteLine("New user '" + model.Input.Name + "' has registered in succesfully!");
-                model.ReturnUrl = model.ReturnUrl == null ? "/UserHome/Index" : model.ReturnUrl;
-                return Redirect(model.ReturnUrl + "?Code=" + result[0] + "&UserId=" + result[1]);
+
+                if (!String.IsNullOrEmpty(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl + "?Token=" + signInHandler.GetToken(user.Id) + "&UserId=" + user.Id);
+                }
+
+                ModelState.AddModelError(String.Empty, "Invalid return url! exit this website manually.");
+
+                return View(model);
             }
         }
 
-        [HttpPost("Validate")]
-        public IActionResult ValidateAccesstoken([FromBody] TokensObject tokens)
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId, bool showLogoutPrompt = false)
         {
-            if (!String.IsNullOrEmpty(tokens.AccessToken))
+            var model = new LogoutModel()
             {
-                return Ok(new { valid = signInHandler.ValidateAccessToken(tokens.AccessToken) });
-            }
-            else return StatusCode(404);
-        }
+                LogoutId = logoutId,
+            };
 
-        [HttpPost("Refresh")]
-        public IActionResult RefreshAccesstoken([FromBody] TokensObject tokens)
-        {
-            if (!String.IsNullOrEmpty(tokens.RefreshToken))
+            if (showLogoutPrompt == false)
             {
-                return Ok(new { access_token = signInHandler.RefreshAccessToken(tokens.RefreshToken) });
+                return await Logout(model);
             }
-            else return StatusCode(404);
+
+            return View(model);
         }
 
-        [HttpGet("token")]
-        public IActionResult GetTokens([FromBody] TokensObject tokens)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout(LogoutModel model)
         {
-            if (!String.IsNullOrEmpty(tokens.UserId) &&
-                !String.IsNullOrEmpty(tokens.Code))
+            string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
+
+            if (!String.IsNullOrEmpty(accessToken))
             {
-                string[] authTokens = signInHandler.RequestTokens(tokens.UserId, tokens.Code);
-
-                return Ok(new { access_token = authTokens[1], refresh_token = authTokens[0] });
+                signInHandler.Logout(accessToken);
             }
-            else return StatusCode(404);
-        }
 
-        [HttpGet("Me")]
-        public IActionResult GetUserByAccesstoken([FromBody] TokensObject tokens)
-        {
-            if (!String.IsNullOrEmpty(tokens.AccessToken))
+            if (model.TriggerExternalSignout)
             {
-                return Ok(signInHandler.GetUserByAccessToken(tokens.AccessToken));
+                string url = Url.Action("Logout", new { logoutId = model.LogoutId });
+
+                return SignOut(new AuthenticationProperties { RedirectUri = url }, model.ExternalAuthenticationScheme);
             }
-            else return StatusCode(404);
+
+            return View();
         }
 
-        public class TokensObject
+        [HttpGet]
+        public IActionResult Validate()
         {
-            public string AccessToken { get; set; }
-            public string RefreshToken { get; set; }
+            string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
 
-            public string Code { get; set; }
-            public string UserId { get; set; }
+            string result = signInHandler.ValidateToken(accessToken);
+
+            if (result == "Not found.")
+            {
+                return StatusCode(200, new { Message = "Unknown access token. No user is signed in with this token.", Result = "Not found." });
+            }
+            else if (result == "Expired.")
+            {
+                return Ok(new { Message = "Access token is expired. Send a post request to '/refresh' with your current access token or sign in again.", Result = "Expired." });
+            }
+            else
+            {
+                return Ok(new { Result = "Success." });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Refresh()
+        {
+            string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
+
+            var result = signInHandler.RefreshToken(accessToken);
+
+            if (String.IsNullOrEmpty(result))
+            {
+                return StatusCode(500, new { Message = "Error occurred refreshing access token." });
+            }
+            else if (result == "Unkown access token.")
+            {
+                return StatusCode(404, new { Message = result });
+            }
+            else
+            {
+                return Ok(new { access_token = result });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Me()
+        {
+            string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
+
+            User user = signInHandler.GetUserByToken(accessToken);
+
+            if (user == null)
+            {
+                return StatusCode(404, new { Message = "No user found attached to access token." });
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
+        
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
+
