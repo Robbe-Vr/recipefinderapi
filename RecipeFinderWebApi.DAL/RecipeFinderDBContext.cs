@@ -95,16 +95,21 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Kitchen>()
                 .HasOne(x => x.User)
                 .WithOne(x => x.Kitchen)
-                .HasForeignKey(typeof(Kitchen), nameof(Kitchen.UserId))
-                .HasPrincipalKey(typeof(User), nameof(User.Id));
+                .HasForeignKey<Kitchen>(x => x.UserId)
+                .HasPrincipalKey<User>(x => x.Id);
 
             builder.Entity<RequirementsList>().HasKey(x => x.RecipeId);
             builder.Entity<RequirementsList>()
                 .HasOne(x => x.Recipe)
                 .WithOne(x => x.RequirementsList)
-                .HasForeignKey(typeof(RequirementsList), nameof(RequirementsList.RecipeId))
-                .HasPrincipalKey(typeof(Recipe), nameof(Recipe.Id));
+                .HasForeignKey<RequirementsList>(x => x.RecipeId)
+                .HasPrincipalKey<Recipe>(x => x.Id);
 
+            builder.Entity<Recipe>()
+                .HasOne(r => r.User)
+                .WithOne()
+                .HasForeignKey<Recipe>(x => x.UserId)
+                .HasPrincipalKey<User>(x => x.Id);
             builder.Entity<Recipe>()
                 .HasMany(r => r.Categories)
                 .WithMany(c => c.Recipes)
@@ -179,6 +184,8 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<Recipe>()
                 .Property(x => x.VideoTutorialLink).HasColumnName("Video_tutorial_link");
             builder.Entity<Recipe>()
+                .Property(x => x.ImageLocation).HasColumnName("Image_location");
+            builder.Entity<Recipe>()
                 .Property(x => x.UserId).HasColumnName("Added_by_id");
 
             builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
@@ -252,7 +259,7 @@ namespace RecipeFinderWebApi.DAL
             builder.Entity<UserAction>()
                 .HasOne(x => x.User)
                 .WithMany()
-                .HasForeignKey(x => x.UserId).HasPrincipalKey(nameof(User.CountId));
+                .HasForeignKey(x => x.UserId).HasPrincipalKey(x => x.CountId);
 
             builder.Entity<UserAction>()
                 .Property(a => a.CountId).HasColumnName("Id");

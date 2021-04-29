@@ -10,3 +10,15 @@ C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Logic\obj\Debu
 C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.csproj.CopyComplete
 C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.dll
 C:\Users\Robbe\source\repos\RecipeFinderWebApi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.pdb
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.deps.json
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.dll
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.pdb
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.dll
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\bin\Debug\netcoreapp3.1\RecipeFinderWebApi.Exchange.pdb
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.csprojAssemblyReference.cache
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.AssemblyInfoInputs.cache
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.AssemblyInfo.cs
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.csproj.CoreCompileInputs.cache
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.csproj.CopyComplete
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.dll
+C:\Users\ShutY\source\repos\RecipeFinderWebApi\recipefinderwebapi\RecipeFinderWebApi.Logic\obj\Debug\netcoreapp3.1\RecipeFinderWebApi.Logic.pdb

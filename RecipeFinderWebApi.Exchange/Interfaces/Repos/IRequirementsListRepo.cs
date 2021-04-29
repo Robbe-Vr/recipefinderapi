@@ -11,9 +11,9 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 
         public RequirementsListIngredient GetById(int id);
 
-        public RequirementsList GetByRecipeId(string id);
+        public IEnumerable<RequirementsListIngredient> GetByRecipeId(string id);
 
-        public RequirementsList GetByRecipeName(string name);
+        public IEnumerable<RequirementsListIngredient> GetByRecipeName(string name);
 
         public int Create(RequirementsListIngredient ingredient);
 

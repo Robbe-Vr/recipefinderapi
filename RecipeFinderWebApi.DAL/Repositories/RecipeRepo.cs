@@ -19,10 +19,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return context.Recipes
                 .Include(x => x.Categories)
                 .Include(x => x.User)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.Ingredient)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.UnitType)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }

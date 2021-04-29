@@ -36,7 +36,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .FirstOrDefault(x => x.CountId == id && !x.Deleted);
         }
 
-        public RequirementsList GetByRecipeId(string id)
+        public IEnumerable<RequirementsListIngredient> GetByRecipeId(string id)
         {
             var ingredients = context.RequirementsLists
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
@@ -46,17 +46,10 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .AsNoTracking()
                 .Where(x => x.RecipeId == id && !x.Deleted);
 
-            var recipe = ingredients.FirstOrDefault()?.Recipe;
-
-            return new RequirementsList()
-            {
-                Recipe = recipe,
-                RecipeId = recipe?.Id,
-                Ingredients = ingredients.ToArray(),
-            };
+            return ingredients;
         }
 
-        public RequirementsList GetByRecipeName(string name)
+        public IEnumerable<RequirementsListIngredient> GetByRecipeName(string name)
         {
             var ingredients = context.RequirementsLists
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
@@ -66,14 +59,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .AsNoTracking()
                 .Where(x => x.Recipe.Name == name && !x.Deleted);
 
-            var recipe = ingredients.FirstOrDefault()?.Recipe;
-
-            return new RequirementsList()
-            {
-                Recipe = recipe,
-                RecipeId = recipe?.Id,
-                Ingredients = ingredients.ToArray(),
-            };
+            return ingredients;
         }
 
         public int Create(RequirementsListIngredient ingredient)

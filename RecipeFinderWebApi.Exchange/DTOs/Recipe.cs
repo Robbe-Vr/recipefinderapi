@@ -19,6 +19,7 @@ namespace RecipeFinderWebApi.Exchange.DTOs
         public ICollection<RecipeCategory> Categories { get; set; }
 
         public string VideoTutorialLink { get; set; }
+        public string ImageLocation { get; set; }
         public string Description { get; set; }
         public string PreparationSteps { get; set; }
 

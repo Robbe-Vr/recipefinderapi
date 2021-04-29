@@ -62,7 +62,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, bool cancel = false)
+        public IActionResult Login(LoginViewModel model, bool cancel = false)
         {
             if (cancel)
             {
@@ -191,7 +191,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Logout(string logoutId, bool showLogoutPrompt = false)
+        public IActionResult Logout(string logoutId, bool showLogoutPrompt = false)
         {
             var model = new LogoutModel()
             {
@@ -200,7 +200,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
             if (showLogoutPrompt == false)
             {
-                return await Logout(model);
+                return Logout(model);
             }
 
             return View(model);
@@ -208,7 +208,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout(LogoutModel model)
+        public IActionResult Logout(LogoutModel model)
         {
             string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "m/RdJK71SssEcdvX3v8MB5wNOa4nC3qcYD40s7Ayaf9HxhrArew2I9XzngUTcQ4attYbe8iTMLg2nSV0xllr5w==",
+  "dgSpecHash": "+Ib3YtfBe5uA3WPmz8pu9u+cL2LyqK6lAmGiIfZ9kmnLjBm3d/HmXtth1pcvCbFCPJUIuJMSwABplIiogKuhRg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
+  "projectFilePath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

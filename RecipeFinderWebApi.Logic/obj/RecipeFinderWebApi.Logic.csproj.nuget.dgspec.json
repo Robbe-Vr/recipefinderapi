@@ -1,25 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj": {}
+    "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
+    "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
+        "projectUniqueName": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
         "projectName": "RecipeFinderWebApi.Exchange",
-        "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
-        "packagesPath": "C:\\Users\\Robbe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\obj\\",
+        "projectPath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj",
+        "packagesPath": "C:\\Users\\ShutY\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\Robbe\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\ShutY\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -60,26 +58,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.104\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj": {
+    "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj",
+        "projectUniqueName": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj",
         "projectName": "RecipeFinderWebApi.Logic",
-        "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj",
-        "packagesPath": "C:\\Users\\Robbe\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Logic\\obj\\",
+        "projectPath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Logic\\RecipeFinderWebApi.Logic.csproj",
+        "packagesPath": "C:\\Users\\ShutY\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Logic\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\Robbe\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\ShutY\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -94,8 +90,8 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
-                "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj"
+              "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
+                "projectPath": "C:\\Users\\ShutY\\source\\repos\\RecipeFinderWebApi\\recipefinderwebapi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj"
               }
             }
           }
@@ -130,7 +126,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.104\\RuntimeIdentifierGraph.json"
         }
       }
     }
