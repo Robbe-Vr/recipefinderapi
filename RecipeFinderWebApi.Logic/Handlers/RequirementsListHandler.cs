@@ -25,12 +25,12 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetById(id);
         }
 
-        public RequirementsList GetByRecipeId(string id)
+        public IEnumerable<RequirementsListIngredient> GetByRecipeId(string id)
         {
             return _repo.GetByRecipeId(id);
         }
 
-        public RequirementsList GetByRecipeName(string name)
+        public IEnumerable<RequirementsListIngredient> GetByRecipeName(string name)
         {
             return _repo.GetByRecipeName(name);
         }

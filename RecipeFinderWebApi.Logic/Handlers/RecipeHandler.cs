@@ -30,7 +30,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
             foreach (Recipe recipe in recipes)
             {
-                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(recipe.Id);
+                List<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id).ToList();
+
+                recipe.RequirementsList = new RequirementsList()
+                {
+                    Ingredients = ingredients,
+                    RecipeId = recipe.Id,
+                    Recipe = recipe,
+                };
             }
 
             return recipes;
@@ -42,7 +49,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
             if (recipe != null)
             {
-                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(id);
+                List<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id).ToList();
+
+                recipe.RequirementsList = new RequirementsList()
+                {
+                    Ingredients = ingredients,
+                    RecipeId = recipe.Id,
+                    Recipe = recipe,
+                };
             }
 
             return recipe;
@@ -54,7 +68,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
             if (recipe != null)
             {
-                recipe.RequirementsList = _requirementsList_repo.GetByRecipeId(recipe.Id);
+                List<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id).ToList();
+
+                recipe.RequirementsList = new RequirementsList()
+                {
+                    Ingredients = ingredients,
+                    RecipeId = recipe.Id,
+                    Recipe = recipe,
+                };
             }
 
             return recipe;
