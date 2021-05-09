@@ -72,6 +72,8 @@ namespace RecipeFinderWebApi.DAL
                 .UsingEntity<UserRoleRelation>(x => x.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId).HasPrincipalKey(x => x.Id), x => x.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).HasPrincipalKey(x => x.Id))
                 .HasKey(x => x.CountId);
 
+            builder.Entity<Kitchen>().HasKey(x => x.UserId);
+
             builder.Entity<KitchenIngredient>().HasKey(x => x.CountId);
             builder.Entity<KitchenIngredient>()
                 .HasOne(x => x.Ingredient)
@@ -91,20 +93,6 @@ namespace RecipeFinderWebApi.DAL
                 .HasForeignKey(x => x.UserId)
                 .HasPrincipalKey(x => x.Id);
 
-            builder.Entity<Kitchen>().HasKey(x => x.UserId);
-            builder.Entity<Kitchen>()
-                .HasOne(x => x.User)
-                .WithOne(x => x.Kitchen)
-                .HasForeignKey<Kitchen>(x => x.UserId)
-                .HasPrincipalKey<User>(x => x.Id);
-
-            builder.Entity<RequirementsList>().HasKey(x => x.RecipeId);
-            builder.Entity<RequirementsList>()
-                .HasOne(x => x.Recipe)
-                .WithOne(x => x.RequirementsList)
-                .HasForeignKey<RequirementsList>(x => x.RecipeId)
-                .HasPrincipalKey<Recipe>(x => x.Id);
-
             builder.Entity<Recipe>()
                 .HasOne(r => r.User)
                 .WithOne()
@@ -117,6 +105,8 @@ namespace RecipeFinderWebApi.DAL
                 .HasKey(x => x.CountId);
             builder.Entity<RecipeCategory>().HasKey(x => x.CountId);
             builder.Entity<RecipeCategory>().Property(x => x.CountId).HasColumnName("Id");
+
+            builder.Entity<RequirementsList>().HasKey(x => x.RecipeId);
 
             builder.Entity<RequirementsListIngredient>().HasKey(x => x.CountId);
             builder.Entity<RequirementsListIngredient>()

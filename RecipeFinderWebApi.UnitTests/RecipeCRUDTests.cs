@@ -17,7 +17,7 @@ namespace RecipeFinderWebApi.UnitTests
         private IngredientHandler ingredientHandler;
         private UnitTypeHandler unitTypeHandler;
 
-        private Recipe recipe;
+        private RecipeWithRequirements recipe;
 
         private RecipeCategory category1;
         private RecipeCategory category2;
@@ -71,7 +71,7 @@ namespace RecipeFinderWebApi.UnitTests
             ingredientHandler.Create(ingredient1);
             ingredient1 = ingredientHandler.GetByName(ingredient1.Name);
 
-            recipe = new Recipe()
+            recipe = new RecipeWithRequirements()
             {
                 Name = "Test",
                 Categories = new List<RecipeCategory>() { category1 },
@@ -159,7 +159,7 @@ namespace RecipeFinderWebApi.UnitTests
 
         public void GetById()
         {
-            Recipe byidRecipe = handler.GetById(recipe.Id);
+            RecipeWithRequirements byidRecipe = handler.GetById(recipe.Id);
 
             recipe = byidRecipe;
 

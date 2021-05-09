@@ -81,7 +81,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
-            ingredient.Kitchens = null;
 
             context.Kitchens.Add(ingredient);
 
@@ -93,7 +92,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
-            ingredient.Kitchens = null;
 
             if (!Exists(ingredient))
             {
@@ -118,7 +116,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
-            ingredient.Kitchens = null;
 
             if (!Exists(ingredient))
             {

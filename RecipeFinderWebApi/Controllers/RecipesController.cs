@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RecipeFinderWebApi.Logic;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
@@ -16,10 +17,12 @@ namespace RecipeFinderWebApi.UI.Controllers
     public class RecipesController : ControllerBase
     {
         private RecipeHandler handler;
+        private PreparableRecipesAlgorithm preparableRecipeHandler;
 
-        public RecipesController(RecipeHandler ingredientHandler)
+        public RecipesController(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler)
         {
-            handler = ingredientHandler;
+            handler = recipeHandler;
+            preparableRecipeHandler = new PreparableRecipesAlgorithm(recipeHandler, kitchenHandler, unitTypeHandler);
         }
 
         // GET: api/<RecipesController>
@@ -28,6 +31,17 @@ namespace RecipeFinderWebApi.UI.Controllers
         {
             return ResponseFilter.FilterDataResponse(
                 handler.GetAll(),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
+        }
+
+        [HttpGet("preparable/{userId}")]
+        public IActionResult GetPreparable(string userId)
+        {
+            return ResponseFilter.FilterDataResponse(
+                preparableRecipeHandler.GetPreparableForUser(userId),
                 (int code, object obj) => {
                     return StatusCode(code, obj);
                 }
@@ -59,7 +73,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // POST api/<RecipesController>
         [HttpPost]
-        public IActionResult Post([FromBody] Recipe value)
+        public IActionResult Post([FromBody] RecipeWithRequirements value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.Create(value),
@@ -71,7 +85,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // PUT api/<RecipesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Recipe value)
+        public IActionResult Put(int id, [FromBody] RecipeWithRequirements value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.Update(value),
@@ -86,7 +100,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         public IActionResult Delete(string id)
         {
             return ResponseFilter.FilterActionResponse(
-                handler.Delete(new Recipe() { Id = id }),
+                handler.Delete(new RecipeWithRequirements() { Id = id }),
                 (int code, object obj) => {
                     return StatusCode(code, obj);
                 }

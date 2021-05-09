@@ -8,11 +8,15 @@ namespace RecipeFinderWebApi.Exchange.DTOs
 {
     public class Kitchen
     {
+        [NotMapped]
         public string UserId { get; set; }
+        [NotMapped]
         public User User { get; set; }
 
+        [NotMapped]
         public ICollection<KitchenIngredient> Ingredients { get; set; }
 
+        [NotMapped]
         public bool Deleted { get; set; }
     }
 
@@ -31,7 +35,6 @@ namespace RecipeFinderWebApi.Exchange.DTOs
 
         public int UnitTypeId { get; set; }
         public UnitType UnitType { get; set; }
-        public ICollection<Kitchen> Kitchens { get; set; }
 
         public bool Deleted { get; set; }
     }

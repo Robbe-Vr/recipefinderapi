@@ -61,9 +61,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
             List<Role> Roles = new List<Role>();
             Roles.AddRange(user.Roles);
 
-            Kitchen Kitchen = new Kitchen();
-            Kitchen.Ingredients = user.Kitchen?.Ingredients;
-
             changes += _repo.Create(user);
 
             if (Roles.Count > 0)
@@ -71,14 +68,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
                 foreach (Role role in Roles)
                 {
                     changes += CreateRoleRelation(user, role);
-                }
-            }
-
-            if (Kitchen?.Ingredients != null && Kitchen.Ingredients.Count > 0)
-            {
-                foreach (KitchenIngredient ingredient in user.Kitchen.Ingredients)
-                {
-                    changes += _kitchen_repo.Create(ingredient);
                 }
             }
 
@@ -90,9 +79,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
             List<Role> Roles = new List<Role>();
             Roles.AddRange(user.Roles);
 
-            Kitchen Kitchen = new Kitchen();
-            Kitchen.Ingredients = user.Kitchen?.Ingredients;
-
             user = _repo.CreateGetId(user);
 
             if (Roles.Count > 0)
@@ -100,14 +86,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
                 foreach (Role role in Roles)
                 {
                     CreateRoleRelation(user, role);
-                }
-            }
-
-            if (Kitchen?.Ingredients != null && Kitchen.Ingredients.Count > 0)
-            {
-                foreach (KitchenIngredient ingredient in user.Kitchen.Ingredients)
-                {
-                    _kitchen_repo.Create(ingredient);
                 }
             }
 
@@ -125,9 +103,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
             List<Role> Roles = new List<Role>();
             Roles.AddRange(user.Roles);
 
-            Kitchen Kitchen = new Kitchen();
-            Kitchen.Ingredients = user.Kitchen?.Ingredients;
-
             changes += _repo.Update(user);
 
             if (Roles.Count > 0)
@@ -144,34 +119,6 @@ namespace RecipeFinderWebApi.Logic.Handlers
                 foreach (Role role in toRemoveRoles)
                 {
                     changes += DeleteRoleRelation(user, role);
-                }
-            }
-
-            if (Kitchen != null && Kitchen.Ingredients != null && Kitchen.Ingredients.Count > 0)
-            {
-                IEnumerable<KitchenIngredient> toAddIngredients = Kitchen.Ingredients.Where(x => !currentState.Kitchen.Ingredients.Contains(x));
-
-                foreach (KitchenIngredient ingredient in toAddIngredients)
-                {
-                    changes += _kitchen_repo.Create(ingredient);
-                }
-
-                IEnumerable<KitchenIngredient> toRemoveIngredients = currentState.Kitchen.Ingredients.Where(x => !Kitchen.Ingredients.Contains(x));
-
-                foreach (KitchenIngredient ingredient in toRemoveIngredients)
-                {
-                    changes += _kitchen_repo.Delete(ingredient);
-                }
-
-                IEnumerable<KitchenIngredient> toUpdateIngredients = Kitchen.Ingredients.Where(x => currentState.Kitchen.Ingredients.Any(y => x.IngredientId == y.IngredientId && (x.Units != y.Units || x.UnitTypeId != y.UnitTypeId)));
-
-                foreach (KitchenIngredient ingredient in toUpdateIngredients)
-                {
-                    ingredient.UserId = currentState.Id;
-
-                    ingredient.CountId = currentState.Kitchen.Ingredients.FirstOrDefault(i => i.IngredientId == ingredient.IngredientId).CountId;
-
-                    changes += _kitchen_repo.Update(ingredient);
                 }
             }
 

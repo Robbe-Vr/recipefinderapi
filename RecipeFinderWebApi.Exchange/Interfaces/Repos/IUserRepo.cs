@@ -8,7 +8,7 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
     public interface IUserRepo
     {
         public IEnumerable<User> GetAll();
-        public IEnumerable<User> GetAllWithKitchen();
+        public IEnumerable<UserWithKitchen> GetAllWithKitchen();
 
         public Kitchen GetKitchenById(string id);
 

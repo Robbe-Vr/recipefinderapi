@@ -43,8 +43,6 @@ namespace RecipeFinderWebApi.Exchange.DTOs
 
         public ICollection<Role> Roles { get; set; }
 
-        public Kitchen Kitchen { get; set; }
-
         public bool Deleted { get; set; }
     }
 }

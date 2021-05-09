@@ -22,27 +22,32 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Where(x => !x.Deleted);
         }
 
-        public IEnumerable<User> GetAllWithKitchen()
+        public IEnumerable<UserWithKitchen> GetAllWithKitchen()
         {
-            return context.Users
-                .Include(x => x.Kitchen.Ingredients)
-                    .ThenInclude(x => x.Ingredient)
-                .Include(x => x.Kitchen.Ingredients)
-                    .ThenInclude(x => x.UnitType)
+            IEnumerable<UserWithKitchen> users = (IEnumerable<UserWithKitchen>)context.Users
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
+
+            foreach (UserWithKitchen user in users)
+            {
+                user.Kitchen = GetKitchenById(user.Id);
+
+                user.Kitchen.User = user;
+            }
+
+            return users;
         }
 
         public Kitchen GetKitchenById(string id)
         {
-            return context.Users
-                .Include(x => x.Kitchen.Ingredients)
-                    .ThenInclude(x => x.Ingredient)
-                .Include(x => x.Kitchen.Ingredients)
-                    .ThenInclude(x => x.UnitType)
-                .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted).Kitchen;
+            return new Kitchen()
+            {
+                Ingredients = context.Kitchens
+                    .AsNoTracking()
+                    .Where(x => x.UserId == id && !x.Deleted).ToList(),
+                UserId = id,
+            };
         }
 
         public User GetById(string id)
@@ -73,7 +78,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
         public int Create(User user)
         {
             user.Roles = null;
-            user.Kitchen = null;
 
             user.Id = Guid.NewGuid().ToString();
 
@@ -85,7 +89,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
         public User CreateGetId(User user)
         {
             user.Roles = null;
-            user.Kitchen = null;
 
             user.Id = Guid.NewGuid().ToString();
 
@@ -99,7 +102,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
         public int Update(User user)
         {
             user.Roles = null;
-            user.Kitchen = null;
 
             if (!Exists(user))
             {
@@ -137,7 +139,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
         public int Delete(User user)
         {
             user.Roles = null;
-            user.Kitchen = null;
 
             if (!Exists(user))
             {

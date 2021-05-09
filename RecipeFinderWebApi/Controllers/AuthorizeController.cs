@@ -207,7 +207,6 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Logout(LogoutModel model)
         {
             string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();

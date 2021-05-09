@@ -28,10 +28,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return context.Recipes
                 .Include(x => x.Categories)
                 .Include(x => x.User)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.Ingredient)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.UnitType)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
@@ -41,10 +37,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return context.Recipes
                 .Include(x => x.Categories)
                 .Include(x => x.User)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.Ingredient)
-                .Include(x => x.RequirementsList.Ingredients)
-                    .ThenInclude(x => x.UnitType)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name & !x.Deleted);
         }
@@ -52,7 +44,6 @@ namespace RecipeFinderWebApi.DAL.Repositories
         public int Create(Recipe recipe)
         {
             recipe.User = null;
-            recipe.RequirementsList = null;
             recipe.Categories = null;
 
             recipe.Id = Guid.NewGuid().ToString();
@@ -64,6 +55,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Update(Recipe recipe)
         {
+            recipe.User = null;
+            recipe.Categories = null;
+
             if (!Exists(recipe))
             {
                 return 0;
@@ -87,6 +81,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Delete(Recipe recipe)
         {
+            recipe.User = null;
+            recipe.Categories = null;
+
             if (!Exists(recipe))
             {
                 return 0;

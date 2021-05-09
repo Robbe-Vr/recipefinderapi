@@ -8,11 +8,15 @@ namespace RecipeFinderWebApi.Exchange.DTOs
 {
     public class RequirementsList
     {
+        [NotMapped]
         public string RecipeId { get; set; }
+        [NotMapped]
         public Recipe Recipe { get; set; }
 
+        [NotMapped]
         public ICollection<RequirementsListIngredient> Ingredients { get; set; }
 
+        [NotMapped]
         public bool Deleted { get; set; }
     }
 

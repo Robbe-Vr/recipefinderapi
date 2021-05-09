@@ -24,28 +24,34 @@ namespace RecipeFinderWebApi.Logic.Handlers
             _requirementsList_repo = requirementsList_repo;
         }
 
-        public IEnumerable<Recipe> GetAll()
+        public IEnumerable<RecipeWithRequirements> GetAll()
         {
             IEnumerable<Recipe> recipes = _repo.GetAll();
 
+            List<RecipeWithRequirements> recipesWithRequirements = new List<RecipeWithRequirements>();
+
             foreach (Recipe recipe in recipes)
             {
-                List<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id).ToList();
+                RecipeWithRequirements recipeWithRequirements = new RecipeWithRequirements(recipe);
 
-                recipe.RequirementsList = new RequirementsList()
+                IEnumerable<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id);
+
+                recipeWithRequirements.RequirementsList = new RequirementsList()
                 {
-                    Ingredients = ingredients,
+                    Ingredients = ingredients.ToList(),
                     RecipeId = recipe.Id,
                     Recipe = recipe,
                 };
+
+                recipesWithRequirements.Add(recipeWithRequirements);
             }
 
-            return recipes;
+            return recipesWithRequirements;
         }
 
-        public Recipe GetById(string id)
+        public RecipeWithRequirements GetById(string id)
         {
-            Recipe recipe = _repo.GetById(id);
+            RecipeWithRequirements recipe = new RecipeWithRequirements(_repo.GetById(id));
 
             if (recipe != null)
             {
@@ -62,9 +68,9 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return recipe;
         }
 
-        public Recipe GetByName(string name)
+        public RecipeWithRequirements GetByName(string name)
         {
-            Recipe recipe = _repo.GetByName(name);
+            RecipeWithRequirements recipe = (RecipeWithRequirements)_repo.GetByName(name);
 
             if (recipe != null)
             {
@@ -81,7 +87,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return recipe;
         }
 
-        public int Create(Recipe recipe)
+        public int Create(RecipeWithRequirements recipe)
         {
             int changes = 0;
 
@@ -93,7 +99,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
             changes += _repo.Create(recipe);
 
-            recipe = _repo.GetByName(recipe.Name);
+            recipe = GetByName(recipe.Name);
 
             if (Categories.Count > 0)
             {
@@ -116,7 +122,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return changes;
         }
 
-        public int Update(Recipe recipe)
+        public int Update(RecipeWithRequirements recipe)
         {
             int changes = 0;
 
@@ -184,7 +190,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return changes;
         }
 
-        public int Delete(Recipe recipe)
+        public int Delete(RecipeWithRequirements recipe)
         {
             int changes = 0;
 

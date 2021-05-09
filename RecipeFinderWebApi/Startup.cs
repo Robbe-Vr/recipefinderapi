@@ -52,7 +52,7 @@ namespace RecipeFinderWebApi.UI
                 options.AddPolicy(name: RFCorsPolicy,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000")
+                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000", "https://recipefinder.sywapps.com")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
                     });
@@ -67,7 +67,7 @@ namespace RecipeFinderWebApi.UI
                 })
                 .AddNewtonsoftJson(options =>
                 {
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 

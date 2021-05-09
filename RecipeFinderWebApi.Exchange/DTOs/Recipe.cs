@@ -23,8 +23,6 @@ namespace RecipeFinderWebApi.Exchange.DTOs
         public string Description { get; set; }
         public string PreparationSteps { get; set; }
 
-        public RequirementsList RequirementsList { get; set; }
-
         public bool Deleted { get; set; }
     }
 }

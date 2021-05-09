@@ -13,11 +13,11 @@ namespace RecipeFinderWebApi.UI.Controllers
     [EnableCors("RFCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
-    public class IngredientCategorysController : ControllerBase
+    public class IngredientCategoriesController : ControllerBase
     {
         private IngredientCategoryHandler handler;
 
-        public IngredientCategorysController(IngredientCategoryHandler ingredientHandler)
+        public IngredientCategoriesController(IngredientCategoryHandler ingredientHandler)
         {
             handler = ingredientHandler;
         }
