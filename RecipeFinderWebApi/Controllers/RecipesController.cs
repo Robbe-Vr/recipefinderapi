@@ -11,6 +11,7 @@ using RecipeFinderWebApi.Logic;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
+    [RequiresRoles(true, "Default")]
     [EnableCors("RFCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
@@ -42,6 +43,17 @@ namespace RecipeFinderWebApi.UI.Controllers
         {
             return ResponseFilter.FilterDataResponse(
                 preparableRecipeHandler.GetPreparableForUser(userId),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
+        }
+
+        [HttpGet("bycook/{userId}")]
+        public IActionResult GetAllFromCook(string userId)
+        {
+            return ResponseFilter.FilterDataResponse(
+                handler.GetAllByCook(userId),
                 (int code, object obj) => {
                     return StatusCode(code, obj);
                 }

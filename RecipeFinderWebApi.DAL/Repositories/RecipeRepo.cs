@@ -23,6 +23,15 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Where(x => !x.Deleted);
         }
 
+        public IEnumerable<Recipe> GetAllByCook(string userId)
+        {
+            return context.Recipes
+                .Include(x => x.Categories)
+                .Include(x => x.User)
+                .AsNoTracking()
+                .Where(x => x.UserId == userId && !x.Deleted);
+        }
+
         public Recipe GetById(string id)
         {
             return context.Recipes

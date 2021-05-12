@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
+    [RequiresRoles(true, "Default")]
     [EnableCors("RFCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]

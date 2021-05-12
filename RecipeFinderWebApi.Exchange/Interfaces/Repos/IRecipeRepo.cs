@@ -8,6 +8,7 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
     public interface IRecipeRepo
     {
         public IEnumerable<Recipe> GetAll();
+        public IEnumerable<Recipe> GetAllByCook(string userId);
 
         public Recipe GetById(string id);
         public Recipe GetByName(string name);

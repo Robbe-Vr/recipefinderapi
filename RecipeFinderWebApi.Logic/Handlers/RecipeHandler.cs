@@ -49,6 +49,31 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return recipesWithRequirements;
         }
 
+        public object GetAllByCook(string userId)
+        {
+            IEnumerable<Recipe> recipes = _repo.GetAllByCook(userId);
+
+            List<RecipeWithRequirements> recipesWithRequirements = new List<RecipeWithRequirements>();
+
+            foreach (Recipe recipe in recipes)
+            {
+                RecipeWithRequirements recipeWithRequirements = new RecipeWithRequirements(recipe);
+
+                IEnumerable<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id);
+
+                recipeWithRequirements.RequirementsList = new RequirementsList()
+                {
+                    Ingredients = ingredients.ToList(),
+                    RecipeId = recipe.Id,
+                    Recipe = recipe,
+                };
+
+                recipesWithRequirements.Add(recipeWithRequirements);
+            }
+
+            return recipesWithRequirements;
+        }
+
         public RecipeWithRequirements GetById(string id)
         {
             RecipeWithRequirements recipe = new RecipeWithRequirements(_repo.GetById(id));

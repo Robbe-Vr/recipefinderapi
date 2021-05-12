@@ -69,7 +69,7 @@ namespace RecipeFinderWebApi.UI.Auth
 
         private static string GenerateAccessToken()
         {
-            string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%&?+";
+            string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!+";
 
             Random r = new Random();
 

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
+    [RequiresRoles(true, "Default")]
     [EnableCors("RFCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
@@ -23,6 +24,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         // GET: api/<RolesController>
+        [RequiresRoles(true, "Admin")]
         [HttpGet]
         public IActionResult Get()
         {

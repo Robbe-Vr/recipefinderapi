@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
+    [RequiresRoles(true, "Default")]
     [EnableCors("RFCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
@@ -26,6 +27,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         // GET: api/<UsersController>
+        [RequiresRoles(true, "Admin")]
         [HttpGet]
         public IActionResult Get()
         {
@@ -59,6 +61,7 @@ namespace RecipeFinderWebApi.UI.Controllers
             );
         }
 
+        [RequiresRoles(true, "Admin")]
         [HttpGet("actions")]
         public IActionResult GetActions()
         {
@@ -70,6 +73,7 @@ namespace RecipeFinderWebApi.UI.Controllers
             );
         }
 
+        [RequiresRoles(true, "Admin")]
         [HttpGet("{id}/actions")]
         public IActionResult GetActionsByUserId(string id)
         {
@@ -108,7 +112,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // POST api/<UsersController>/getid
         [HttpPost]
-        public IActionResult CreateGetById([FromBody] User value)
+        public IActionResult CreateGetId([FromBody] User value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.CreateGetId(value),

@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityModel;
+using RecipeFinderWebApi.UI.Filters;
 
 namespace RecipeFinderWebApi.UI.Controllers
 {
@@ -207,6 +208,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpPost]
+        [RequiresRoles(true, "Default")]
         public IActionResult Logout(LogoutModel model)
         {
             string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
@@ -227,6 +229,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpGet]
+        [RequiresRoles(true, "Default")]
         public IActionResult Validate()
         {
             string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
@@ -269,6 +272,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpGet]
+        [RequiresRoles(true, "Default")]
         public IActionResult Me()
         {
             string accessToken = HttpContext.Request.Headers["RecipeFinder_AccessToken"].ToString();
