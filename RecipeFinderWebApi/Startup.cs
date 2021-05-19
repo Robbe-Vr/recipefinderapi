@@ -71,8 +71,17 @@ namespace RecipeFinderWebApi.UI
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
+            services.AddHttpContextAccessor();
+
+            Func<HttpContext, User> getUserByToken = new Func<HttpContext, User>((HttpContext context) =>
+            {
+                string accessToken = context.Request.Headers["RecipeFinder_AccessToken"];
+
+                return AuthManager.GetUser(accessToken);
+            });
+
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context)); });
-            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeHandler(new RecipeRepo(context), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeHandler(new RecipeRepo(context, getUserByToken(x.GetService<IHttpContextAccessor>().HttpContext)), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)); });

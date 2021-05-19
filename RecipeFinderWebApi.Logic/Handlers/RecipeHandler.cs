@@ -225,7 +225,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
             Categories.AddRange(currentState.Categories);
 
             RequirementsList requirementsList = new RequirementsList();
-            requirementsList.Ingredients = recipe.RequirementsList?.Ingredients;
+            requirementsList.Ingredients = currentState.RequirementsList?.Ingredients;
 
             changes += _repo.Delete(currentState);
 

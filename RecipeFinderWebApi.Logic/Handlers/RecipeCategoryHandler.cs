@@ -63,7 +63,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Delete(RecipeCategory category)
         {
-            return _repo.Delete(category);
+            return _repo.Delete(GetById(category.CountId));
         }
     }
 }

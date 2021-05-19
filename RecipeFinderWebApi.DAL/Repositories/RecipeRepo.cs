@@ -10,8 +10,11 @@ namespace RecipeFinderWebApi.DAL.Repositories
 {
     public class RecipeRepo : AbstractRepo<Recipe>, IRecipeRepo
     {
-        public RecipeRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        private User currentUser;
+
+        public RecipeRepo(RecipeFinderDbContext dbContext, User currentUser) : base(dbContext)
         {
+            this.currentUser = currentUser;
         }
 
         public IEnumerable<Recipe> GetAll()
@@ -20,7 +23,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .Where(x => !x.Deleted);
+                .Where(x => (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
         public IEnumerable<Recipe> GetAllByCook(string userId)
@@ -29,7 +32,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .Where(x => x.UserId == userId && !x.Deleted);
+                .Where(x => x.UserId == userId && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
         public Recipe GetById(string id)
@@ -38,7 +41,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .FirstOrDefault(x => x.Id == id && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
         public Recipe GetByName(string name)
@@ -47,7 +50,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name & !x.Deleted);
+                .FirstOrDefault(x => x.Name == name && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
         public int Create(Recipe recipe)

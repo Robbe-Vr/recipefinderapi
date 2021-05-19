@@ -56,7 +56,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Delete(UserAction action)
         {
-            return _repo.Delete(action);
+            return _repo.Delete(GetById(action.CountId));
         }
     }
 }

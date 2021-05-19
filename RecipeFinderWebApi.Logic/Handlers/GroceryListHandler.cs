@@ -47,7 +47,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Delete(GroceryList ingredient)
         {
-            return _repo.Delete(ingredient);
+            return _repo.Delete(GetById(ingredient.Id));
         }
     }
 }

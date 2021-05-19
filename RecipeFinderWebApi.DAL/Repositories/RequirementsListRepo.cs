@@ -64,6 +64,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public int Create(RequirementsListIngredient ingredient)
         {
+            ingredient.CountId = 0;
             ingredient.Ingredient = null;
             ingredient.Recipe = null;
             ingredient.UnitType = null;

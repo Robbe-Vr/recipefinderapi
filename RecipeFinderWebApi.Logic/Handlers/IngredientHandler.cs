@@ -106,10 +106,10 @@ namespace RecipeFinderWebApi.Logic.Handlers
             ingredient.CountId = currentState.CountId;
 
             List<IngredientCategory> Categories = new List<IngredientCategory>();
-            Categories.AddRange(ingredient.Categories);
+            Categories.AddRange(currentState.Categories);
 
             List<UnitType> UnitTypes = new List<UnitType>();
-            UnitTypes.AddRange(ingredient.UnitTypes);
+            UnitTypes.AddRange(currentState.UnitTypes);
 
             changes += _repo.Update(ingredient);
 
@@ -157,10 +157,10 @@ namespace RecipeFinderWebApi.Logic.Handlers
             var currentState = GetById(ingredient.Id);
 
             List<IngredientCategory> Categories = new List<IngredientCategory>();
-            Categories.AddRange(ingredient.Categories);
+            Categories.AddRange(currentState.Categories);
 
             List<UnitType> UnitTypes = new List<UnitType>();
-            UnitTypes.AddRange(ingredient.UnitTypes);
+            UnitTypes.AddRange(currentState.UnitTypes);
 
             changes += _repo.Delete(currentState);
 

@@ -15,6 +15,8 @@ namespace RecipeFinderWebApi.Exchange.DTOs
             CountId = recipe.CountId;
             Id = recipe.Id;
             Name = recipe.Name;
+            ImageLocation = recipe.ImageLocation;
+            IsPublic = recipe.IsPublic;
             Description = recipe.Description;
             VideoTutorialLink = recipe.VideoTutorialLink;
             ImageLocation = recipe.ImageLocation;

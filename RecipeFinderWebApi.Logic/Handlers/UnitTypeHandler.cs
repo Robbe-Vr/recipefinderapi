@@ -33,14 +33,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetByName(name);
         }
 
-        public int Create(UnitType ingredient)
+        public int Create(UnitType unitType)
         {
-            return _repo.Create(ingredient);
+            return _repo.Create(unitType);
         }
 
-        public int CreateIngredientRelation(Ingredient ingredient, UnitType category)
+        public int CreateIngredientRelation(Ingredient ingredient, UnitType unitType)
         {
-            return _ingredient_relation_repo.CreateRelation(ingredient, category);
+            return _ingredient_relation_repo.CreateRelation(ingredient, unitType);
         }
 
         public int DeleteIngredientRelation(IngredientUnitTypeRelation relation)
@@ -55,14 +55,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _ingredient_relation_repo.DeleteRelation(relation);
         }
 
-        public int Update(UnitType ingredient)
+        public int Update(UnitType unitType)
         {
-            return _repo.Update(ingredient);
+            return _repo.Update(unitType);
         }
 
-        public int Delete(UnitType ingredient)
+        public int Delete(UnitType unitType)
         {
-            return _repo.Delete(ingredient);
+            return _repo.Delete(GetById(unitType.CountId));
         }
     }
 }

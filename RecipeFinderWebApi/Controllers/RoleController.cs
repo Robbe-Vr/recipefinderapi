@@ -73,7 +73,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // PUT api/<RolesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Role value)
+        public IActionResult Put(string id, [FromBody] Role value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.Update(value),

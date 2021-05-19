@@ -112,6 +112,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 else context.Ingredients.Update(ingredient);
             }
 
+            context.Entry(ingredient).State = EntityState.Modified;
+
             ingredient.Deleted = true;
 
             return context.SaveChanges();

@@ -124,7 +124,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] User value)
+        public IActionResult Put(string id, [FromBody] User value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.Update(value),

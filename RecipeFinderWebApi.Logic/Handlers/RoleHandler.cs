@@ -56,14 +56,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _user_relation_repo.DeleteRelation(relation);
         }
 
-        public int Update(Role user)
+        public int Update(Role role)
         {
-            return _repo.Update(user);
+            return _repo.Update(role);
         }
 
-        public int Delete(Role user)
+        public int Delete(Role role)
         {
-            return _repo.Delete(user);
+            return _repo.Delete(GetById(role.Id));
         }
     }
 }

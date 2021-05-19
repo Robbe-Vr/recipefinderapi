@@ -97,7 +97,7 @@ namespace RecipeFinderWebApi.UI.Controllers
 
         // PUT api/<RecipesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] RecipeWithRequirements value)
+        public IActionResult Put(string id, [FromBody] RecipeWithRequirements value)
         {
             return ResponseFilter.FilterActionResponse(
                 handler.Update(value),

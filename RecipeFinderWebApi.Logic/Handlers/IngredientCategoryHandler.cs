@@ -46,7 +46,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Delete(IngredientCategory ingredient)
         {
-            return _repo.Delete(ingredient);
+            return _repo.Delete(GetById(ingredient.CountId));
         }
 
         public int CreateIngredientRelation(Ingredient ingredient, IngredientCategory category)
