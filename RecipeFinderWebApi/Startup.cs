@@ -30,6 +30,7 @@ using IdentityServer4.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using RecipeFinderWebApi.UI.Auth;
+using RecipeFinderWebApi.Logic;
 
 namespace RecipeFinderWebApi.UI
 {
@@ -80,8 +81,31 @@ namespace RecipeFinderWebApi.UI
                 return AuthManager.GetUser(accessToken);
             });
 
-            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context)); });
-            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeHandler(new RecipeRepo(context, getUserByToken(x.GetService<IHttpContextAccessor>().HttpContext)), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context)); });
+            services.AddScoped(x => {
+                RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions);
+                RecipeHandler recipeHandler = null;
+                KitchenHandler kitchenHandler = new KitchenHandler(new KitchenRepo(context));
+                UnitTypeHandler unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
+                PreparableRecipesAlgorithm preparableAlgorithm = new PreparableRecipesAlgorithm(recipeHandler, kitchenHandler, unitTypeHandler);
+                recipeHandler = new RecipeHandler(
+                    new RecipeRepo(context, getUserByToken(x.GetService<IHttpContextAccessor>().HttpContext)),
+                    new RecipeCategoryRelationRepo(context),
+                    new RequirementsListRepo(context),
+                    preparableAlgorithm);
+                WhatToBuyAlgorithm algorithm = new WhatToBuyAlgorithm(recipeHandler, kitchenHandler, unitTypeHandler);
+                return new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context), algorithm);
+            });
+            services.AddScoped(x => {
+                RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions);
+                RecipeHandler recipeHandler = null;
+                PreparableRecipesAlgorithm algorithm = new PreparableRecipesAlgorithm(recipeHandler, new KitchenHandler(new KitchenRepo(context)), new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)));
+                recipeHandler = new RecipeHandler(
+                    new RecipeRepo(context, getUserByToken(x.GetService<IHttpContextAccessor>().HttpContext)),
+                    new RecipeCategoryRelationRepo(context),
+                    new RequirementsListRepo(context),
+                    algorithm);
+                return recipeHandler;
+            });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)); });

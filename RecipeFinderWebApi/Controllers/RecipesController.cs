@@ -18,12 +18,10 @@ namespace RecipeFinderWebApi.UI.Controllers
     public class RecipesController : ControllerBase
     {
         private RecipeHandler handler;
-        private PreparableRecipesAlgorithm preparableRecipeHandler;
 
-        public RecipesController(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler)
+        public RecipesController(RecipeHandler recipeHandler)
         {
             handler = recipeHandler;
-            preparableRecipeHandler = new PreparableRecipesAlgorithm(recipeHandler, kitchenHandler, unitTypeHandler);
         }
 
         // GET: api/<RecipesController>
@@ -42,7 +40,7 @@ namespace RecipeFinderWebApi.UI.Controllers
         public IActionResult GetPreparable(string userId)
         {
             return ResponseFilter.FilterDataResponse(
-                preparableRecipeHandler.GetPreparableForUser(userId),
+                handler.GetPreparableForUser(userId),
                 (int code, object obj) => {
                     return StatusCode(code, obj);
                 }

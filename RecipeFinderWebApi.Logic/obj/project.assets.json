@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.1": {
+    "net5.0": {
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -1190,7 +1190,7 @@
       },
       "RecipeFinderWebApi.Exchange/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.1",
+        "framework": ".NETCoreApp,Version=v5.0",
         "compile": {
           "bin/placeholder/RecipeFinderWebApi.Exchange.dll": {}
         },
@@ -4573,7 +4573,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.1": [
+    "net5.0": [
       "MlkPwgen >= 0.3.0",
       "RecipeFinderWebApi.Exchange >= 1.0.0"
     ]
@@ -4603,15 +4603,15 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "netcoreapp3.1"
+        "net5.0"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "netcoreapp5.0",
           "projectReferences": {
             "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
               "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj"
@@ -4626,8 +4626,8 @@
       }
     },
     "frameworks": {
-      "netcoreapp3.1": {
-        "targetAlias": "netcoreapp3.1",
+      "net5.0": {
+        "targetAlias": "netcoreapp5.0",
         "dependencies": {
           "MlkPwgen": {
             "target": "Package",

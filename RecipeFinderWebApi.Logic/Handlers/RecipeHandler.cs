@@ -15,13 +15,17 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         private IRequirementsListRepo _requirementsList_repo;
 
-        public RecipeHandler(IRecipeRepo repo, IRecipeCategoryRelationRepo category_relation_repo, IRequirementsListRepo requirementsList_repo)
+        private PreparableRecipesAlgorithm _algorithm;
+
+        public RecipeHandler(IRecipeRepo repo, IRecipeCategoryRelationRepo category_relation_repo, IRequirementsListRepo requirementsList_repo, PreparableRecipesAlgorithm algorithm)
         {
             _repo = repo;
 
             _category_relation_repo = category_relation_repo;
 
             _requirementsList_repo = requirementsList_repo;
+
+            _algorithm = algorithm;
         }
 
         public IEnumerable<RecipeWithRequirements> GetAll()
@@ -47,6 +51,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
             }
 
             return recipesWithRequirements;
+        }
+
+        public IEnumerable<RecipeWithRequirements> GetPreparableForUser(string userId)
+        {
+            return _algorithm.GetPreparableForUser(userId);
         }
 
         public object GetAllByCook(string userId)

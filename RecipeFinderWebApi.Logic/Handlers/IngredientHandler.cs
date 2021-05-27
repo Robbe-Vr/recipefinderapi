@@ -14,17 +14,26 @@ namespace RecipeFinderWebApi.Logic.Handlers
         private IIngredientCategoryRelationRepo _category_relation_repo;
         private IIngredientUnitTypeRelationRepo _unitType_relation_repo;
 
-        public IngredientHandler(IIngredientRepo repo, IIngredientCategoryRelationRepo category_relation_repo, IIngredientUnitTypeRelationRepo unitType_relation_repo)
+        private WhatToBuyAlgorithm _algorithm;
+
+        public IngredientHandler(IIngredientRepo repo, IIngredientCategoryRelationRepo category_relation_repo, IIngredientUnitTypeRelationRepo unitType_relation_repo, WhatToBuyAlgorithm algorithm)
         {
             _repo = repo;
 
             _category_relation_repo = category_relation_repo;
             _unitType_relation_repo = unitType_relation_repo;
+
+            _algorithm = algorithm;
         }
 
         public IEnumerable<Ingredient> GetAll()
         {
             return _repo.GetAll();
+        }
+
+        public IEnumerable<RequirementsListIngredient> GetWhatToBuyForUser(string userId)
+        {
+            return _algorithm.GetWhatToBuyForUser(userId);
         }
 
         public Ingredient GetById(string id)

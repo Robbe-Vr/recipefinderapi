@@ -87,6 +87,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.Deleted = ingredient.Deleted;
                     old.AverageVolumeInLiterPerUnit = ingredient.AverageVolumeInLiterPerUnit;
                     old.AverageWeightInKgPerUnit = ingredient.AverageWeightInKgPerUnit;
+
+                    context.Ingredients.Update(old);
                 }
                 else context.Ingredients.Update(ingredient);
             }

@@ -24,15 +24,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.1"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
+          "net5.0": {
+            "targetAlias": "netcoreapp5.0",
             "projectReferences": {
               "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
                 "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj"
@@ -47,8 +47,8 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "netcoreapp5.0",
           "dependencies": {
             "Microsoft.AspNetCore.Mvc.Core": {
               "target": "Package",
@@ -56,35 +56,35 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.Abstractions": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.Relational": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[5.0.6, )"
             },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
@@ -134,15 +134,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.1"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
+          "net5.0": {
+            "targetAlias": "netcoreapp5.0",
             "projectReferences": {}
           }
         },
@@ -153,8 +153,8 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "netcoreapp5.0",
           "imports": [
             "net461",
             "net462",
@@ -194,15 +194,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.1"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
+          "net5.0": {
+            "targetAlias": "netcoreapp5.0",
             "projectReferences": {
               "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj": {
                 "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.Exchange\\RecipeFinderWebApi.Exchange.csproj"
@@ -217,8 +217,8 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "netcoreapp5.0",
           "dependencies": {
             "MlkPwgen": {
               "target": "Package",
@@ -264,15 +264,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.1"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
+          "net5.0": {
+            "targetAlias": "netcoreapp5.0",
             "projectReferences": {
               "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.DAL\\RecipeFinderWebApi.DAL.csproj": {
                 "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.DAL\\RecipeFinderWebApi.DAL.csproj"
@@ -293,8 +293,8 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
+        "net5.0": {
+          "targetAlias": "netcoreapp5.0",
           "dependencies": {
             "MSTest.TestAdapter": {
               "target": "Package",

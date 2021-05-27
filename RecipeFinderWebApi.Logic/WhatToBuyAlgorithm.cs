@@ -1,5 +1,6 @@
 ﻿using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.Exchange.Interfaces.Repos;
+using RecipeFinderWebApi.Logic.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,43 +10,110 @@ namespace RecipeFinderWebApi.Logic
 {
     public class WhatToBuyAlgorithm
     {
-        private IKitchenRepo _kitchenRepo;
-        private IIngredientRepo _ingredientRepo;
-        private IRecipeRepo _recipeRepo;
-        private IRequirementsListRepo _requirementsListRepo;
+        private RecipeHandler _recipeHandler;
+        private KitchenHandler _kitchenHandler;
 
-        public WhatToBuyAlgorithm(IKitchenRepo kitchenRepo, IIngredientRepo ingredientRepo, IRecipeRepo recipeRepo, IRequirementsListRepo requirementsListRepo)
+        private AlgorithmHelper _helper;
+
+        public WhatToBuyAlgorithm(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler)
         {
-            _kitchenRepo = kitchenRepo;
-            _ingredientRepo = ingredientRepo;
-            _recipeRepo = recipeRepo;
-            _requirementsListRepo = requirementsListRepo;
+            _recipeHandler = recipeHandler;
+            _kitchenHandler = kitchenHandler;
+            _helper = new AlgorithmHelper(unitTypeHandler);
         }
 
-        public IEnumerable<KitchenIngredient> Calculate(WhatToBuyFilterObject filters)
+        public IEnumerable<RecipeWithRequirements> GetWhatToBuyForUser(string userId)
         {
-            var currentKitchen = _kitchenRepo.GetByUserId(filters.UserId);
+            Kitchen userKitchen = _kitchenHandler.GetByUserId(userId);
 
-            var toBuyIngredients = GetIngredients(currentKitchen.Ingredients, filters);
+            var preparableRecipes = FindMatchingRecipes(userKitchen.Ingredients);
 
-            return toBuyIngredients;
+            return preparableRecipes;
         }
 
-        private IEnumerable<KitchenIngredient> GetIngredients(IEnumerable<KitchenIngredient> currentIngredients, WhatToBuyFilterObject filters)
+        private IEnumerable<RecipeWithRequirements> FindMatchingRecipes(IEnumerable<KitchenIngredient> kitchenIngredients)
         {
-            return new List<KitchenIngredient>(filters.MaxResultCount).Where(x => ValidateIngredientForFilters(x, filters));
-        }
+            List<RecipeWithRequirements> unmatchingRecipes = new List<RecipeWithRequirements>();
 
-        private bool ValidateIngredientForFilters(KitchenIngredient ingredient, WhatToBuyFilterObject filters)
-        {
-            foreach (IngredientCategory category in ingredient.Ingredient.Categories)
+            IEnumerable<RecipeWithRequirements> allRecipes = _recipeHandler.GetAll();
+
+            foreach (KitchenIngredient ingredient in kitchenIngredients)
             {
-                filters.DisallowedIngredientCategories.Contains(category);
+                List<RecipeWithRequirements> recipesWithIngredients = allRecipes.Where(r => r.RequirementsList.Ingredients.Any(x => x.IngredientId == ingredient.IngredientId)).ToList();
 
-                return false;
+                foreach (RecipeWithRequirements recipe in recipesWithIngredients)
+                {
+                    RequirementsListIngredient required = recipe.RequirementsList.Ingredients.First(x => x.IngredientId == ingredient.IngredientId);
+
+                    KitchenIngredient present = ingredient;
+
+                    double missingAmount = CalculateMissingAmount(present, required);
+
+                    if (missingAmount > 0)
+                    {
+                        RecipeWithRequirements unmatchingRecipe = unmatchingRecipes.FirstOrDefault(r => r.CountId == recipe.CountId);
+
+                        if (unmatchingRecipe != null)
+                        {
+                            unmatchingRecipe.RequirementsList.Ingredients.Add(
+                                new RequirementsListIngredient()
+                                {
+                                    CountId = required.CountId,
+                                    IngredientId = required.IngredientId,
+                                    Ingredient = required.Ingredient,
+                                    UnitTypeId = _helper.LastUsed.CountId,
+                                    UnitType = _helper.LastUsed,
+                                    RecipeId = recipe.Id,
+                                    Recipe = recipe,
+                                    Units = missingAmount,
+                                    Deleted = required.Deleted,
+                                }
+                            );
+                        }
+                        else
+                        {
+                            unmatchingRecipes.Add(
+                                new RecipeWithRequirements(recipe)
+                                {
+                                    RequirementsList = new RequirementsList()
+                                    {
+                                        RecipeId = recipe.Id,
+                                        Recipe = recipe,
+                                        Ingredients = new List<RequirementsListIngredient>()
+                                        {
+                                            new RequirementsListIngredient()
+                                            {
+                                                CountId = required.CountId,
+                                                IngredientId = required.IngredientId,
+                                                Ingredient = required.Ingredient,
+                                                UnitTypeId = _helper.LastUsed.CountId,
+                                                UnitType = _helper.LastUsed,
+                                                RecipeId = recipe.Id,
+                                                Recipe = recipe,
+                                                Units = missingAmount,
+                                                Deleted = required.Deleted,
+                                            },
+                                        }
+                                    },
+                                }
+                            );
+
+                        }
+                    }
+                }
             }
 
-            return true;
+            return unmatchingRecipes.OrderBy(r => unmatchingRecipes.Count(x => x.CountId == r.CountId) != r.RequirementsList.Ingredients.Sum(x => x.Units));
+        }
+
+        private double CalculateMissingAmount(KitchenIngredient present, RequirementsListIngredient required)
+        {
+            double[] evenedOutAmounts = _helper.EvenOutUnits(present, required);
+
+            double presentEqualAmount = evenedOutAmounts[0];
+            double requiredEqualAmount = evenedOutAmounts[1];
+
+            return requiredEqualAmount - presentEqualAmount;
         }
     }
 }
