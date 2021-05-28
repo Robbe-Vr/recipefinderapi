@@ -63,7 +63,6 @@ namespace RecipeFinderWebApi.UnitTests
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
                 Roles = new List<Role>() { roleHandler.GetByName(role.Name) },
-                Kitchen = null,
                 Deleted = false,
             };
             userHandler.Create(user);

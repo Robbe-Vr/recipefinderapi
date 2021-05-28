@@ -40,9 +40,19 @@ namespace RecipeFinderWebApi.UnitTests
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
-            handler = new RecipeHandler(new RecipeRepo(context), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context));
+            User user = new User()
+            {
+                CountId = 1,
+                Id = "8fs9d8fds-A908fsd9sfd80a-f7s8dr23",
+                Name = "Recipe Finder admin",
+                Email = "admin@recipefinder.com",
+            };
+
+            handler = new RecipeHandler(new RecipeRepo(context, user), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context),
+                new Logic.PreparableRecipesAlgorithm(null, null, null));
             categoryHandler = new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context));
-            ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context));
+            ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
+                null);
             unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
 
             var recipes = handler.GetAll();
@@ -78,7 +88,7 @@ namespace RecipeFinderWebApi.UnitTests
                 PreparationSteps = "",
                 Description = "",
                 VideoTutorialLink = "",
-                User = null,
+                User = user,
                 RequirementsList = new RequirementsList()
                     { Ingredients = new List<RequirementsListIngredient>()
                         { new RequirementsListIngredient() { Ingredient = ingredient1, IngredientId = ingredient1.Id, Units = 5, UnitType = unitType1, UnitTypeId = unitType1.CountId } } },

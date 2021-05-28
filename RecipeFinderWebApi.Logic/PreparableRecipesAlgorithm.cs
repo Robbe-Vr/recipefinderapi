@@ -21,6 +21,11 @@ namespace RecipeFinderWebApi.Logic
             _helper = new AlgorithmHelper(unitTypeHandler);
         }
 
+        public void setRecipeHandler(RecipeHandler recipeHandler)
+        {
+            _recipeHandler = recipeHandler;
+        }
+
         public IEnumerable<RecipeWithRequirements> GetPreparableForUser(string userId)
         {
             Kitchen userKitchen = _kitchenHandler.GetByUserId(userId);

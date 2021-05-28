@@ -31,37 +31,7 @@ namespace RecipeFinderWebApi.Logic
             }
             else
             {
-                if (present.Ingredient.UnitTypes.Any(x => x.CountId == _unitTypeHandler.GetByName("Units").CountId))
-                {
-                    if (present.UnitTypeId == _unitTypeHandler.GetByName("Kg").CountId)
-                    {
-                        presentEqualAmount = present.Units / present.Ingredient.AverageWeightInKgPerUnit;
-                    }
-                    else if (present.UnitTypeId == _unitTypeHandler.GetByName("L").CountId)
-                    {
-                        presentEqualAmount = present.Units / present.Ingredient.AverageVolumeInLiterPerUnit;
-                    }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
-                    {
-                        presentEqualAmount = present.Units;
-                    }
-
-                    if (required.UnitTypeId == _unitTypeHandler.GetByName("Kg").CountId)
-                    {
-                        requiredEqualAmount = required.Units / required.Ingredient.AverageWeightInKgPerUnit;
-                    }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("L").CountId)
-                    {
-                        requiredEqualAmount = required.Units / required.Ingredient.AverageVolumeInLiterPerUnit;
-                    }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
-                    {
-                        requiredEqualAmount = required.Units;
-                    }
-
-                    LastUsed = _unitTypeHandler.GetByName("Units");
-                }
-                else if (present.Ingredient.UnitTypes.Any(x => x.CountId == _unitTypeHandler.GetByName("Kg").CountId))
+                if (present.Ingredient.UnitTypes.Any(x => x.CountId == _unitTypeHandler.GetByName("Kg").CountId))
                 {
                     if (present.UnitTypeId == _unitTypeHandler.GetByName("Kg").CountId)
                     {
@@ -120,6 +90,36 @@ namespace RecipeFinderWebApi.Logic
                     }
 
                     LastUsed = _unitTypeHandler.GetByName("L");
+                }
+                else if (present.Ingredient.UnitTypes.Any(x => x.CountId == _unitTypeHandler.GetByName("Units").CountId))
+                {
+                    if (present.UnitTypeId == _unitTypeHandler.GetByName("Kg").CountId)
+                    {
+                        presentEqualAmount = present.Units / present.Ingredient.AverageWeightInKgPerUnit;
+                    }
+                    else if (present.UnitTypeId == _unitTypeHandler.GetByName("L").CountId)
+                    {
+                        presentEqualAmount = present.Units / present.Ingredient.AverageVolumeInLiterPerUnit;
+                    }
+                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
+                    {
+                        presentEqualAmount = present.Units;
+                    }
+
+                    if (required.UnitTypeId == _unitTypeHandler.GetByName("Kg").CountId)
+                    {
+                        requiredEqualAmount = required.Units / required.Ingredient.AverageWeightInKgPerUnit;
+                    }
+                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("L").CountId)
+                    {
+                        requiredEqualAmount = required.Units / required.Ingredient.AverageVolumeInLiterPerUnit;
+                    }
+                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
+                    {
+                        requiredEqualAmount = required.Units;
+                    }
+
+                    LastUsed = _unitTypeHandler.GetByName("Units");
                 }
             }
 

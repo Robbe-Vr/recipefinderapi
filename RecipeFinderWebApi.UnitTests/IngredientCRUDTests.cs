@@ -37,7 +37,8 @@ namespace RecipeFinderWebApi.UnitTests
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
-            handler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context));
+            handler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
+                null);
             categoryHandler = new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context));
             unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
 

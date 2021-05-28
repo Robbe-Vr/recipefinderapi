@@ -22,16 +22,30 @@ namespace RecipeFinderWebApi.Logic
             _helper = new AlgorithmHelper(unitTypeHandler);
         }
 
-        public IEnumerable<RecipeWithRequirements> GetWhatToBuyForUser(string userId)
+        public void setRecipeHandler(RecipeHandler recipeHandler)
+        {
+            _recipeHandler = recipeHandler;
+        }
+
+        public IEnumerable<RecipeWithRequirements> GetWhatToBuyInRecipesForUser(string userId)
         {
             Kitchen userKitchen = _kitchenHandler.GetByUserId(userId);
 
-            var preparableRecipes = FindMatchingRecipes(userKitchen.Ingredients);
+            var whatToBuyRecipes = FindWhatToBuy<RecipeWithRequirements>(userKitchen.Ingredients);
 
-            return preparableRecipes;
+            return whatToBuyRecipes;
         }
 
-        private IEnumerable<RecipeWithRequirements> FindMatchingRecipes(IEnumerable<KitchenIngredient> kitchenIngredients)
+        public IEnumerable<RequirementsListIngredient> GetWhatToBuyInIngredientsForUser(string userId)
+        {
+            Kitchen userKitchen = _kitchenHandler.GetByUserId(userId);
+
+            var whatToBuyIngredients = FindWhatToBuy<RequirementsListIngredient>(userKitchen.Ingredients);
+
+            return whatToBuyIngredients;
+        }
+
+        private IEnumerable<T> FindWhatToBuy<T>(IEnumerable<KitchenIngredient> kitchenIngredients) where T : class
         {
             List<RecipeWithRequirements> unmatchingRecipes = new List<RecipeWithRequirements>();
 
@@ -103,7 +117,11 @@ namespace RecipeFinderWebApi.Logic
                 }
             }
 
-            return unmatchingRecipes.OrderBy(r => unmatchingRecipes.Count(x => x.CountId == r.CountId) != r.RequirementsList.Ingredients.Sum(x => x.Units));
+
+            return typeof(T) == typeof(RecipeWithRequirements) ?
+                unmatchingRecipes.OrderBy(r => r.RequirementsList.Ingredients.Sum(x => x.Units)).Cast<T>()
+                :
+                unmatchingRecipes.SelectMany(r => r.RequirementsList.Ingredients).OrderBy(r => r.Units).Cast<T>();
         }
 
         private double CalculateMissingAmount(KitchenIngredient present, RequirementsListIngredient required)

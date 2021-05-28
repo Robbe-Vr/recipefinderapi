@@ -12,6 +12,8 @@ namespace RecipeFinderWebApi.Exchange.DTOs
 
         public RecipeWithRequirements(Recipe recipe)
         {
+            if (recipe == null) return;
+
             CountId = recipe.CountId;
             Id = recipe.Id;
             Name = recipe.Name;

@@ -25,6 +25,8 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
             _requirementsList_repo = requirementsList_repo;
 
+            algorithm.setRecipeHandler(this);
+
             _algorithm = algorithm;
         }
 
@@ -87,6 +89,8 @@ namespace RecipeFinderWebApi.Logic.Handlers
         {
             RecipeWithRequirements recipe = new RecipeWithRequirements(_repo.GetById(id));
 
+            if (recipe.CountId == 0) recipe = null;
+
             if (recipe != null)
             {
                 List<RequirementsListIngredient> ingredients = _requirementsList_repo.GetByRecipeId(recipe.Id).ToList();
@@ -104,7 +108,9 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public RecipeWithRequirements GetByName(string name)
         {
-            RecipeWithRequirements recipe = (RecipeWithRequirements)_repo.GetByName(name);
+            RecipeWithRequirements recipe = new RecipeWithRequirements(_repo.GetByName(name));
+
+            if (recipe.CountId == 0) recipe = null;
 
             if (recipe != null)
             {

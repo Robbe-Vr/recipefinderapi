@@ -31,9 +31,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetAll();
         }
 
-        public IEnumerable<RequirementsListIngredient> GetWhatToBuyForUser(string userId)
+        public IEnumerable<RecipeWithRequirements> GetWhatToBuyInRecipesForUser(string userId)
         {
-            return _algorithm.GetWhatToBuyForUser(userId);
+            return _algorithm.GetWhatToBuyInRecipesForUser(userId);
+        }
+
+        public IEnumerable<RequirementsListIngredient> GetWhatToBuyInIngredientsForUser(string userId)
+        {
+            return _algorithm.GetWhatToBuyInIngredientsForUser(userId);
         }
 
         public Ingredient GetById(string id)
@@ -115,10 +120,10 @@ namespace RecipeFinderWebApi.Logic.Handlers
             ingredient.CountId = currentState.CountId;
 
             List<IngredientCategory> Categories = new List<IngredientCategory>();
-            Categories.AddRange(currentState.Categories);
+            Categories.AddRange(ingredient.Categories);
 
             List<UnitType> UnitTypes = new List<UnitType>();
-            UnitTypes.AddRange(currentState.UnitTypes);
+            UnitTypes.AddRange(ingredient.UnitTypes);
 
             changes += _repo.Update(ingredient);
 

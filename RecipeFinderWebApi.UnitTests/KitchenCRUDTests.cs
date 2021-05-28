@@ -41,7 +41,8 @@ namespace RecipeFinderWebApi.UnitTests
 
             handler = new KitchenHandler(new KitchenRepo(context));
             userHandler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
-            ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context));
+            ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
+                null);
             unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
             RoleHandler roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
@@ -72,7 +73,6 @@ namespace RecipeFinderWebApi.UnitTests
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
                 Roles = new List<Role>() { roleHandler.GetByName(role.Name) },
-                Kitchen = null,
                 Deleted = false,
             };
             userHandler.Create(user);

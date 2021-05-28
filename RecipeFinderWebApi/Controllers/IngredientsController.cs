@@ -35,6 +35,30 @@ namespace RecipeFinderWebApi.UI.Controllers
             );
         }
 
+        // GET: api/<IngredientsController>/whattobuyingredients/5
+        [HttpGet("whattobuyingredients/{userId}")]
+        public IActionResult GetWhatToBuyIngredients(string userId)
+        {
+            return ResponseFilter.FilterDataResponse(
+                handler.GetWhatToBuyInIngredientsForUser(userId),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
+        }
+
+        // GET: api/<IngredientsController>/whattobuyrecipes/5
+        [HttpGet("whattobuyrecipes/{userId}")]
+        public IActionResult GetWhatToBuyRecipes(string userId)
+        {
+            return ResponseFilter.FilterDataResponse(
+                handler.GetWhatToBuyInRecipesForUser(userId),
+                (int code, object obj) => {
+                    return StatusCode(code, obj);
+                }
+            );
+        }
+
         // GET api/<IngredientsController>/5
         [HttpGet("{id}")]
         public IActionResult Get(string id)
