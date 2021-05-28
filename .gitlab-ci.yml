@@ -1,5 +1,5 @@
 
-image: microsoft/dotnet:latest
+image: mcr.microsoft.com/dotnet/sdk:5.0
 
 stages:
     - build
@@ -9,7 +9,6 @@ variables:
     test: "RecipeFinderWebApi.UnitTests"
 
 before_script:
-    - "cd src"
     - "dotnet restore"
 
 build:
