@@ -9,7 +9,6 @@ variables:
     test: "RecipeFinderWebApi.UnitTests"
 
 before_script:
-    - "cd src"
     - "dotnet restore"
 
 build:
