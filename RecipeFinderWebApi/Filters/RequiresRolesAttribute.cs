@@ -75,10 +75,10 @@ namespace RecipeFinderWebApi.UI.Filters
 
         private bool UserIsAuthorized(Role[] roles)
         {
-            return matchAll ? UserHasRequiredRoles(roles) : UserHasRequiredRole(roles);
+            return matchAll ? UserHasAllRequiredRoles(roles) : UserHasOneOfRequiredRoles(roles);
         }
 
-        private bool UserHasRequiredRoles(Role[] roles)
+        private bool UserHasAllRequiredRoles(Role[] roles)
         {
             foreach (int roleId in requiredRoles)
             {
@@ -91,7 +91,7 @@ namespace RecipeFinderWebApi.UI.Filters
             return true;
         }
 
-        private bool UserHasRequiredRole(Role[] roles)
+        private bool UserHasOneOfRequiredRoles(Role[] roles)
         {
             foreach (int roleId in requiredRoles)
             {
