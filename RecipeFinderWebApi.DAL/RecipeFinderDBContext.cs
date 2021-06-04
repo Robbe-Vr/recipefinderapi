@@ -243,6 +243,10 @@ namespace RecipeFinderWebApi.DAL
                 .Property(g => g.CountId).HasColumnName("Count_id");
             builder.Entity<GroceryList>()
                 .Property(g => g.UserId).HasColumnName("User_id");
+            builder.Entity<GroceryList>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId).HasPrincipalKey(x => x.Id);
 
             builder.Entity<UserAction>()
                 .HasKey(a => a.CountId);

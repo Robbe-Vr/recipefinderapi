@@ -67,7 +67,7 @@ namespace RecipeFinderWebApi.UI.Filters
 
             if (!UserIsAuthorized(user.Roles.ToArray()))
             {
-                context.Result = new ObjectResult("The user associated with this access_token is not authorized for this endpoint!!") { StatusCode = 401 };
+                context.Result = new ObjectResult("The user associated with this access_token is not authorized for this endpoint!") { StatusCode = 401 };
                 return;
             }
 
