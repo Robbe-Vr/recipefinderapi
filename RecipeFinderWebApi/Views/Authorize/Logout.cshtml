@@ -1,0 +1,13 @@
+﻿@model LogoutModel
+
+@{
+    ViewData["Title"] = "Logout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <form asp-action="Logout">
+        Logout here <button type="submit">Logout</button>
+    </form>
+</div>
