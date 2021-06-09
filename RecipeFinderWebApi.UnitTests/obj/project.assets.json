@@ -9108,7 +9108,7 @@
       },
       "frameworks": {
         "net5.0": {
-          "targetAlias": "netcoreapp5.0",
+          "targetAlias": "net5.0",
           "projectReferences": {
             "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.DAL\\RecipeFinderWebApi.DAL.csproj": {
               "projectPath": "C:\\Users\\Robbe\\source\\repos\\RecipeFinderWebApi\\RecipeFinderWebApi.DAL\\RecipeFinderWebApi.DAL.csproj"
@@ -9130,7 +9130,7 @@
     },
     "frameworks": {
       "net5.0": {
-        "targetAlias": "netcoreapp5.0",
+        "targetAlias": "net5.0",
         "dependencies": {
           "MSTest.TestAdapter": {
             "target": "Package",
