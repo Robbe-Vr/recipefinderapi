@@ -53,7 +53,9 @@ namespace RecipeFinderWebApi.UI
                 options.AddPolicy(name: RFCorsPolicy,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000", "https://recipefinder.sywapps.com")
+                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000",
+                                            "http://localhost:3001", "https://localhost:3001", "http://192.168.2.29:3001", "https://192.168.2.29:3001",
+                                            "https://recipefinder.sywapps.com")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
                     });
