@@ -1,4 +1,5 @@
-﻿using RecipeFinderWebApi.Exchange.Interfaces.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeFinderWebApi.Exchange.Interfaces.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,14 +7,20 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public abstract class AbstractRepo<TEntity> where TEntity : class, ICountIdentifiedEntity
+    public abstract class AbstractBaseRepo<TEntity> where TEntity : class, ICountIdentifiedEntity
     {
         public RecipeFinderDbContext context;
+        public DbSet<TEntity> db;
 
-        public AbstractRepo(RecipeFinderDbContext dbContext)
+        public AbstractBaseRepo(RecipeFinderDbContext dbContext, string table)
         {
             context = dbContext;
+            db = context.GetTable<TEntity>(table);
         }
+
+        public abstract IEnumerable<TEntity> GetAll();
+        public abstract TEntity GetById(int id);
+        
 
         public bool KeyIsAttached(TEntity entity)
         {

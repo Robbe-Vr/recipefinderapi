@@ -8,22 +8,22 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UserActionRepo : AbstractRepo<UserAction>, IUserActionRepo
+    public class UserActionRepo : AbstractBaseEntityRepo<UserAction>, IUserActionRepo
     {
-        public UserActionRepo(RecipeFinderDbContext context) : base(context)
+        public UserActionRepo(RecipeFinderDbContext context) : base(context, nameof(RecipeFinderDbContext.UserActions))
         {
         }
 
-        public IEnumerable<UserAction> GetAll()
+        public override IEnumerable<UserAction> GetAll()
         {
-            return context.UserActions
+            return db
                 .Include(x => x.User)
                 .AsNoTracking();
         }
 
-        public UserAction GetById(int id)
+        public override UserAction GetById(int id)
         {
-            return context.UserActions
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.CountId == id);
@@ -31,22 +31,22 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<UserAction> GetAllByUser(int userId)
         {
-            return context.UserActions
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .Where(x => x.UserId == userId);
         }
 
-        public int Create(UserAction action)
+        public override int Create(UserAction action)
         {
             action.User = null;
 
-            context.UserActions.Add(action);
+            db.Add(action);
 
             return context.SaveChanges();
         }
 
-        public int Update(UserAction action)
+        public override int Update(UserAction action)
         {
             action.User = null;
 
@@ -66,13 +66,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.UserId = action.UserId;
                     old.Description = action.Description;
                 }
-                else context.UserActions.Update(action);
+                else db.Update(action);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(UserAction action)
+        public override int Delete(UserAction action)
         {
             if (!Exists(action))
             {

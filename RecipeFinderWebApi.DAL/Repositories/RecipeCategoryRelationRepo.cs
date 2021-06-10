@@ -8,24 +8,24 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RecipeCategoryRelationRepo : AbstractRepo<RecipeCategoryRelation>, IRecipeCategoryRelationRepo
+    public class RecipeCategoryRelationRepo : AbstractBaseRelationRepo<RecipeCategoryRelation, Recipe, RecipeCategory>, IRecipeCategoryRelationRepo
     {
-        public RecipeCategoryRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public RecipeCategoryRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.CategoriesRecipe))
         {
         }
 
-        public IEnumerable<RecipeCategoryRelation> GetAll()
+        public override IEnumerable<RecipeCategoryRelation> GetAll()
         {
-            return context.CategoriesRecipe
+            return db
                 .Include(x => x.Recipe)
                 .Include(x => x.Category)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public RecipeCategoryRelation GetById(int id)
+        public override RecipeCategoryRelation GetById(int id)
         {
-            return context.CategoriesRecipe
+            return db
                 .Include(x => x.Recipe)
                 .Include(x => x.Category)
                 .AsNoTracking()
@@ -34,14 +34,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public RecipeCategoryRelation GetByRecipeIdAndCategoryId(string recipeId, int categoryId)
         {
-            return context.CategoriesRecipe
+            return db
                 .Include(x => x.Recipe)
                 .Include(x => x.Category)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.RecipeId == recipeId && x.CategoryId == categoryId);
         }
 
-        public int CreateRelation(Recipe recipe, RecipeCategory category)
+        public override int CreateRelation(RecipeCategoryRelation relation)
+        {
+            db.Add(relation);
+
+            return context.SaveChanges();
+        }
+
+        public override int CreateRelation(Recipe recipe, RecipeCategory category)
         {
             var relation = new RecipeCategoryRelation()
             {
@@ -52,13 +59,43 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 Deleted = false,
             };
 
-            context.CategoriesRecipe
-                .Add(relation);
+            db.Add(relation);
 
             return context.SaveChanges();
         }
 
-        public int DeleteRelation(RecipeCategoryRelation relation)
+        public override int DeleteRelation(Recipe recipe, RecipeCategory category)
+        {
+            var relation = new RecipeCategoryRelation()
+            {
+                RecipeId = recipe.Id,
+                //Recipe = recipe,
+                CategoryId = category.CountId,
+                //Category = category,
+                Deleted = false,
+            };
+
+            if (!Exists(relation))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(relation))
+            {
+                if (KeyIsAttached(relation))
+                {
+                    relation = GetAttachedEntityByEntity(relation);
+                }
+            }
+
+            relation.Recipe = null;
+            relation.Category = null;
+
+            context.Entry(relation).State = EntityState.Deleted;
+
+            return context.SaveChanges();
+        }
+
+        public override int DeleteRelation(RecipeCategoryRelation relation)
         {
             if (!Exists(relation))
             {

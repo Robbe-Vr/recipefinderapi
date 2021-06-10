@@ -8,15 +8,15 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class KitchenRepo : AbstractRepo<KitchenIngredient>, IKitchenRepo
+    public class KitchenRepo : AbstractBaseEntityRepo<KitchenIngredient>, IKitchenRepo
     {
-        public KitchenRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public KitchenRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.Kitchens))
         {
         }
 
-        public IEnumerable<KitchenIngredient> GetAll()
+        public override IEnumerable<KitchenIngredient> GetAll()
         {
-            return context.Kitchens
+            return db
                 .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                 .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                 .Include(k => k.UnitType)
@@ -25,9 +25,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Where(k => !k.Deleted);
         }
 
-        public KitchenIngredient GetById(int id)
+        public override KitchenIngredient GetById(int id)
         {
-            return context.Kitchens
+            return db
                 .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                 .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                 .Include(k => k.UnitType)
@@ -38,7 +38,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public Kitchen GetByUserId(string id)
         {
-            var ingredients = context.Kitchens
+            var ingredients = db
                 .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                 .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                 .Include(k => k.UnitType)
@@ -58,7 +58,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public Kitchen GetByUserName(string name)
         {
-            var ingredients = context.Kitchens
+            var ingredients = db
                  .Include(k => k.Ingredient).ThenInclude(i => i.Categories)
                  .Include(k => k.Ingredient).ThenInclude(i => i.UnitTypes)
                  .Include(k => k.UnitType)
@@ -76,18 +76,18 @@ namespace RecipeFinderWebApi.DAL.Repositories
             };
         }
 
-        public int Create(KitchenIngredient ingredient)
+        public override int Create(KitchenIngredient ingredient)
         {
             ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
 
-            context.Kitchens.Add(ingredient);
+            db.Add(ingredient);
 
             return context.SaveChanges();
         }
 
-        public int Update(KitchenIngredient ingredient)
+        public override int Update(KitchenIngredient ingredient)
         {
             ingredient.User = null;
             ingredient.Ingredient = null;
@@ -105,13 +105,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.Units = ingredient.Units;
                     old.UnitTypeId = ingredient.UnitTypeId;
                 }
-                else context.Kitchens.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(KitchenIngredient ingredient)
+        public override int Delete(KitchenIngredient ingredient)
         {
             ingredient.User = null;
             ingredient.Ingredient = null;
@@ -127,7 +127,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 {
                     ingredient = GetAttachedEntityByEntity(ingredient);
                 }
-                else context.Kitchens.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             ingredient.Deleted = true;

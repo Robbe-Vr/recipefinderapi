@@ -8,18 +8,18 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RecipeRepo : AbstractRepo<Recipe>, IRecipeRepo
+    public class RecipeRepo : AbstractBaseEntityRepo<Recipe>, IRecipeRepo
     {
         private User currentUser;
 
-        public RecipeRepo(RecipeFinderDbContext dbContext, User currentUser) : base(dbContext)
+        public RecipeRepo(RecipeFinderDbContext dbContext, User currentUser) : base(dbContext, nameof(RecipeFinderDbContext.Recipes))
         {
             this.currentUser = currentUser;
         }
 
-        public IEnumerable<Recipe> GetAll()
+        public override IEnumerable<Recipe> GetAll()
         {
-            return context.Recipes
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
@@ -28,16 +28,25 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<Recipe> GetAllByCook(string userId)
         {
-            return context.Recipes
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
                 .Where(x => x.UserId == userId && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
+        public override Recipe GetById(int id)
+        {
+            return db
+                .Include(x => x.Categories)
+                .Include(x => x.User)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
+        }
+
         public Recipe GetById(string id)
         {
-            return context.Recipes
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
@@ -46,26 +55,26 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public Recipe GetByName(string name)
         {
-            return context.Recipes
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
-        public int Create(Recipe recipe)
+        public override int Create(Recipe recipe)
         {
             recipe.User = null;
             recipe.Categories = null;
 
             recipe.Id = Guid.NewGuid().ToString();
 
-            context.Recipes.Add(recipe);
+            db.Add(recipe);
 
             return context.SaveChanges();
         }
 
-        public int Update(Recipe recipe)
+        public override int Update(Recipe recipe)
         {
             recipe.User = null;
             recipe.Categories = null;
@@ -85,13 +94,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.VideoTutorialLink = recipe.VideoTutorialLink;
                     old.Description = recipe.Description;
                 }
-                else context.Recipes.Update(recipe);
+                else db.Update(recipe);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(Recipe recipe)
+        public override int Delete(Recipe recipe)
         {
             recipe.User = null;
             recipe.Categories = null;

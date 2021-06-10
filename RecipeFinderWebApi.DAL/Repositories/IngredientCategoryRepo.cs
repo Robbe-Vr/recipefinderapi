@@ -8,23 +8,23 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class IngredientCategoryRepo : AbstractRepo<IngredientCategory>, IIngredientCategoryRepo
+    public class IngredientCategoryRepo : AbstractBaseEntityRepo<IngredientCategory>, IIngredientCategoryRepo
     {
-        public IngredientCategoryRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public IngredientCategoryRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.IngredientCategories))
         {
         }
 
-        public IEnumerable<IngredientCategory> GetAll()
+        public override IEnumerable<IngredientCategory> GetAll()
         {
-            return context.IngredientCategories
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public IngredientCategory GetById(int id)
+        public override IngredientCategory GetById(int id)
         {
-            return context.IngredientCategories
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.CountId == id && !x.Deleted);
@@ -32,22 +32,22 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IngredientCategory GetByName(string name)
         {
-            return context.IngredientCategories
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(IngredientCategory category)
+        public override int Create(IngredientCategory category)
         {
             category.Ingredients = null;
 
-            context.IngredientCategories.Add(category);
+            db.Add(category);
 
             return context.SaveChanges();
         }
 
-        public int Update(IngredientCategory category)
+        public override int Update(IngredientCategory category)
         {
             category.Ingredients = null;
 
@@ -62,13 +62,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     IngredientCategory old = GetAttachedEntityByEntity(category);
                     old.Name = category.Name;
                 }
-                else context.IngredientCategories.Update(category);
+                else db.Update(category);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(IngredientCategory category)
+        public override int Delete(IngredientCategory category)
         {
             category.Ingredients = null;
 

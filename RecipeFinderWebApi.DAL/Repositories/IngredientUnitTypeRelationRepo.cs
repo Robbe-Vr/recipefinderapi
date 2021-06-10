@@ -8,24 +8,24 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class IngredientUnitTypeRelationRepo : AbstractRepo<IngredientUnitTypeRelation>, IIngredientUnitTypeRelationRepo
+    public class IngredientUnitTypeRelationRepo : AbstractBaseRelationRepo<IngredientUnitTypeRelation, Ingredient, UnitType>, IIngredientUnitTypeRelationRepo
     {
-        public IngredientUnitTypeRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public IngredientUnitTypeRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.UnitTypesIngredient))
         {
         }
 
-        public IEnumerable<IngredientUnitTypeRelation> GetAll()
+        public override IEnumerable<IngredientUnitTypeRelation> GetAll()
         {
-            return context.UnitTypesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.UnitType)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public IngredientUnitTypeRelation GetById(int id)
+        public override IngredientUnitTypeRelation GetById(int id)
         {
-            return context.UnitTypesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.UnitType)
                 .AsNoTracking()
@@ -34,14 +34,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IngredientUnitTypeRelation GetByIngredientIdAndUnitTypeId(string ingredientId, int unitTypeId)
         {
-            return context.UnitTypesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.UnitType)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.IngredientId == ingredientId && x.UnitTypeId == unitTypeId);
         }
 
-        public int CreateRelation(Ingredient ingredient, UnitType unitType)
+        public override int CreateRelation(IngredientUnitTypeRelation relation)
+        {
+            db.Add(relation);
+
+            return context.SaveChanges();
+        }
+
+        public override int CreateRelation(Ingredient ingredient, UnitType unitType)
         {
             var relation = new IngredientUnitTypeRelation()
             {
@@ -52,14 +59,45 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 Deleted = false,
             };
 
-            context.UnitTypesIngredient
-                .Add(relation);
+            db.Add(relation);
 
             return context.SaveChanges();
         }
 
-        public int DeleteRelation(IngredientUnitTypeRelation relation)
+        public override int DeleteRelation(IngredientUnitTypeRelation relation)
         {
+            if (!Exists(relation))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(relation))
+            {
+                if (KeyIsAttached(relation))
+                {
+                    relation = GetAttachedEntityByEntity(relation);
+                }
+            }
+
+            relation.Ingredient = null;
+            relation.UnitType = null;
+
+            context.Entry(relation).State = EntityState.Deleted;
+
+            return context.SaveChanges();
+        }
+
+        public override int DeleteRelation(Ingredient ingredient, UnitType unitType)
+        {
+            var relation = new IngredientUnitTypeRelation()
+            {
+                IngredientId = ingredient.Id,
+                //Ingredient = ingredient,
+                UnitTypeId = unitType.CountId,
+                //UnitType = unitType,
+                Deleted = false,
+            };
+
+
             if (!Exists(relation))
             {
                 return 0;

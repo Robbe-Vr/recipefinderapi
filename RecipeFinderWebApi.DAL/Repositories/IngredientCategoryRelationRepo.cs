@@ -8,24 +8,24 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class IngredientCategoryRelationRepo : AbstractRepo<IngredientCategoryRelation>, IIngredientCategoryRelationRepo
+    public class IngredientCategoryRelationRepo : AbstractBaseRelationRepo<IngredientCategoryRelation, Ingredient, IngredientCategory>, IIngredientCategoryRelationRepo
     {
-        public IngredientCategoryRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public IngredientCategoryRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.CategoriesIngredient))
         {
         }
 
-        public IEnumerable<IngredientCategoryRelation> GetAll()
+        public override IEnumerable<IngredientCategoryRelation> GetAll()
         {
-            return context.CategoriesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.Category)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public IngredientCategoryRelation GetById(int id)
+        public override IngredientCategoryRelation GetById(int id)
         {
-            return context.CategoriesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.Category)
                 .AsNoTracking()
@@ -34,14 +34,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IngredientCategoryRelation GetByIngredientIdAndCategoryId(string ingredientId, int categoryId)
         {
-            return context.CategoriesIngredient
+            return db
                 .Include(x => x.Ingredient)
                 .Include(x => x.Category)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.IngredientId == ingredientId && x.CategoryId == categoryId);
         }
 
-        public int CreateRelation(Ingredient ingredient, IngredientCategory category)
+        public override int CreateRelation(IngredientCategoryRelation relation)
+        {
+            db.Add(relation);
+
+            return context.SaveChanges();
+        }
+
+        public override int CreateRelation(Ingredient ingredient, IngredientCategory category)
         {
             var relation = new IngredientCategoryRelation()
             {
@@ -52,13 +59,43 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 Deleted = false,
             };
 
-            context.CategoriesIngredient
-                .Add(relation);
+            db.Add(relation);
 
             return context.SaveChanges();
         }
 
-        public int DeleteRelation(IngredientCategoryRelation relation)
+        public override int DeleteRelation(Ingredient ingredient, IngredientCategory category)
+        {
+            var relation = new IngredientCategoryRelation()
+            {
+                IngredientId = ingredient.Id,
+                //Ingredient = ingredient,
+                CategoryId = category.CountId,
+                //Category = category,
+                Deleted = false,
+            };
+
+            if (!Exists(relation))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(relation))
+            {
+                if (KeyIsAttached(relation))
+                {
+                    relation = GetAttachedEntityByEntity(relation);
+                }
+            }
+
+            relation.Ingredient = null;
+            relation.Category = null;
+
+            context.Entry(relation).State = EntityState.Deleted;
+
+            return context.SaveChanges();
+        }
+
+        public override int DeleteRelation(IngredientCategoryRelation relation)
         {
             if (!Exists(relation))
             {

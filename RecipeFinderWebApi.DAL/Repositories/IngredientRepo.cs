@@ -8,24 +8,33 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class IngredientRepo : AbstractRepo<Ingredient>, IIngredientRepo
+    public class IngredientRepo : AbstractBaseEntityRepo<Ingredient>, IIngredientRepo
     {
-        public IngredientRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public IngredientRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.Ingredients))
         {
         }
 
-        public IEnumerable<Ingredient> GetAll()
+        public override IEnumerable<Ingredient> GetAll()
         {
-            return context.Ingredients
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
+        public override Ingredient GetById(int id)
+        {
+            return db
+                .Include(x => x.Categories)
+                .Include(x => x.UnitTypes)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+        }
+
         public Ingredient GetById(string id)
         {
-            return context.Ingredients
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
@@ -34,21 +43,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public Ingredient GetByName(string name)
         {
-            return context.Ingredients
+            return db
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(Ingredient ingredient)
+        public override int Create(Ingredient ingredient)
         {
             ingredient.UnitTypes = null;
             ingredient.Categories = null;
 
             ingredient.Id = Guid.NewGuid().ToString();
 
-            context.Ingredients.Add(ingredient);
+            db.Add(ingredient);
 
             return context.SaveChanges();
         }
@@ -60,14 +69,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
             ingredient.Id = Guid.NewGuid().ToString();
 
-            context.Ingredients.Add(ingredient);
+            db.Add(ingredient);
 
             context.SaveChanges();
 
             return ingredient;
         }
 
-        public int Update(Ingredient ingredient)
+        public override int Update(Ingredient ingredient)
         {
             ingredient.UnitTypes = null;
             ingredient.Categories = null;
@@ -88,15 +97,15 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.AverageVolumeInLiterPerUnit = ingredient.AverageVolumeInLiterPerUnit;
                     old.AverageWeightInKgPerUnit = ingredient.AverageWeightInKgPerUnit;
 
-                    context.Ingredients.Update(old);
+                    db.Update(old);
                 }
-                else context.Ingredients.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(Ingredient ingredient)
+        public override int Delete(Ingredient ingredient)
         {
             ingredient.UnitTypes = null;
             ingredient.Categories = null;
@@ -111,7 +120,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 {
                     ingredient = GetAttachedEntityByEntity(ingredient);
                 }
-                else context.Ingredients.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             context.Entry(ingredient).State = EntityState.Modified;

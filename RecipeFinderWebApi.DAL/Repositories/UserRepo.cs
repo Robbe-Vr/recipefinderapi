@@ -8,15 +8,15 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UserRepo : AbstractRepo<User>, IUserRepo
+    public class UserRepo : AbstractBaseEntityRepo<User>, IUserRepo
     {
-        public UserRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public UserRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.Users))
         {
         }
 
-        public IEnumerable<User> GetAll()
+        public override IEnumerable<User> GetAll()
         {
-            return context.Users
+            return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
@@ -24,7 +24,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<UserWithKitchen> GetAllWithKitchen()
         {
-            IEnumerable<UserWithKitchen> users = (IEnumerable<UserWithKitchen>)context.Users
+            IEnumerable<UserWithKitchen> users = (IEnumerable<UserWithKitchen>)db
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
@@ -50,9 +50,17 @@ namespace RecipeFinderWebApi.DAL.Repositories
             };
         }
 
+        public override User GetById(int id)
+        {
+            return db
+                .Include(x => x.Roles)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+        }
+
         public User GetById(string id)
         {
-            return context.Users
+            return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
@@ -60,7 +68,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public User GetByName(string name)
         {
-            return context.Users
+            return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
@@ -68,20 +76,20 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<Role> GetRolesByUserId(string id)
         {
-            return context.Users
+            return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted)
                 .Roles;
         }
 
-        public int Create(User user)
+        public override int Create(User user)
         {
             user.Roles = null;
 
             user.Id = Guid.NewGuid().ToString();
 
-            context.Users.Add(user);
+            db.Add(user);
 
             return context.SaveChanges();
         }
@@ -92,14 +100,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
             user.Id = Guid.NewGuid().ToString();
 
-            context.Users.Add(user);
+            db.Add(user);
 
            context.SaveChanges();
 
             return user;
         }
 
-        public int Update(User user)
+        public override int Update(User user)
         {
             user.Roles = null;
 
@@ -130,13 +138,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.AccessFailedCount = user.AccessFailedCount;
                     old.Deleted = user.Deleted;
                 }
-                else context.Users.Update(user);
+                else db.Update(user);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(User user)
+        public override int Delete(User user)
         {
             user.Roles = null;
 
@@ -150,7 +158,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 {
                     user = GetAttachedEntityByEntity(user);
                 }
-                else context.Users.Update(user);
+                else db.Update(user);
             }
 
             user.Deleted = true;

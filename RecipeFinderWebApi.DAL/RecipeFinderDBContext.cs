@@ -269,6 +269,11 @@ namespace RecipeFinderWebApi.DAL
                 .Property(a => a.UserId).HasColumnName("User_id");
         }
 
+        public DbSet<T> GetTable<T>(string value) where T : class
+        {
+            return typeof(RecipeFinderDbContext).GetProperty(value)?.GetValue(this) as DbSet<T>;
+        }
+
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
 

@@ -8,15 +8,15 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class GroceryListRepo : AbstractRepo<GroceryList>, IGroceryListRepo
+    public class GroceryListRepo : AbstractBaseEntityRepo<GroceryList>, IGroceryListRepo
     {
-        public GroceryListRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public GroceryListRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.GroceryLists))
         {
         }
 
-        public IEnumerable<GroceryList> GetAll()
+        public override IEnumerable<GroceryList> GetAll()
         {
-            return context.GroceryLists
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
@@ -24,15 +24,23 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<GroceryList> GetAllByUserId(string id)
         {
-            return context.GroceryLists
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .Where(x => x.UserId == id && !x.Deleted);
         }
 
+        public override GroceryList GetById(int id)
+        {
+            return db
+                .Include(x => x.User)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+        }
+
         public GroceryList GetById(string id)
         {
-            return context.GroceryLists
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
@@ -40,24 +48,24 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public GroceryList GetByName(string name)
         {
-            return context.GroceryLists
+            return db
                 .Include(x => x.User)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(GroceryList list)
+        public override int Create(GroceryList list)
         {
             list.User = null;
 
             list.Id = Guid.NewGuid().ToString();
 
-            context.GroceryLists.Add(list);
+            db.Add(list);
 
             return context.SaveChanges();
         }
 
-        public int Update(GroceryList list)
+        public override int Update(GroceryList list)
         {
             list.User = null;
 
@@ -75,13 +83,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.Value = list.Value;
                     old.Deleted = list.Deleted;
                 }
-                else context.GroceryLists.Update(list);
+                else db.Update(list);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(GroceryList list)
+        public override int Delete(GroceryList list)
         {
             list.User = null;
 

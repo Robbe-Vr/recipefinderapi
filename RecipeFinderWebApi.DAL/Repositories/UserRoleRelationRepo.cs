@@ -8,24 +8,24 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UserRoleRelationRepo : AbstractRepo<UserRoleRelation>, IUserRoleRelationRepo
+    public class UserRoleRelationRepo : AbstractBaseRelationRepo<UserRoleRelation, User, Role>, IUserRoleRelationRepo
     {
-        public UserRoleRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public UserRoleRelationRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.UserRoles))
         {
         }
 
-        public IEnumerable<UserRoleRelation> GetAll()
+        public override IEnumerable<UserRoleRelation> GetAll()
         {
-            return context.UserRoles
+            return db
                 .Include(x => x.User)
                 .Include(x => x.Role)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public UserRoleRelation GetById(int id)
+        public override UserRoleRelation GetById(int id)
         {
-            return context.UserRoles
+            return db
                 .Include(x => x.User)
                 .Include(x => x.Role)
                 .AsNoTracking()
@@ -34,14 +34,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public UserRoleRelation GetByUserIdAndRoleId(string userId, string roleId)
         {
-            return context.UserRoles
+            return db
                 .Include(x => x.User)
                 .Include(x => x.Role)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.UserId == userId && x.RoleId == roleId);
         }
 
-        public int CreateRelation(User user, Role role)
+        public override int CreateRelation(UserRoleRelation relation)
+        {
+            db.Add(relation);
+
+            return context.SaveChanges();
+        }
+
+        public override int CreateRelation(User user, Role role)
         {
             var relation = new UserRoleRelation()
             {
@@ -52,14 +59,44 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 Deleted = false,
             };
 
-            context.UserRoles
-                .Add(relation);
+            db.Add(relation);
 
             return context.SaveChanges();
         }
 
-        public int DeleteRelation(UserRoleRelation relation)
+        public override int DeleteRelation(UserRoleRelation relation)
         {
+            if (!Exists(relation))
+            {
+                return 0;
+            }
+            if (!EntityIsAttached(relation))
+            {
+                if (KeyIsAttached(relation))
+                {
+                    relation = GetAttachedEntityByEntity(relation);
+                }
+            }
+
+            relation.User = null;
+            relation.Role = null;
+
+            context.Entry(relation).State = EntityState.Deleted;
+
+            return context.SaveChanges();
+        }
+
+        public override int DeleteRelation(User user, Role role)
+        {
+            var relation = new UserRoleRelation()
+            {
+                UserId = user.Id,
+                //User = user,
+                RoleId = role.Id,
+                //Role = role,
+                Deleted = false,
+            };
+
             if (!Exists(relation))
             {
                 return 0;

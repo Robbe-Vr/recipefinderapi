@@ -8,15 +8,15 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RequirementsListRepo : AbstractRepo<RequirementsListIngredient>, IRequirementsListRepo
+    public class RequirementsListRepo : AbstractBaseEntityRepo<RequirementsListIngredient>, IRequirementsListRepo
     {
-        public RequirementsListRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public RequirementsListRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.RequirementsLists))
         {
         }
 
-        public IEnumerable<RequirementsListIngredient> GetAll()
+        public override IEnumerable<RequirementsListIngredient> GetAll()
         {
-            return context.RequirementsLists
+            return db
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
@@ -25,9 +25,9 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Where(x => !x.Deleted);
         }
 
-        public RequirementsListIngredient GetById(int id)
+        public override RequirementsListIngredient GetById(int id)
         {
-            return context.RequirementsLists
+            return db
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
@@ -38,7 +38,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<RequirementsListIngredient> GetByRecipeId(string id)
         {
-            var ingredients = context.RequirementsLists
+            var ingredients = db
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
@@ -51,7 +51,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public IEnumerable<RequirementsListIngredient> GetByRecipeName(string name)
         {
-            var ingredients = context.RequirementsLists
+            var ingredients = db
                 .Include(x => x.Ingredient).ThenInclude(x => x.Categories)
                 .Include(x => x.Ingredient).ThenInclude(x => x.UnitTypes)
                 .Include(x => x.UnitType)
@@ -62,19 +62,19 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return ingredients;
         }
 
-        public int Create(RequirementsListIngredient ingredient)
+        public override int Create(RequirementsListIngredient ingredient)
         {
             ingredient.CountId = 0;
             ingredient.Ingredient = null;
             ingredient.Recipe = null;
             ingredient.UnitType = null;
 
-            context.RequirementsLists.Add(ingredient);
+            db.Add(ingredient);
 
             return context.SaveChanges();
         }
 
-        public int Update(RequirementsListIngredient ingredient)
+        public override int Update(RequirementsListIngredient ingredient)
         {
             ingredient.Ingredient = null;
             ingredient.Recipe = null;
@@ -92,13 +92,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     old.Units = ingredient.Units;
                     old.UnitTypeId = ingredient.UnitTypeId;
                 }
-                else context.RequirementsLists.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(RequirementsListIngredient ingredient)
+        public override int Delete(RequirementsListIngredient ingredient)
         {
             ingredient.Ingredient = null;
             ingredient.Recipe = null;
@@ -114,7 +114,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 {
                     ingredient = GetAttachedEntityByEntity(ingredient);
                 }
-                else context.RequirementsLists.Update(ingredient);
+                else db.Update(ingredient);
             }
 
             ingredient.Deleted = true;

@@ -8,45 +8,52 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class RoleRepo : AbstractRepo<Role>, IRoleRepo
+    public class RoleRepo : AbstractBaseEntityRepo<Role>, IRoleRepo
     {
-        public RoleRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public RoleRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.Roles))
         {
         }
 
-        public IEnumerable<Role> GetAll()
+        public override IEnumerable<Role> GetAll()
         {
-            return context.Roles
+            return db
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
+        public override Role GetById(int id)
+        {
+            return db
+                .AsNoTracking()
+                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+        }
+
         public Role GetById(string id)
         {
-            return context.Roles
+            return db
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Id == id && !x.Deleted);
         }
 
         public Role GetByName(string name)
         {
-            return context.Roles
+            return db
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(Role role)
+        public override int Create(Role role)
         {
             role.Users = null;
 
             role.Id = Guid.NewGuid().ToString();
 
-            context.Roles.Add(role);
+            db.Add(role);
 
             return context.SaveChanges();
         }
 
-        public int Update(Role role)
+        public override int Update(Role role)
         {
             role.Users = null;
 
@@ -61,13 +68,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     Role old = GetAttachedEntityByEntity(role);
                     old.Name = role.Name;
                 }
-                else context.Roles.Update(role);
+                else db.Update(role);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(Role role)
+        public override int Delete(Role role)
         {
             role.Users = null;
 

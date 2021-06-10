@@ -8,23 +8,23 @@ using System.Text;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
-    public class UnitTypeRepo : AbstractRepo<UnitType>, IUnitTypeRepo
+    public class UnitTypeRepo : AbstractBaseEntityRepo<UnitType>, IUnitTypeRepo
     {
-        public UnitTypeRepo(RecipeFinderDbContext dbContext) : base(dbContext)
+        public UnitTypeRepo(RecipeFinderDbContext dbContext) : base(dbContext, nameof(RecipeFinderDbContext.UnitTypes))
         {
         }
 
-        public IEnumerable<UnitType> GetAll()
+        public override IEnumerable<UnitType> GetAll()
         {
-            return context.UnitTypes
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .Where(x => !x.Deleted);
         }
 
-        public UnitType GetById(int id)
+        public override UnitType GetById(int id)
         {
-            return context.UnitTypes
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.CountId == id && !x.Deleted);
@@ -32,22 +32,22 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public UnitType GetByName(string name)
         {
-            return context.UnitTypes
+            return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
                 .FirstOrDefault(x => x.Name == name && !x.Deleted);
         }
 
-        public int Create(UnitType unitType)
+        public override int Create(UnitType unitType)
         {
             unitType.Ingredients = null;
 
-            context.UnitTypes.Add(unitType);
+            db.Add(unitType);
 
             return context.SaveChanges();
         }
 
-        public int Update(UnitType unitType)
+        public override int Update(UnitType unitType)
         {
             unitType.Ingredients = null;
 
@@ -62,13 +62,13 @@ namespace RecipeFinderWebApi.DAL.Repositories
                     UnitType old = GetAttachedEntityByEntity(unitType);
                     old.Name = unitType.Name;
                 }
-                else context.UnitTypes.Update(unitType);
+                else db.Update(unitType);
             }
 
             return context.SaveChanges();
         }
 
-        public int Delete(UnitType unitType)
+        public override int Delete(UnitType unitType)
         {
             unitType.Ingredients = null;
 
