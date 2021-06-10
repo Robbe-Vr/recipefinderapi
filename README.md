@@ -1,7 +1,7 @@
 ## RecipeFinder React
 <!-- blank line -->
 ### Introduction
-RecipeFinder is een mobiele javascript app met een C# API die je helpt met het bepalen wat je kan eten. Door aan te geven welke producten en ingrediënten er in je keuken liggen, zal de app recepten voorleggen zodat je minder lang hoeft te denken over wat je wilt eten en meteen kan beginnen met koken. Ik maak deze app op aanvraag van vrienden die deze app zouden willen gebruiken.
+RecipeFinder is a mobile javascript app with a C# API, the app's goal is to help you decide what to cook and eat. By providing the app with the products and ingredients you have in your kitchen, the app can calculate recipes so you do not have to think about you options on what to cook and start cooking immediately. The app can keep track of your kitchen, tell you what you should buy at the grocery store, save grocery lists, and ofcourse tell you what recipes to cook and how to do so if needed.
 <!-- blank line -->
 "RecipeFinder React" is the front end react web application from the RecipeFinder application. RecipeFinder is a web application wehich can help you choose what to eat. By telling hte app about the ingredients and products you have laying around in your kitchen, the app can provide recipes to cook so you don't need to think much longer about what to eat and start cooking immediately.
 <!-- blank line -->
@@ -20,7 +20,7 @@ The RecipeFinder app has a front-end application which can connect to an API for
 ### Architecture Diagram
 A diagram showing the architecture used for the back-end of our application.
 ![Architecture Diagram](/documentation/images/architecture.png "Architecture Diagram")
-
+<!-- blank line -->
 This architecture diagram shows how an Ingredient entity is handled through the layers of the application.
 ![Architecture Diagram Ingredient](/documentation/images/architecture-ingredient.png "Architecture Diagram Ingredient")
 <!-- blank line -->
@@ -121,8 +121,7 @@ All planned cypress integration tests are listed below:
     -	remove ui shows up as warning when removing/banning a user
 
 </details>
-<!-- blank line -->
-<!-- blank line -->
+
 ### Back-End Unit Test testplan
 Since our back-end is an api, we can test responses from the endpoint and the CRUD functionality before the ORM.
 We currently only have tests for the CRUD functionality
