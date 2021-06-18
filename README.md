@@ -123,5 +123,5 @@ All planned cypress integration tests are listed below:
 </details>
 
 ### Back-End Unit Test testplan
-Since our back-end is an api, we can test responses from the endpoint and the CRUD functionality before the ORM.
-We currently only have tests for the CRUD functionality
+Since our back-end is an api, we can test responses from the endpoint, the CRUD functionality before the ORM and the algorithms.
+We currently only test the CRUD functionality and the algorithms.
