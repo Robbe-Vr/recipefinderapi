@@ -6,6 +6,8 @@ using RecipeFinderWebApi.DAL.Repositories;
 using RecipeFinderWebApi.Exchange.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace RecipeFinderWebApi.UnitTests
 {
@@ -28,12 +30,15 @@ namespace RecipeFinderWebApi.UnitTests
         {
         }
 
-        [TestInitialize()]
         public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
-            builder.UseInMemoryDatabase("RecipeFinderDB");
+            builder.UseInMemoryDatabase("RecipeFinderDB-ingrdients", new InMemoryDatabaseRoot());
             builder.EnableSensitiveDataLogging();
+            builder.ConfigureWarnings(options =>
+            {
+                options.Ignore(new[] { CoreEventId.ManyServiceProvidersCreatedWarning });
+            });
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
@@ -42,25 +47,19 @@ namespace RecipeFinderWebApi.UnitTests
             categoryHandler = new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context));
             unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
 
-            var ingredients = handler.GetAll();
-
-            if (ingredients.Any())
-            {
-                foreach (var ingredient in ingredients)
-                {
-                    handler.Delete(ingredient);
-                }
-            }
-
             category1 = new IngredientCategory() { Name = "TestCategory1" };
             category2 = new IngredientCategory() { Name = "TestCategory2" };
-            categoryHandler.Create(category1);
-            categoryHandler.Create(category2);
+            context.IngredientCategories.AddRange(new[] { category1, category2 });
+            context.SaveChanges();
+            category1 = context.IngredientCategories.First(x => x.Name == category1.Name);
+            category2 = context.IngredientCategories.First(x => x.Name == category2.Name);
 
             unitType1 = new UnitType() { Name = "TestType1", AllowDecimals = false };
             unitType2 = new UnitType() { Name = "TestType2", AllowDecimals = true };
-            unitTypeHandler.Create(unitType1);
-            unitTypeHandler.Create(unitType2);
+            context.UnitTypes.AddRange(new[] { unitType1, unitType2 });
+            context.SaveChanges();
+            unitType1 = context.UnitTypes.First(x => x.Name == unitType1.Name);
+            unitType2 = context.UnitTypes.First(x => x.Name == unitType2.Name);
 
             ingredient = new Ingredient()
             {
@@ -77,20 +76,26 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetAll()
         {
+            Initialize();
+
             var ingredients = handler.GetAll();
 
-            Assert.AreEqual(ingredients.Count(), 0);
+            Assert.AreEqual(0, ingredients.Count());
         }
 
         [TestMethod]
         public void TestCreate()
         {
+            Initialize();
+
             Create();
         }
 
         [TestMethod]
         public void TestGetByName()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -99,6 +104,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetById()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -108,6 +115,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestUpdate()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -119,6 +128,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestDelete()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -134,24 +145,21 @@ namespace RecipeFinderWebApi.UnitTests
             int newRows = handler.Create(ingredient);
 
             Assert.AreEqual(expectedNewRows, newRows);
+            ingredient = handler.GetByName(ingredient.Name);
         }
 
         public void GetByName()
         {
             Ingredient bynameIngredient = handler.GetByName(ingredient.Name);
 
-            ingredient.Id = bynameIngredient.Id;
-
-            Assert.AreEqual(bynameIngredient.Name, ingredient.Name);
+            Assert.AreEqual(ingredient.Name, bynameIngredient.Name);
         }
 
         public void GetById()
         {
             Ingredient byidIngredient = handler.GetById(ingredient.Id);
 
-            ingredient = byidIngredient;
-
-            Assert.AreEqual(byidIngredient.Name, ingredient.Name);
+            Assert.AreEqual(ingredient.Name, byidIngredient.Name);
         }
 
         public void Update()
@@ -166,7 +174,7 @@ namespace RecipeFinderWebApi.UnitTests
             int updatedRows = handler.Update(ingredient);
 
             Assert.AreEqual(3, updatedRows);
-            Assert.AreEqual(handler.GetById(ingredient.Id).Name, updatedName);
+            Assert.AreEqual(updatedName, handler.GetById(ingredient.Id).Name);
         }
 
         public void Delete()

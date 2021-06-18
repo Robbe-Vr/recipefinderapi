@@ -6,6 +6,8 @@ using RecipeFinderWebApi.DAL.Repositories;
 using RecipeFinderWebApi.Exchange.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace RecipeFinderWebApi.UnitTests
 {
@@ -20,26 +22,19 @@ namespace RecipeFinderWebApi.UnitTests
         {
         }
 
-        [TestInitialize()]
         public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
-            builder.UseInMemoryDatabase("RecipeFinderDB");
+            builder.UseInMemoryDatabase("RecipeFinderDB-unittypes", new InMemoryDatabaseRoot());
             builder.EnableSensitiveDataLogging();
+            builder.ConfigureWarnings(options =>
+            {
+                options.Ignore(new[] { CoreEventId.ManyServiceProvidersCreatedWarning });
+            });
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
             handler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
-
-            var unitTypes = handler.GetAll();
-
-            if (unitTypes.Any())
-            {
-                foreach (var unitType in unitTypes)
-                {
-                    handler.Delete(unitType);
-                }
-            }
 
             unitType = new UnitType()
             {
@@ -51,20 +46,26 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetAll()
         {
+            Initialize();
+
             var unitTypes = handler.GetAll();
 
-            Assert.AreEqual(unitTypes.Count(), 0);
+            Assert.AreEqual(0, unitTypes.Count());
         }
 
         [TestMethod]
         public void TestCreate()
         {
+            Initialize();
+
             Create();
         }
 
         [TestMethod]
         public void TestGetByName()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -73,6 +74,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetById()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -82,6 +85,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestUpdate()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -93,6 +98,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestDelete()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -114,18 +121,14 @@ namespace RecipeFinderWebApi.UnitTests
         {
             UnitType bynameUnitType = handler.GetByName(unitType.Name);
 
-            unitType.CountId = bynameUnitType.CountId;
-
-            Assert.AreEqual(bynameUnitType.Name, unitType.Name);
+            Assert.AreEqual(unitType.Name, bynameUnitType.Name);
         }
 
         public void GetById()
         {
             UnitType byidUnitType = handler.GetById(unitType.CountId);
 
-            unitType = byidUnitType;
-
-            Assert.AreEqual(byidUnitType.Name, unitType.Name);
+            Assert.AreEqual(unitType.Name, byidUnitType.Name);
         }
 
         public void Update()
@@ -138,7 +141,7 @@ namespace RecipeFinderWebApi.UnitTests
             int updatedRows = handler.Update(unitType);
 
             Assert.AreEqual(1, updatedRows);
-            Assert.AreEqual(handler.GetById(unitType.CountId).Name, updatedName);
+            Assert.AreEqual(updatedName, handler.GetById(unitType.CountId).Name);
         }
 
         public void Delete()

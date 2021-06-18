@@ -7,6 +7,8 @@ using RecipeFinderWebApi.Exchange.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace RecipeFinderWebApi.UnitTests
 {
@@ -26,32 +28,27 @@ namespace RecipeFinderWebApi.UnitTests
         {
         }
 
-        [TestInitialize]
         public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
-            builder.UseInMemoryDatabase("RecipeFinderDB");
+            builder.UseInMemoryDatabase("RecipeFinderDB-users", new InMemoryDatabaseRoot());
             builder.EnableSensitiveDataLogging();
+            builder.ConfigureWarnings(options =>
+            {
+                options.Ignore(new[] { CoreEventId.ManyServiceProvidersCreatedWarning });
+            });
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
             handler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
             roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
-            var users = handler.GetAll();
-
-            if (users.Any())
-            {
-                foreach (var user in users)
-                {
-                    handler.Delete(user);
-                }
-            }
-
-            role1 = new Role() { Name = "Default" };
-            role2 = new Role() { Name = "Admin" };
-            roleHandler.Create(role1);
-            roleHandler.Create(role2);
+            role1 = new Role() { Name = "Default", Id = "75483" };
+            role2 = new Role() { Name = "Admin", Id = "75484" };
+            context.Roles.AddRange(new[] { role1, role2 });
+            context.SaveChanges();
+            role1 = context.Roles.First(x => x.Name == role1.Name);
+            role2 = context.Roles.First(x => x.Name == role2.Name);
 
             user = new User()
             {
@@ -67,7 +64,7 @@ namespace RecipeFinderWebApi.UnitTests
                 SecurityStamp = "",
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
-                Roles = new List<Role>() { roleHandler.GetByName(role1.Name) },
+                Roles = new List<Role>() { role1 },
                 Deleted = false,
             };
         }
@@ -75,20 +72,26 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetAll()
         {
+            Initialize();
+
             var users = handler.GetAll();
 
-            Assert.AreEqual(users.Count(), 0);
+            Assert.AreEqual(0, users.Count());
         }
 
         [TestMethod]
         public void TestCreate()
         {
+            Initialize();
+            
             Create();
         }
 
         [TestMethod]
         public void TestGetByName()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -97,6 +100,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetById()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -106,6 +111,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestUpdate()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -117,6 +124,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestDelete()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -132,24 +141,21 @@ namespace RecipeFinderWebApi.UnitTests
             int newRows = handler.Create(user);
 
             Assert.IsTrue(newRows == expectedNewRows);
+            user = handler.GetByName(user.Name);
         }
 
         public void GetByName()
         {
             User bynameUser = handler.GetByName(user.Name);
 
-            user.Id = bynameUser.Id;
-
-            Assert.AreEqual(bynameUser.Name, user.Name);
+            Assert.AreEqual(user.Name, bynameUser.Name);
         }
 
         public void GetById()
         {
             User byidUser = handler.GetById(user.Id);
 
-            user = byidUser;
-
-            Assert.AreEqual(byidUser.Name, user.Name);
+            Assert.AreEqual(user.Name, byidUser.Name);
         }
 
         public void Update()
@@ -157,12 +163,12 @@ namespace RecipeFinderWebApi.UnitTests
             string updatedName = "TestUpdate";
 
             user.Name = updatedName;
-            user.Roles.Add(roleHandler.GetByName(role2.Name));
+            user.Roles.Add(role2);
 
             int updatedRows = handler.Update(user);
 
             Assert.IsTrue(updatedRows > 0);
-            Assert.AreEqual(handler.GetById(user.Id).Name, updatedName);
+            Assert.AreEqual(updatedName, handler.GetById(user.Id).Name);
         }
 
         public void Delete()

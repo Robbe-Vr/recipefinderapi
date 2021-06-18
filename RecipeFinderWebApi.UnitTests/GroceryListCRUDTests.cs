@@ -7,6 +7,8 @@ using RecipeFinderWebApi.Exchange.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace RecipeFinderWebApi.UnitTests
 {
@@ -23,12 +25,15 @@ namespace RecipeFinderWebApi.UnitTests
         {
         }
 
-        [TestInitialize()]
         public void Initialize()
         {
             var builder = new DbContextOptionsBuilder<RecipeFinderDbContext>();
-            builder.UseInMemoryDatabase("RecipeFinderDB");
+            builder.UseInMemoryDatabase("RecipeFinderDB-grocerylists", new InMemoryDatabaseRoot());
             builder.EnableSensitiveDataLogging();
+            builder.ConfigureWarnings(options =>
+            {
+                options.Ignore(new[] { CoreEventId.ManyServiceProvidersCreatedWarning });
+            });
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
@@ -36,20 +41,12 @@ namespace RecipeFinderWebApi.UnitTests
             userHandler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
             RoleHandler roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
-            var groceryLists = handler.GetAll();
-
-            if (groceryLists.Any())
-            {
-                foreach (var groceryList in groceryLists)
-                {
-                    handler.Delete(groceryList);
-                }
-            }
-
-            Role role = new Role() { Name = "TestRole" };
-            roleHandler.Create(role);
+            Role role = new Role() { Name = "TestRole", Id = "75483" };
+            context.Roles.AddRange(new[] { role });
+            context.SaveChanges();
             user = new User()
             {
+                Id = "75483",
                 Name = "Test",
                 Email = "test@test.net",
                 Salt = "12345",
@@ -62,11 +59,12 @@ namespace RecipeFinderWebApi.UnitTests
                 SecurityStamp = "",
                 PhoneNumber = "",
                 EmailConfirmationToken = "",
-                Roles = new List<Role>() { roleHandler.GetByName(role.Name) },
+                Roles = new List<Role>() { context.Roles.First(x => x.Name == role.Name) },
                 Deleted = false,
             };
-            userHandler.Create(user);
-            user = userHandler.GetByName(user.Name);
+            context.Users.AddRange(new[] { user });
+            context.SaveChanges();
+            user = context.Users.First(x => x.Name == user.Name);
 
             groceryList = new GroceryList()
             {
@@ -81,20 +79,26 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetAll()
         {
+            Initialize();
+
             var groceryLists = handler.GetAll();
 
-            Assert.AreEqual(groceryLists.Count(), 0);
+            Assert.AreEqual(0, groceryLists.Count());
         }
 
         [TestMethod]
         public void TestCreate()
         {
+            Initialize();
+
             Create();
         }
 
         [TestMethod]
         public void TestGetByName()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -103,6 +107,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestGetById()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -112,6 +118,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestUpdate()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -123,6 +131,8 @@ namespace RecipeFinderWebApi.UnitTests
         [TestMethod]
         public void TestDelete()
         {
+            Initialize();
+
             Create();
 
             GetByName();
@@ -138,13 +148,12 @@ namespace RecipeFinderWebApi.UnitTests
             int newRows = handler.Create(groceryList);
 
             Assert.AreEqual(expectedNewRows, newRows);
+            groceryList = handler.GetByName(groceryList.Name);
         }
 
         public void GetByName()
         {
             GroceryList bynameGroceryList = handler.GetByName(groceryList.Name);
-
-            groceryList.Id = bynameGroceryList.Id;
 
             Assert.AreEqual(bynameGroceryList.Name, groceryList.Name);
         }
@@ -153,9 +162,7 @@ namespace RecipeFinderWebApi.UnitTests
         {
             GroceryList byidGroceryList = handler.GetById(groceryList.Id);
 
-            groceryList = byidGroceryList;
-
-            Assert.AreEqual(byidGroceryList.Name, groceryList.Name);
+            Assert.AreEqual(groceryList.Name, byidGroceryList.Name);
         }
 
         public void Update()
@@ -167,7 +174,7 @@ namespace RecipeFinderWebApi.UnitTests
             int updatedRows = handler.Update(groceryList);
 
             Assert.AreEqual(1, updatedRows);
-            Assert.AreEqual(handler.GetById(groceryList.Id).Name, updatedName);
+            Assert.AreEqual(updatedName, handler.GetById(groceryList.Id).Name);
         }
 
         public void Delete()
