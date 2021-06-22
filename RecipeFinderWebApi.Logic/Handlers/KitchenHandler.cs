@@ -53,8 +53,8 @@ namespace RecipeFinderWebApi.Logic.Handlers
                 {
                     return validationResult;
                 }
-
             }
+
             KitchenIngredient existing = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);
             if (existing == null)
             {
