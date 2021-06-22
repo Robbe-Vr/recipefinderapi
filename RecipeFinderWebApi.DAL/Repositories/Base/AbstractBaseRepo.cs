@@ -41,5 +41,17 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return context.Set<TEntity>().Any(i => i.CountId == entity.CountId);
         }
+
+        /// <summary>
+        /// returns 0 if originality is valid,
+        /// returns -1 if an entity with equal property values already exists,
+        /// returns -2 if a deleted entity with equal property values exists,
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public abstract int ValidateOriginality(TEntity obj);
+
+        public abstract bool TryRestore(TEntity obj);
     }
 }

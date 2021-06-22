@@ -116,5 +116,27 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
             return context.SaveChanges();
         }
+
+        public override int ValidateOriginality(IngredientCategoryRelation obj)
+        {
+            return db.Any(x => x.IngredientId == obj.IngredientId && x.CategoryId == obj.CategoryId && !x.Deleted) ? -1 :
+                db.Any(x => x.IngredientId == obj.IngredientId && x.CategoryId == obj.CategoryId && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(IngredientCategoryRelation obj)
+        {
+            IngredientCategoryRelation restorable = db.FirstOrDefault(x => x.IngredientId == obj.IngredientId && x.CategoryId == obj.CategoryId && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
+        }
     }
 }

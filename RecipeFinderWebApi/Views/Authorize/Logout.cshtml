@@ -7,7 +7,7 @@
 
 <h1>@ViewData["Title"]</h1>
 <div class="row">
-    <form asp-action="Logout">
+    <form asp-action="Logout" asp-route-ReturnUrl="@(Model?.ReturnUrl ?? Url.Content("~/"))">
         Logout here <button type="submit">Logout</button>
     </form>
 </div>

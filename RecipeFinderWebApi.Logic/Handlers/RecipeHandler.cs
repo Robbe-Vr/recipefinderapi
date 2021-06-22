@@ -129,6 +129,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(RecipeWithRequirements recipe)
         {
+            int validationResult = _repo.ValidateOriginality(recipe);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(recipe))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             int changes = 0;
 
             RequirementsList requirementsList = new RequirementsList();
@@ -164,6 +179,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(RecipeWithRequirements recipe)
         {
+            int validationResult = _repo.ValidateOriginality(recipe);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(recipe))
+                {
+                    return validationResult;
+                }
+            }
+
             int changes = 0;
 
             var currentState = GetById(recipe.Id);

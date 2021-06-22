@@ -38,6 +38,23 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(KitchenIngredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(ingredient))
+                    {
+                        return 0;
+                    }
+                }
+                else if (validationResult != -1)
+                {
+                    return validationResult;
+                }
+
+            }
             KitchenIngredient existing = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);
             if (existing == null)
             {
@@ -61,6 +78,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(KitchenIngredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2 && validationResult != -1)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(ingredient))
+                {
+                    return validationResult;
+                }
+            }
+
             if (ingredient.CountId < 1)
             {
                 var actual = GetByUserId(ingredient.UserId).Ingredients.FirstOrDefault(x => x.IngredientId == ingredient.IngredientId);

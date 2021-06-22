@@ -34,9 +34,24 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetByName(name);
         }
 
-        public int Create(Role user)
+        public int Create(Role role)
         {
-            return _repo.Create(user);
+            int validationResult = _repo.ValidateOriginality(role);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(role))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
+            return _repo.Create(role);
         }
 
         public int CreateUserRelation(User user, Role role)
@@ -58,6 +73,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(Role role)
         {
+            int validationResult = _repo.ValidateOriginality(role);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(role))
+                {
+                    return validationResult;
+                }
+            }
+
             return _repo.Update(role);
         }
 

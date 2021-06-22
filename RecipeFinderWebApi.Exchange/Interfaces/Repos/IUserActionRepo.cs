@@ -5,14 +5,8 @@ using System.Text;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IUserActionRepo
+    public interface IUserActionRepo : IBaseEntityRepo<UserAction>
     {
-        public IEnumerable<UserAction> GetAll();
-        public UserAction GetById(int id);
-
         public IEnumerable<UserAction> GetAllByUser(int userId);
-        public int Create(UserAction action);
-        public int Update(UserAction action);
-        public int Delete(UserAction action);
     }
 }

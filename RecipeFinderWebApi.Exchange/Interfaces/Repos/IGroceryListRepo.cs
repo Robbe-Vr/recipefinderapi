@@ -5,20 +5,13 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IGroceryListRepo
+    public interface IGroceryListRepo : IBaseEntityRepo<GroceryList>
     {
-        public IEnumerable<GroceryList> GetAll();
 
         public IEnumerable<GroceryList> GetAllByUserId(string id);
 
         public GroceryList GetById(string id);
 
         public GroceryList GetByName(string name);
-
-        public int Create(GroceryList list);
-
-        public int Update(GroceryList list);
-
-        public int Delete(GroceryList list);
     }
 }

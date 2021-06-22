@@ -44,6 +44,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(Role role)
         {
+            role.CountId = 0;
             role.Users = null;
 
             role.Id = Guid.NewGuid().ToString();
@@ -95,6 +96,28 @@ namespace RecipeFinderWebApi.DAL.Repositories
             role.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(Role obj)
+        {
+            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
+                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(Role obj)
+        {
+            Role restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

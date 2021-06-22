@@ -40,6 +40,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(UnitType unitType)
         {
+            unitType.CountId = 0;
             unitType.Ingredients = null;
 
             db.Add(unitType);
@@ -89,6 +90,28 @@ namespace RecipeFinderWebApi.DAL.Repositories
             unitType.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(UnitType obj)
+        {
+            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
+                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(UnitType obj)
+        {
+            UnitType restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

@@ -71,7 +71,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && !x.Deleted);
+                .FirstOrDefault(x => x.Name == name || x.EMAIL_NORMALIZED == name.ToUpper() && !x.Deleted);
         }
 
         public IEnumerable<Role> GetRolesByUserId(string id)
@@ -85,6 +85,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(User user)
         {
+            user.CountId = 0;
             user.Roles = null;
 
             user.Id = Guid.NewGuid().ToString();
@@ -164,6 +165,36 @@ namespace RecipeFinderWebApi.DAL.Repositories
             user.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        /// <summary>
+        /// returns 0 if originality is valid,
+        /// returns -1 if an user with the same name already exists,
+        /// returns -2 if an user with the same email already exists,
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override int ValidateOriginality(User obj)
+        {
+            return db.Any(x => x.Name == obj.Name && x.CountId != obj.CountId) ? -3 :
+                db.Any(x => x.EMAIL_NORMALIZED == obj.EMAIL_NORMALIZED && x.CountId != obj.CountId) ? -4 :
+                0;
+        }
+
+        public override bool TryRestore(User obj)
+        {
+            User restorable = db.FirstOrDefault(x => x.Name == obj.Name || x.EMAIL_NORMALIZED == obj.EMAIL_NORMALIZED && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

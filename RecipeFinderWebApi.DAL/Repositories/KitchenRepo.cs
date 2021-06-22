@@ -78,6 +78,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(KitchenIngredient ingredient)
         {
+            ingredient.CountId = 0;
             ingredient.User = null;
             ingredient.Ingredient = null;
             ingredient.UnitType = null;
@@ -133,6 +134,32 @@ namespace RecipeFinderWebApi.DAL.Repositories
             ingredient.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(KitchenIngredient obj)
+        {
+            return db.Any(x => x.UserId == obj.UserId && x.IngredientId == x.IngredientId && !x.Deleted) ? -1 :
+                db.Any(x => x.UserId == obj.UserId && x.IngredientId == x.IngredientId && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(KitchenIngredient obj)
+        {
+            KitchenIngredient restorable = db.FirstOrDefault(x => x.UserId == obj.UserId && x.IngredientId == x.IngredientId && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            restorable.UnitTypeId = obj.UnitTypeId;
+            restorable.UnitType = null;
+            restorable.Units = obj.Units;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

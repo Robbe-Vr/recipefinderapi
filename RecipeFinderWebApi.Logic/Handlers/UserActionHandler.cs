@@ -46,11 +46,40 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(UserAction action)
         {
+            int validationResult = _repo.ValidateOriginality(action);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(action))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             return _repo.Create(action);
         }
 
         public int Update(UserAction action)
         {
+            int validationResult = _repo.ValidateOriginality(action);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(action))
+                {
+                    return validationResult;
+                }
+            }
+
             return _repo.Update(action);
         }
 

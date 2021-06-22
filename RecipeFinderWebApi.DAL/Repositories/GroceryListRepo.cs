@@ -56,6 +56,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(GroceryList list)
         {
+            list.CountId = 0;
             list.User = null;
 
             list.Id = Guid.NewGuid().ToString();
@@ -109,6 +110,28 @@ namespace RecipeFinderWebApi.DAL.Repositories
             list.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(GroceryList obj)
+        {
+            return db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && !x.Deleted) ? -1 :
+                db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(GroceryList obj)
+        {
+            GroceryList restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

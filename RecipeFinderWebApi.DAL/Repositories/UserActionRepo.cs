@@ -39,6 +39,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(UserAction action)
         {
+            action.CountId = 0;
             action.User = null;
 
             db.Add(action);
@@ -91,6 +92,16 @@ namespace RecipeFinderWebApi.DAL.Repositories
             context.Entry(action).State = EntityState.Deleted;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(UserAction obj)
+        {
+            return 0;
+        }
+
+        public override bool TryRestore(UserAction obj)
+        {
+            return false;
         }
     }
 }

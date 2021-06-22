@@ -37,11 +37,40 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(RequirementsListIngredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(ingredient))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             return _repo.Create(ingredient);
         }
 
         public int Update(RequirementsListIngredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(ingredient))
+                {
+                    return validationResult;
+                }
+            }
+
             return _repo.Update(ingredient);
         }
 

@@ -192,10 +192,11 @@ namespace RecipeFinderWebApi.UI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Logout(string logoutId, bool showLogoutPrompt = false)
+        public IActionResult Logout(string logoutId, bool showLogoutPrompt = false, string returnUrl = null)
         {
             var model = new LogoutModel()
             {
+                ReturnUrl = returnUrl,
                 LogoutId = logoutId,
             };
 
@@ -225,7 +226,14 @@ namespace RecipeFinderWebApi.UI.Controllers
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, model.ExternalAuthenticationScheme);
             }
 
-            return View();
+            if (!String.IsNullOrEmpty(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [HttpGet]

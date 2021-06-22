@@ -36,6 +36,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(RecipeCategory category)
         {
+            int validationResult = _repo.ValidateOriginality(category);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(category))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             return _repo.Create(category);
         }
 
@@ -58,6 +73,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(RecipeCategory category)
         {
+            int validationResult = _repo.ValidateOriginality(category);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(category))
+                {
+                    return validationResult;
+                }
+            }
+
             return _repo.Update(category);
         }
 

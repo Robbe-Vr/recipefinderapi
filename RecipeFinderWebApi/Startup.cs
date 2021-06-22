@@ -118,7 +118,7 @@ namespace RecipeFinderWebApi.UI
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new GroceryListHandler(new GroceryListRepo(context)); });
 
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UserActionHandler(new UserActionRepo(context), new UserRepo(context)); });
-            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new SignInHandler(new UserRepo(context), new RoleRepo(context)); });
+            services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new SignInHandler(new UserRepo(context), new RoleRepo(context), new UserRoleRelationRepo(context)); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

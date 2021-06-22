@@ -5,18 +5,11 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IIngredientRepo
+    public interface IIngredientRepo : IBaseEntityRepo<Ingredient>
     {
-        public IEnumerable<Ingredient> GetAll();
-
         public Ingredient GetById(string id);
         public Ingredient GetByName(string name);
 
-        public int Create(Ingredient ingredient);
         public Ingredient CreateGetId(Ingredient ingredient);
-
-        public int Update(Ingredient ingredient);
-
-        public int Delete(Ingredient ingredient);
     }
 }

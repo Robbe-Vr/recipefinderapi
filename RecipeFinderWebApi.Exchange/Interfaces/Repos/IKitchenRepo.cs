@@ -5,20 +5,10 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IKitchenRepo
+    public interface IKitchenRepo : IBaseEntityRepo<KitchenIngredient>
     {
-        public IEnumerable<KitchenIngredient> GetAll();
-
-        public KitchenIngredient GetById(int id);
-
         public Kitchen GetByUserId(string id);
 
         public Kitchen GetByUserName(string name);
-
-        public int Create(KitchenIngredient ingredient);
-
-        public int Update(KitchenIngredient ingredient);
-
-        public int Delete(KitchenIngredient ingredient);
     }
 }

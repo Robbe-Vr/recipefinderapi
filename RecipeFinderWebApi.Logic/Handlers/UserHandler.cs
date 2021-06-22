@@ -56,6 +56,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(User user)
         {
+            int validationResult = _repo.ValidateOriginality(user);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(user))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             int changes = 0;
 
             List<Role> Roles = new List<Role>();
@@ -76,6 +91,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public User CreateGetId(User user)
         {
+            int validationResult = _repo.ValidateOriginality(user);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(user))
+                    {
+                        return null;
+                    }
+                }
+
+                return null;
+            }
+
             List<Role> Roles = new List<Role>();
             Roles.AddRange(user.Roles);
 
@@ -94,6 +124,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(User user)
         {
+            int validationResult = _repo.ValidateOriginality(user);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(user))
+                {
+                    return validationResult;
+                }
+            }
+
             int changes = 0;
 
             var currentState = GetById(user.Id);

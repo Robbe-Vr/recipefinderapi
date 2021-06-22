@@ -5,9 +5,8 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IUserRepo
+    public interface IUserRepo : IBaseEntityRepo<User>
     {
-        public IEnumerable<User> GetAll();
         public IEnumerable<UserWithKitchen> GetAllWithKitchen();
 
         public Kitchen GetKitchenById(string id);
@@ -18,12 +17,6 @@ namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 
         public IEnumerable<Role> GetRolesByUserId(string id);
 
-        public int Create(User user);
-
         User CreateGetId(User user);
-
-        public int Update(User user);
-
-        public int Delete(User user);
     }
 }

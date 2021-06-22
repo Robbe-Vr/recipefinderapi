@@ -64,6 +64,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(Recipe recipe)
         {
+            recipe.CountId = 0;
             recipe.User = null;
             recipe.Categories = null;
 
@@ -122,6 +123,28 @@ namespace RecipeFinderWebApi.DAL.Repositories
             recipe.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(Recipe obj)
+        {
+            return db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && !x.Deleted) ? -1 :
+                db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(Recipe obj)
+        {
+            Recipe restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

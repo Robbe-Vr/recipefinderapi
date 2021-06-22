@@ -5,16 +5,9 @@ using System.Text;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IIngredientCategoryRelationRepo
+    public interface IIngredientCategoryRelationRepo : IBaseRelationRepo<IngredientCategoryRelation, Ingredient, IngredientCategory>
     {
-        public IEnumerable<IngredientCategoryRelation> GetAll();
-
-        public IngredientCategoryRelation GetById(int id);
 
         public IngredientCategoryRelation GetByIngredientIdAndCategoryId(string ingredientId, int categoryId);
-
-        public int CreateRelation(Ingredient ingredient, IngredientCategory category);
-
-        public int DeleteRelation(IngredientCategoryRelation relation);
     }
 }

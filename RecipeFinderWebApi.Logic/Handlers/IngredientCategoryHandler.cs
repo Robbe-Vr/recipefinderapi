@@ -34,19 +34,48 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetByName(name);
         }
 
-        public int Create(IngredientCategory ingredient)
+        public int Create(IngredientCategory category)
         {
-            return _repo.Create(ingredient);
+            int validationResult = _repo.ValidateOriginality(category);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(category))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
+            return _repo.Create(category);
         }
 
-        public int Update(IngredientCategory ingredient)
+        public int Update(IngredientCategory category)
         {
-            return _repo.Update(ingredient);
+            int validationResult = _repo.ValidateOriginality(category);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(category))
+                {
+                    return validationResult;
+                }
+            }
+
+            return _repo.Update(category);
         }
 
-        public int Delete(IngredientCategory ingredient)
+        public int Delete(IngredientCategory category)
         {
-            return _repo.Delete(GetById(ingredient.CountId));
+            return _repo.Delete(GetById(category.CountId));
         }
 
         public int CreateIngredientRelation(Ingredient ingredient, IngredientCategory category)

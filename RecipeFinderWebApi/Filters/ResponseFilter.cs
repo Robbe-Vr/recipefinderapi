@@ -35,7 +35,7 @@ namespace RecipeFinderWebApi.UI.Filters
                 return StatusCode(errData.Code, errData.Data);
             }
 
-            if ((errData = ZeroChangesCheck(data)).Error)
+            if ((errData = ErrorCodeCheck(data)).Error)
             {
                 return StatusCode(errData.Code, errData.Data);
             }
@@ -82,13 +82,34 @@ namespace RecipeFinderWebApi.UI.Filters
             return new ErrorData();
         }
 
-        private static ErrorData ZeroChangesCheck<T>(T data)
+        private static ErrorData ErrorCodeCheck<T>(T data)
         {
             if (typeof(T) == typeof(int))
             {
-                if (int.Parse(data.ToString()) < 1)
+                int code = int.Parse(data.ToString());
+
+                if (code < 1)
                 {
-                    return ZeroChanges();
+                    if (code == 0)
+                    {
+                        return ZeroChanges();
+                    }
+                    else if (code == -1)
+                    {
+                        return AlreadyExists();
+                    }
+                    else if (code == -2)
+                    {
+                        return EntityRestored();
+                    }
+                    else if (code == -3)
+                    {
+                        return UserNameAlreadyExists();
+                    }
+                    else if (code == -4)
+                    {
+                        return UserEmailAlreadyExists();
+                    }
                 }
             }
 
@@ -123,6 +144,50 @@ namespace RecipeFinderWebApi.UI.Filters
             {
                 StatusCode = 200,
                 Message = "The actions were performed, but zero changes were made to any of the resources.",
+            };
+
+            return new ErrorData(model.StatusCode, model);
+        }
+
+        private static ErrorData AlreadyExists()
+        {
+            ErrorModel model = new ErrorModel()
+            {
+                StatusCode = 200,
+                Message = "An entity with the same property values already exists.",
+            };
+
+            return new ErrorData(model.StatusCode, model);
+        }
+
+        private static ErrorData EntityRestored()
+        {
+            ErrorModel model = new ErrorModel()
+            {
+                StatusCode = 200,
+                Message = "A previously deleted entity with the same property values has been restored instead of creating or updating.",
+            };
+
+            return new ErrorData(model.StatusCode, model);
+        }
+
+        private static ErrorData UserNameAlreadyExists()
+        {
+            ErrorModel model = new ErrorModel()
+            {
+                StatusCode = 200,
+                Message = "The given username is already in use.",
+            };
+
+            return new ErrorData(model.StatusCode, model);
+        }
+
+        private static ErrorData UserEmailAlreadyExists()
+        {
+            ErrorModel model = new ErrorModel()
+            {
+                StatusCode = 200,
+                Message = "The given email address is already in use.",
             };
 
             return new ErrorData(model.StatusCode, model);

@@ -5,18 +5,11 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IRecipeRepo
+    public interface IRecipeRepo : IBaseEntityRepo<Recipe>
     {
-        public IEnumerable<Recipe> GetAll();
         public IEnumerable<Recipe> GetAllByCook(string userId);
 
         public Recipe GetById(string id);
         public Recipe GetByName(string name);
-
-        public int Create(Recipe recipe);
-
-        public int Update(Recipe recipe);
-
-        public int Delete(Recipe recipe);
     }
 }

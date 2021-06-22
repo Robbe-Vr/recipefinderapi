@@ -15,20 +15,26 @@ namespace RecipeFinderWebApi.UI.Auth
 
         private IUserRepo _user_repo;
         private IRoleRepo _role_repo;
+        private IUserRoleRelationRepo _user_role_repo;
 
-        public SignInHandler(IUserRepo user_repo, IRoleRepo role_repo)
+        public SignInHandler(IUserRepo user_repo, IRoleRepo role_repo, IUserRoleRelationRepo user_role_repo)
         {
             enc = new Encryption();
 
             _user_repo = user_repo;
             _role_repo = role_repo;
+            _user_role_repo = user_role_repo;
         }
 
         public User Register(string name, string email, string password, DateTime DOB)
         {
             try
             {
-                User newUser = new User() { Name = name, Email = email, Roles = new Role[] { _role_repo.GetByName("Default") }, DOB = DOB, CreationDate = DateTime.Now };
+                User newUser = new User()
+                {
+                    Name = name, NAME_NORMALIZED = name.ToUpper(), Email = email, EMAIL_NORMALIZED = email.ToUpper(), DOB = DOB, CreationDate = DateTime.Now,
+                    ConcurrencyStamp = "123456789", SecurityStamp = "123456789", PhoneNumber = "1234", EmailConfirmed = true, EmailConfirmationToken = "", PhoneNumberConfirmed = false,
+                };
 
                 newUser.Salt = enc.CreateSalt(8);
                 newUser.PasswordHashed = enc.HashString(new EncryptionObject() { Text = password, Salt = newUser.Salt })?.Result;
@@ -39,6 +45,13 @@ namespace RecipeFinderWebApi.UI.Auth
                 if (rowsAffected > 0)
                 {
                     var user = _user_repo.GetByName(newUser.Name);
+
+                    _user_role_repo.CreateRelation(new UserRoleRelation()
+                    {
+                        UserId = user.Id,
+                        RoleId = _role_repo.GetByName("Default")?.Id,
+                        Deleted = false,
+                });
 
                     return user;
                 }

@@ -53,6 +53,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(Ingredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(ingredient))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             int changes = 0;
 
             List<IngredientCategory> Categories = new List<IngredientCategory>();
@@ -84,6 +99,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public Ingredient CreateGetId(Ingredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(ingredient))
+                    {
+                        return null;
+                    }
+                }
+
+                return null;
+            }
+
             List<IngredientCategory> Categories = new List<IngredientCategory>();
             Categories.AddRange(ingredient.Categories);
 
@@ -113,6 +143,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(Ingredient ingredient)
         {
+            int validationResult = _repo.ValidateOriginality(ingredient);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(ingredient))
+                {
+                    return validationResult;
+                }
+            }
+
             int changes = 0;
 
             var currentState = GetById(ingredient.Id);

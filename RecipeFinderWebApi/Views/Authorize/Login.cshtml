@@ -36,7 +36,7 @@
                     <button type="submit" class="btn btn-info mb-3" style="width:auto">Log in</button>
                 </div>
                 <div>
-                    or <a class="btn-link" asp-action="Register">register</a> if you dont have an account yet.
+                    or <a class="btn-link" asp-action="Register" asp-route-ReturnUrl="@Model.Input.ReturnUrl">register</a> if you dont have an account yet.
                 </div>
                 @*
                     <div class="form-group">

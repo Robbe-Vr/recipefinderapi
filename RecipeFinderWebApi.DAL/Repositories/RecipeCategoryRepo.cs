@@ -41,6 +41,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int Create(RecipeCategory category)
         {
+            category.CountId = 0;
             category.Recipes = null;
 
             db.Add(category);
@@ -90,6 +91,28 @@ namespace RecipeFinderWebApi.DAL.Repositories
             category.Deleted = true;
 
             return context.SaveChanges();
+        }
+
+        public override int ValidateOriginality(RecipeCategory obj)
+        {
+            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
+                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+                0;
+        }
+
+        public override bool TryRestore(RecipeCategory obj)
+        {
+            RecipeCategory restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+
+            if (restorable == null) { return false; }
+
+            db.Update(restorable);
+
+            restorable.Deleted = false;
+
+            context.SaveChanges();
+
+            return true;
         }
     }
 }

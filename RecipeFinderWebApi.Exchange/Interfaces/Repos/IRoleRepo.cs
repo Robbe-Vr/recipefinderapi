@@ -5,17 +5,9 @@ using RecipeFinderWebApi.Exchange.DTOs;
 
 namespace RecipeFinderWebApi.Exchange.Interfaces.Repos
 {
-    public interface IRoleRepo
+    public interface IRoleRepo : IBaseEntityRepo<Role>
     {
-        public IEnumerable<Role> GetAll();
-
         public Role GetById(string id);
         public Role GetByName(string name);
-
-        public int Create(Role role);
-
-        public int Update(Role role);
-
-        public int Delete(Role role);
     }
 }

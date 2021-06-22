@@ -35,19 +35,48 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _repo.GetByName(name);
         }
 
-        public int Create(GroceryList ingredient)
+        public int Create(GroceryList list)
         {
-            return _repo.Create(ingredient);
+            int validationResult = _repo.ValidateOriginality(list);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(list))
+                    {
+                        return 0;
+                    }
+                }
+                
+                return validationResult;
+            }
+
+            return _repo.Create(list);
         }
 
-        public int Update(GroceryList ingredient)
+        public int Update(GroceryList list)
         {
-            return _repo.Update(ingredient);
+            int validationResult = _repo.ValidateOriginality(list);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(list))
+                {
+                    return validationResult;
+                }
+            }
+
+            return _repo.Update(list);
         }
 
-        public int Delete(GroceryList ingredient)
+        public int Delete(GroceryList list)
         {
-            return _repo.Delete(GetById(ingredient.Id));
+            return _repo.Delete(GetById(list.Id));
         }
     }
 }

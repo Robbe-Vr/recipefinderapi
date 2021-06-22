@@ -35,6 +35,21 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(UnitType unitType)
         {
+            int validationResult = _repo.ValidateOriginality(unitType);
+
+            if (validationResult != 0)
+            {
+                if (validationResult == -2)
+                {
+                    if (!_repo.TryRestore(unitType))
+                    {
+                        return 0;
+                    }
+                }
+
+                return validationResult;
+            }
+
             return _repo.Create(unitType);
         }
 
@@ -57,6 +72,20 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(UnitType unitType)
         {
+            int validationResult = _repo.ValidateOriginality(unitType);
+
+            if (validationResult != 0)
+            {
+                if (validationResult != -2)
+                {
+                    return validationResult;
+                }
+                else if (_repo.TryRestore(unitType))
+                {
+                    return validationResult;
+                }
+            }
+
             return _repo.Update(unitType);
         }
 

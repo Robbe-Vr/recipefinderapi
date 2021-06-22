@@ -10,5 +10,6 @@ namespace RecipeFinderWebApi.UI.ViewModels
         public string LogoutId { get; set; }
         public bool TriggerExternalSignout { get; set; }
         public string ExternalAuthenticationScheme { get; set; }
+        public string ReturnUrl { get; internal set; }
     }
 }
