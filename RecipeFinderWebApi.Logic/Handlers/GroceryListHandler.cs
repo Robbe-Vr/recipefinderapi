@@ -37,6 +37,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(GroceryList list)
         {
+            if (!Validate(list))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(list);
 
             if (validationResult != 0)
@@ -57,6 +62,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(GroceryList list)
         {
+            if (!Validate(list))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(list);
 
             if (validationResult != 0)
@@ -77,6 +87,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
         public int Delete(GroceryList list)
         {
             return _repo.Delete(GetById(list.Id));
+        }
+
+        private bool Validate(GroceryList list)
+        {
+            return (list.Name?.Length > 2 && list.UserId?.Length > 1 && list.Value?.Split(',').Length >= 3);
         }
     }
 }

@@ -129,6 +129,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(RecipeWithRequirements recipe)
         {
+            if (!Validate(recipe))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(recipe);
 
             if (validationResult != 0)
@@ -179,6 +184,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(RecipeWithRequirements recipe)
         {
+            if (!Validate(recipe))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(recipe);
 
             if (validationResult != 0)
@@ -306,5 +316,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _category_relation_repo.DeleteRelation(relation);
         }
 
+        private bool Validate(Recipe recipe)
+        {
+            return (recipe.Name?.Length > 2 && recipe.Description?.Length > 2 &&
+                recipe.PreparationSteps?.Length > 2 && recipe.UserId?.Length > 2 &&
+                recipe.Categories?.Count > 0);
+        }
     }
 }

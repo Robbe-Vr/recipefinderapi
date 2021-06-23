@@ -53,6 +53,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(Ingredient ingredient)
         {
+            if (!Validate(ingredient))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(ingredient);
 
             if (validationResult != 0)
@@ -99,6 +104,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public Ingredient CreateGetId(Ingredient ingredient)
         {
+            if (!Validate(ingredient))
+            {
+                return null;
+            }
+
             int validationResult = _repo.ValidateOriginality(ingredient);
 
             if (validationResult != 0)
@@ -143,6 +153,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(Ingredient ingredient)
         {
+            if (!Validate(ingredient))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(ingredient);
 
             if (validationResult != 0)
@@ -269,5 +284,12 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _unitType_relation_repo.DeleteRelation(relation);
         }
 
+        private bool Validate(Ingredient ingredient)
+        {
+            return (ingredient.Name?.Length > 2 && 
+                (ingredient.UnitTypes?.Any(x => x.CountId == 10) == true ? ingredient.AverageVolumeInLiterPerUnit > 0.00 : true) &&
+                (ingredient.UnitTypes?.Any(x => x.CountId == 11) == true ? ingredient.AverageWeightInKgPerUnit > 0.00 : true) &&
+                ingredient.Categories?.Count > 0);
+        }
     }
 }

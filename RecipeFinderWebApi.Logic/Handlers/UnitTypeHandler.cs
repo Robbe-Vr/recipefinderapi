@@ -35,6 +35,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(UnitType unitType)
         {
+            if (!Validate(unitType))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(unitType);
 
             if (validationResult != 0)
@@ -72,6 +77,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(UnitType unitType)
         {
+            if (!Validate(unitType))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(unitType);
 
             if (validationResult != 0)
@@ -92,6 +102,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
         public int Delete(UnitType unitType)
         {
             return _repo.Delete(GetById(unitType.CountId));
+        }
+
+        private bool Validate(UnitType unitType)
+        {
+            return (unitType.Name?.Length > 0);
         }
     }
 }

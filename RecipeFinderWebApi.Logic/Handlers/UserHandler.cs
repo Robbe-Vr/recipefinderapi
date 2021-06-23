@@ -56,6 +56,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(User user)
         {
+            if (!Validate(user))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(user);
 
             if (validationResult != 0)
@@ -91,6 +96,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public User CreateGetId(User user)
         {
+            if (!Validate(user))
+            {
+                return null;
+            }
+
             int validationResult = _repo.ValidateOriginality(user);
 
             if (validationResult != 0)
@@ -124,6 +134,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(User user)
         {
+            if (!Validate(user))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(user);
 
             if (validationResult != 0)
@@ -210,5 +225,15 @@ namespace RecipeFinderWebApi.Logic.Handlers
             return _role_relation_repo.DeleteRelation(relation);
         }
 
+        private bool Validate(User user)
+        {
+            return (user.Name?.Length > 2 && user.NAME_NORMALIZED == user.Name?.ToUpper() &&
+                user.Email?.Split('@').Length == 2 && user.Email?.Split('@')[1].Split('.').Length == 2 &&
+                user.EMAIL_NORMALIZED == user.Email?.ToUpper() && user.EmailConfirmationToken?.Length > 0 &&
+                user.ConcurrencyStamp?.Length > 0 && user.SecurityStamp?.Length > 0 &&
+                user.PhoneNumber?.Length > 2 && user.AccessFailedCount >= 0 && user.Roles?.Count > 0 &&
+                user.CreationDate < DateTime.Now && user.DOB > DateTime.Now.AddYears(-16) &&
+                user.PasswordHashed?.Length > 8 && user.Salt?.Length > 2);
+        }
     }
 }

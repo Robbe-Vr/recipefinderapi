@@ -36,6 +36,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Create(Role role)
         {
+            if (!Validate(role))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(role);
 
             if (validationResult != 0)
@@ -73,6 +78,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
 
         public int Update(Role role)
         {
+            if (!Validate(role))
+            {
+                return -10;
+            }
+
             int validationResult = _repo.ValidateOriginality(role);
 
             if (validationResult != 0)
@@ -93,6 +103,11 @@ namespace RecipeFinderWebApi.Logic.Handlers
         public int Delete(Role role)
         {
             return _repo.Delete(GetById(role.Id));
+        }
+
+        private bool Validate(Role role)
+        {
+            return (role.Name?.Length > 2);
         }
     }
 }

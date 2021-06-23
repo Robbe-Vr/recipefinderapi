@@ -110,6 +110,10 @@ namespace RecipeFinderWebApi.UI.Filters
                     {
                         return UserEmailAlreadyExists();
                     }
+                    else if (code == -10)
+                    {
+                        return InvalidPropertyValues();
+                    }
                 }
             }
 
@@ -188,6 +192,17 @@ namespace RecipeFinderWebApi.UI.Filters
             {
                 StatusCode = 200,
                 Message = "The given email address is already in use.",
+            };
+
+            return new ErrorData(model.StatusCode, model);
+        }
+
+        private static ErrorData InvalidPropertyValues()
+        {
+            ErrorModel model = new ErrorModel()
+            {
+                StatusCode = 200,
+                Message = "One or more fields are entered invalid.",
             };
 
             return new ErrorData(model.StatusCode, model);
