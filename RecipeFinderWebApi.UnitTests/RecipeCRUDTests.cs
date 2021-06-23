@@ -54,7 +54,7 @@ namespace RecipeFinderWebApi.UnitTests
             };
 
             handler = new RecipeHandler(new RecipeRepo(context, user), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context),
-                new Logic.PreparableRecipesAlgorithm(null, null, null));
+                new Logic.PreparableRecipesAlgorithm(null, null, null, null));
             categoryHandler = new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context));
             ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
                 null);

@@ -44,11 +44,11 @@ namespace RecipeFinderWebApi.UnitTests
 
             RecipeFinderDbContext context = new RecipeFinderDbContext(builder.Options);
 
-            handler = new KitchenHandler(new KitchenRepo(context));
+            unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
+            handler = new KitchenHandler(new KitchenRepo(context), new IngredientRepo(context), unitTypeHandler);
             userHandler = new UserHandler(new UserRepo(context), new UserRoleRelationRepo(context), new KitchenRepo(context));
             ingredientHandler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
                 null);
-            unitTypeHandler = new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context));
             RoleHandler roleHandler = new RoleHandler(new RoleRepo(context), new UserRoleRelationRepo(context));
 
             Role role = new Role() { Name = "TestRole", Id = "578493" };
