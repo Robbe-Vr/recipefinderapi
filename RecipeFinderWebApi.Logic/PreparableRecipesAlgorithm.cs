@@ -39,17 +39,15 @@ namespace RecipeFinderWebApi.Logic
         {
             List<RecipeWithRequirements> matchingRecipes = new List<RecipeWithRequirements>();
 
-            IEnumerable<RecipeWithRequirements> allRecipes = _recipeHandler.GetAll();
+            List<RecipeWithRequirements> recipesWithIngredients = _recipeHandler.GetAll()
+                .Where(r => r.RequirementsList.Ingredients.Any(x => kitchenIngredients.Any(i => x.IngredientId == i.IngredientId)) || r.RequirementsList.Ingredients.Count <= 2).ToList();
 
-            foreach (KitchenIngredient ingredient in kitchenIngredients)
+            foreach (RecipeWithRequirements recipe in recipesWithIngredients)
             {
-                List<RecipeWithRequirements> recipesWithIngredients = allRecipes.Where(r => r.RequirementsList.Ingredients.Any(x => x.IngredientId == ingredient.IngredientId)).ToList();
-
-                foreach (RecipeWithRequirements recipe in recipesWithIngredients)
+                foreach (RequirementsListIngredient required in recipe.RequirementsList.Ingredients)
                 {
-                    RequirementsListIngredient required = recipe.RequirementsList.Ingredients.First(x => x.IngredientId == ingredient.IngredientId);
-
-                    KitchenIngredient present = ingredient;
+                    KitchenIngredient present = kitchenIngredients.FirstOrDefault(x => x.IngredientId == required.IngredientId)
+                        ?? new KitchenIngredient() { Ingredient = required.Ingredient, IngredientId = required.IngredientId, Units = 0, UnitType = required.UnitType, UnitTypeId = required.UnitTypeId };
 
                     if (PresentAmountMoreOrEqualToRequiredAmount(present, required))
                     {

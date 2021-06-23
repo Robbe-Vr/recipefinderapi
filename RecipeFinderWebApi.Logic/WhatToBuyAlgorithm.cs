@@ -49,17 +49,15 @@ namespace RecipeFinderWebApi.Logic
         {
             List<RecipeWithRequirements> unmatchingRecipes = new List<RecipeWithRequirements>();
 
-            IEnumerable<RecipeWithRequirements> allRecipes = _recipeHandler.GetAll();
+            List<RecipeWithRequirements> recipesWithIngredients = _recipeHandler.GetAll()
+                .Where(r => r.RequirementsList.Ingredients.Any(x => kitchenIngredients.Any(i => x.IngredientId == i.IngredientId)) || r.RequirementsList.Ingredients.Count <= 2).ToList();
 
-            foreach (KitchenIngredient ingredient in kitchenIngredients)
+            foreach (RecipeWithRequirements recipe in recipesWithIngredients)
             {
-                List<RecipeWithRequirements> recipesWithIngredients = allRecipes.Where(r => r.RequirementsList.Ingredients.Any(x => x.IngredientId == ingredient.IngredientId)).ToList();
-
-                foreach (RecipeWithRequirements recipe in recipesWithIngredients)
+                foreach (RequirementsListIngredient required in recipe.RequirementsList.Ingredients)
                 {
-                    RequirementsListIngredient required = recipe.RequirementsList.Ingredients.First(x => x.IngredientId == ingredient.IngredientId);
-
-                    KitchenIngredient present = ingredient;
+                    KitchenIngredient present = kitchenIngredients.FirstOrDefault(x => x.IngredientId == required.IngredientId)
+                        ?? new KitchenIngredient() { Ingredient = required.Ingredient, IngredientId = required.IngredientId, Units = 0, UnitType = required.UnitType, UnitTypeId = required.UnitTypeId };
 
                     double missingAmount = CalculateMissingAmount(present, required);
 
@@ -95,18 +93,18 @@ namespace RecipeFinderWebApi.Logic
                                         Recipe = recipe,
                                         Ingredients = new List<RequirementsListIngredient>()
                                         {
-                                            new RequirementsListIngredient()
-                                            {
-                                                CountId = required.CountId,
-                                                IngredientId = required.IngredientId,
-                                                Ingredient = required.Ingredient,
-                                                UnitTypeId = _helper.LastUsed?.CountId ?? present.UnitTypeId,
-                                                UnitType = _helper.LastUsed ?? present.UnitType,
-                                                RecipeId = recipe.Id,
-                                                Recipe = recipe,
-                                                Units = missingAmount,
-                                                Deleted = required.Deleted,
-                                            },
+                                        new RequirementsListIngredient()
+                                        {
+                                            CountId = required.CountId,
+                                            IngredientId = required.IngredientId,
+                                            Ingredient = required.Ingredient,
+                                            UnitTypeId = _helper.LastUsed?.CountId ?? present.UnitTypeId,
+                                            UnitType = _helper.LastUsed ?? present.UnitType,
+                                            RecipeId = recipe.Id,
+                                            Recipe = recipe,
+                                            Units = missingAmount,
+                                            Deleted = required.Deleted,
+                                        },
                                         }
                                     },
                                 }
@@ -116,7 +114,6 @@ namespace RecipeFinderWebApi.Logic
                     }
                 }
             }
-
 
             return typeof(T) == typeof(RecipeWithRequirements) ?
                 unmatchingRecipes.OrderBy(r => r.RequirementsList.Ingredients.Sum(x => x.Units)).Cast<T>()

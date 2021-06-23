@@ -41,7 +41,7 @@ namespace RecipeFinderWebApi.Logic
                     {
                         presentEqualAmount = (present.Units / present.Ingredient.AverageVolumeInLiterPerUnit) * present.Ingredient.AverageWeightInKgPerUnit;
                     }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
+                    else if (present.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
                     {
                         presentEqualAmount = present.Units * present.Ingredient.AverageWeightInKgPerUnit;
                     }
@@ -71,7 +71,7 @@ namespace RecipeFinderWebApi.Logic
                     {
                         presentEqualAmount = (present.Units / present.Ingredient.AverageVolumeInLiterPerUnit) * present.Ingredient.AverageWeightInKgPerUnit;
                     }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
+                    else if (present.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
                     {
                         presentEqualAmount = present.Units * present.Ingredient.AverageVolumeInLiterPerUnit;
                     }
@@ -101,7 +101,7 @@ namespace RecipeFinderWebApi.Logic
                     {
                         presentEqualAmount = present.Units / present.Ingredient.AverageVolumeInLiterPerUnit;
                     }
-                    else if (required.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
+                    else if (present.UnitTypeId == _unitTypeHandler.GetByName("Units").CountId)
                     {
                         presentEqualAmount = present.Units;
                     }
