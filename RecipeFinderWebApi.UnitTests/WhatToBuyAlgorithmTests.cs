@@ -211,7 +211,7 @@ namespace RecipeFinderWebApi.UnitTests
 
             var recipes = handler.GetWhatToBuyInRecipesForUser(user.Id);
 
-            Assert.AreEqual(0, recipes.Count());
+            Assert.AreEqual(1, recipes.Count());
             //Assert.AreEqual(1, recipes.Count());
             //Assert.AreEqual(4, recipes.ToArray()[0].RequirementsList.Ingredients.ToArray()[0].Units);
         }
@@ -249,7 +249,7 @@ namespace RecipeFinderWebApi.UnitTests
 
             var recipes = handler.GetWhatToBuyInRecipesForUser(user.Id);
 
-            Assert.AreEqual(0, recipes.Count());
+            Assert.AreEqual(2, recipes.Count());
         }
     }
 }
