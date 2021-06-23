@@ -212,8 +212,7 @@ namespace RecipeFinderWebApi.UnitTests
             var recipes = handler.GetWhatToBuyInRecipesForUser(user.Id);
 
             Assert.AreEqual(1, recipes.Count());
-            //Assert.AreEqual(1, recipes.Count());
-            //Assert.AreEqual(4, recipes.ToArray()[0].RequirementsList.Ingredients.ToArray()[0].Units);
+            Assert.AreEqual(4, recipes.ToArray()[0].RequirementsList.Ingredients.ToArray()[0].Units);
         }
 
         [TestMethod]
@@ -239,7 +238,7 @@ namespace RecipeFinderWebApi.UnitTests
             Assert.AreEqual(2, recipes.Count());
             Assert.AreEqual(6, recipes.First(x => x.Id == recipe2.Id).RequirementsList.Ingredients.First(x => x.IngredientId == ingredient1.Id).Units);
             Assert.AreEqual(3, recipes.First(x => x.Id == recipe1.Id).RequirementsList.Ingredients.First(x => x.IngredientId == ingredient1.Id).Units);
-            //Assert.AreEqual(4, recipes.First(x => x.Id == recipe1.Id).RequirementsList.Ingredients.First(x => x.IngredientId == ingredient2.Id).Units);
+            Assert.AreEqual(4, recipes.First(x => x.Id == recipe1.Id).RequirementsList.Ingredients.First(x => x.IngredientId == ingredient2.Id).Units);
         }
 
         [TestMethod]
