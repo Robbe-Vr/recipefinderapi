@@ -60,11 +60,11 @@ namespace RecipeFinderWebApi.UnitTests
             context.SaveChanges();
             user = context.Users.First(x => x.Name == user.Name);
 
-            kitchenHandler = new KitchenHandler(new KitchenRepo(context));
+            kitchenHandler = new KitchenHandler(new KitchenRepo(context), new IngredientRepo(context), new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)));
             RecipeHandler recipeHandler = new RecipeHandler(new RecipeRepo(context, user), new RecipeCategoryRelationRepo(context), new RequirementsListRepo(context),
-                new Logic.PreparableRecipesAlgorithm(null, null, null));
+                new Logic.PreparableRecipesAlgorithm(null, null, null, null));
             handler = new IngredientHandler(new IngredientRepo(context), new IngredientCategoryRelationRepo(context), new IngredientUnitTypeRelationRepo(context),
-                new Logic.WhatToBuyAlgorithm(recipeHandler, kitchenHandler, new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context))));
+                new Logic.WhatToBuyAlgorithm(recipeHandler, kitchenHandler, new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)), new IngredientRepo(context)));
 
             category1 = new RecipeCategory() { Name = "TestCategory1" };
             category2 = new RecipeCategory() { Name = "TestCategory2" };

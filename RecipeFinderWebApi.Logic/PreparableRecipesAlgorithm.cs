@@ -1,4 +1,5 @@
 ﻿using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.Exchange.Interfaces.Repos;
 using RecipeFinderWebApi.Logic.Handlers;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,11 @@ namespace RecipeFinderWebApi.Logic
 
         private AlgorithmHelper _helper;
 
-        public PreparableRecipesAlgorithm(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler)
+        public PreparableRecipesAlgorithm(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler, IIngredientRepo ingredientRepo)
         {
             _recipeHandler = recipeHandler;
             _kitchenHandler = kitchenHandler;
-            _helper = new AlgorithmHelper(unitTypeHandler);
+            _helper = new AlgorithmHelper(unitTypeHandler, ingredientRepo);
         }
 
         public void setRecipeHandler(RecipeHandler recipeHandler)

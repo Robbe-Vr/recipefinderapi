@@ -10,10 +10,14 @@ namespace RecipeFinderWebApi.Logic.Handlers
     public class KitchenHandler
     {
         private IKitchenRepo _repo;
+        private IIngredientRepo _ingredient_repo;
+        private UnitTypeHandler _unitTypeHandler;
 
-        public KitchenHandler(IKitchenRepo repo)
+        public KitchenHandler(IKitchenRepo repo, IIngredientRepo ingredient_repo, UnitTypeHandler unitTypeHandler)
         {
             _repo = repo;
+            _ingredient_repo = ingredient_repo;
+            _unitTypeHandler = unitTypeHandler;
         }
 
         public IEnumerable<KitchenIngredient> GetAll()
@@ -64,12 +68,15 @@ namespace RecipeFinderWebApi.Logic.Handlers
             {
                 if (existing.UnitTypeId == ingredient.UnitTypeId)
                 {
-                    existing.Units += ingredient.Units;
+                    existing.Units = ingredient.Units + (validationResult == -2 || validationResult == -1 ? existing.Units : 0);
                 }
                 else
                 {
-                    existing.UnitTypeId = ingredient.UnitTypeId;
-                    existing.Units = ingredient.Units;
+                    AlgorithmHelper helper = new AlgorithmHelper(_unitTypeHandler, _ingredient_repo);
+
+                    double convertedUnits = helper.Convert(ingredient, existing.UnitType);
+
+                    existing.Units = convertedUnits + (validationResult == -2 || validationResult == -1 ? existing.Units : 0);
                 }
 
                 return Update(existing);

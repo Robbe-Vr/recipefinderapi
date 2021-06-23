@@ -15,11 +15,11 @@ namespace RecipeFinderWebApi.Logic
 
         private AlgorithmHelper _helper;
 
-        public WhatToBuyAlgorithm(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler)
+        public WhatToBuyAlgorithm(RecipeHandler recipeHandler, KitchenHandler kitchenHandler, UnitTypeHandler unitTypeHandler, IIngredientRepo ingredientRepo)
         {
             _recipeHandler = recipeHandler;
             _kitchenHandler = kitchenHandler;
-            _helper = new AlgorithmHelper(unitTypeHandler);
+            _helper = new AlgorithmHelper(unitTypeHandler, ingredientRepo);
         }
 
         public void setRecipeHandler(RecipeHandler recipeHandler)

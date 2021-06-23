@@ -1,4 +1,5 @@
 ﻿using RecipeFinderWebApi.Exchange.DTOs;
+using RecipeFinderWebApi.Exchange.Interfaces.Repos;
 using RecipeFinderWebApi.Logic.Handlers;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ namespace RecipeFinderWebApi.Logic
     public class AlgorithmHelper
     {
         private UnitTypeHandler _unitTypeHandler;
+        private IIngredientRepo _ingredientRepo;
 
-        public AlgorithmHelper(UnitTypeHandler unitTypeHandler)
+        public AlgorithmHelper(UnitTypeHandler unitTypeHandler, IIngredientRepo ingredientRepo)
         {
             _unitTypeHandler = unitTypeHandler;
+            _ingredientRepo = ingredientRepo;
         }
 
         public UnitType LastUsed { get; private set; }
@@ -28,6 +31,8 @@ namespace RecipeFinderWebApi.Logic
             {
                 presentEqualAmount = present.Units;
                 requiredEqualAmount = required.Units;
+
+                LastUsed = present.UnitType;
             }
             else
             {
@@ -124,6 +129,62 @@ namespace RecipeFinderWebApi.Logic
             }
 
             return new double[] { presentEqualAmount, requiredEqualAmount };
+        }
+
+        public double Convert(KitchenIngredient ingredient, UnitType toUnitType)
+        {
+            if (ingredient.Ingredient == null || ingredient.Ingredient.UnitTypes == null)
+            {
+                ingredient.Ingredient = _ingredientRepo.GetById(ingredient.IngredientId);
+            }
+
+            if (ingredient.UnitType == null)
+            {
+                ingredient.UnitType = _unitTypeHandler.GetById(ingredient.UnitTypeId);
+            }
+
+            if (ingredient.Ingredient.UnitTypes.Any(x => x.CountId == toUnitType.CountId))
+            {
+                if (ingredient.UnitTypeId == toUnitType.CountId)
+                {
+                    return ingredient.Units;
+                }
+                else if (ingredient.UnitType.Name == "Units")
+                {
+                    if (toUnitType.Name == "Kg")
+                    {
+                        return ingredient.Units * ingredient.Ingredient.AverageWeightInKgPerUnit;
+                    }
+                    else if (toUnitType.Name == "L")
+                    {
+                        return ingredient.Units * ingredient.Ingredient.AverageVolumeInLiterPerUnit;
+                    }
+                }
+                else if (ingredient.UnitType.Name == "Kg")
+                {
+                    if (toUnitType.Name == "Units")
+                    {
+                        return (int)((ingredient.Units / ingredient.Ingredient.AverageWeightInKgPerUnit) + 0.5);
+                    }
+                    else if (toUnitType.Name == "L")
+                    {
+                        return (ingredient.Units / ingredient.Ingredient.AverageWeightInKgPerUnit) * ingredient.Ingredient.AverageVolumeInLiterPerUnit;
+                    }
+                }
+                else if (ingredient.UnitType.Name == "L")
+                {
+                    if (toUnitType.Name == "Kg")
+                    {
+                        return (ingredient.Units / ingredient.Ingredient.AverageVolumeInLiterPerUnit) * ingredient.Ingredient.AverageWeightInKgPerUnit;
+                    }
+                    else if (toUnitType.Name == "Units")
+                    {
+                        return (int)((ingredient.Units / ingredient.Ingredient.AverageVolumeInLiterPerUnit) + 0.5);
+                    }
+                }
+            }
+
+            return 0;
         }
     }
 }
