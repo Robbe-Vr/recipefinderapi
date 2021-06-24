@@ -55,15 +55,15 @@ namespace RecipeFinderWebApi.UnitTests
                 Name = "Test",
                 Email = "test@test.net",
                 Salt = "12345",
-                PasswordHashed = "!@#$%",
-                DOB = DateTime.Now,
-                CreationDate = DateTime.Now,
-                EMAIL_NORMALIZED = "",
-                NAME_NORMALIZED = "",
-                ConcurrencyStamp = "",
-                SecurityStamp = "",
-                PhoneNumber = "",
-                EmailConfirmationToken = "",
+                PasswordHashed = "!@#$%$#^&*($*",
+                DOB = DateTime.Now.AddYears(-20),
+                CreationDate = DateTime.Now.AddDays(-2),
+                EMAIL_NORMALIZED = "TEST@TEST.NET",
+                NAME_NORMALIZED = "TEST",
+                ConcurrencyStamp = "1234",
+                SecurityStamp = "1234",
+                PhoneNumber = "1234",
+                EmailConfirmationToken = "1234",
                 Roles = new List<Role>() { role1 },
                 Deleted = false,
             };
@@ -163,6 +163,7 @@ namespace RecipeFinderWebApi.UnitTests
             string updatedName = "TestUpdate";
 
             user.Name = updatedName;
+            user.NAME_NORMALIZED = updatedName.ToUpper();
             user.Roles.Add(role2);
 
             int updatedRows = handler.Update(user);

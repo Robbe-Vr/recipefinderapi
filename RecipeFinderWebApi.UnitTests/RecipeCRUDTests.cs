@@ -85,10 +85,11 @@ namespace RecipeFinderWebApi.UnitTests
             {
                 Name = "Test",
                 Categories = new List<RecipeCategory>() { category1 },
-                PreparationSteps = "",
-                Description = "",
+                PreparationSteps = "do this{NEXT}do that",
+                Description = "A test Recipe",
                 VideoTutorialLink = "",
                 User = user,
+                UserId = user.Id,
                 RequirementsList = new RequirementsList()
                     { Ingredients = new List<RequirementsListIngredient>()
                         { new RequirementsListIngredient() { Ingredient = ingredient1, IngredientId = ingredient1.Id, Units = 5, UnitType = unitType1, UnitTypeId = unitType1.CountId } } },

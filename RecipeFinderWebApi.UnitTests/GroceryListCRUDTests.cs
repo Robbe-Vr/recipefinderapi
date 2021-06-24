@@ -69,7 +69,7 @@ namespace RecipeFinderWebApi.UnitTests
             groceryList = new GroceryList()
             {
                 Name = "Test",
-                Value = "1 - Test1 - Test2 | 2 - Test3 - Test4",
+                Value = "1, Test1, Test2 | 2, Test3, Test4",
                 User = user,
                 UserId = user.Id,
                 Deleted = false,

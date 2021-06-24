@@ -232,7 +232,7 @@ namespace RecipeFinderWebApi.Logic.Handlers
                 user.EMAIL_NORMALIZED == user.Email?.ToUpper() && user.EmailConfirmationToken?.Length > 0 &&
                 user.ConcurrencyStamp?.Length > 0 && user.SecurityStamp?.Length > 0 &&
                 user.PhoneNumber?.Length > 2 && user.AccessFailedCount >= 0 && user.Roles?.Count > 0 &&
-                user.CreationDate < DateTime.Now && user.DOB > DateTime.Now.AddYears(-16) &&
+                user.CreationDate < DateTime.Now && user.DOB < DateTime.Now.AddYears(-16) &&
                 user.PasswordHashed?.Length > 8 && user.Salt?.Length > 2);
         }
     }
