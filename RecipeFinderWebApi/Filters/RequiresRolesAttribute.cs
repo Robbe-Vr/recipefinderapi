@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Primitives;
 using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.Logic.Handlers;
 using RecipeFinderWebApi.UI.Auth;
+using RecipeFinderWebApi.UI.Controllers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,7 +56,12 @@ namespace RecipeFinderWebApi.UI.Filters
 
             if (String.IsNullOrEmpty(accessToken))
             {
-                context.Result = new ObjectResult("No access_token provided!") { StatusCode = 401 };
+                Trace.WriteLine($"Denied request from {context.HttpContext.Request.Host}. Reason: No access_token provided!");
+                context.Result = new ContentResult
+                {
+                    ContentType = "text/html",
+                    Content = "<html><body>No access_token provided!\n<a href=\"https://recipefinderapi.sywapps.com/api/authorize/Login" + "\">Login here</a></body></html>",
+                };
                 return;
             }
 
@@ -61,16 +69,25 @@ namespace RecipeFinderWebApi.UI.Filters
 
             if (user == null)
             {
-                context.Result = new ObjectResult("Unknown access_token!") { StatusCode = 401 };
+                Trace.WriteLine($"Denied request from {context.HttpContext.Request.Host}. Reason: Unknown access_token '{accessToken}'!");
+                context.Result = new ContentResult
+                {
+                    ContentType = "text/html",
+                    Content = "<html><body>Unknown access_token!\n<a href=\"https://recipefinderapi.sywapps.com/api/authorize/Login" + "\">Login here</a></body></html>",
+                };
                 return;
             }
 
             if (!UserIsAuthorized(user.Roles.ToArray()))
             {
-                context.Result = new ObjectResult("The user associated with this access_token is not authorized for this endpoint!") { StatusCode = 401 };
+                Trace.WriteLine($"Denied request from {context.HttpContext.Request.Host}. Reason: The user associated with the access_token '{accessToken}' is not authorized for this endpoint!");
+                context.Result = new ContentResult
+                {
+                    ContentType = "text/html",
+                    Content = "<html><body>The user associated with this access_token is not authorized for this endpoint!\n<a href=\"https://recipefinderapi.sywapps.com/api/authorize/Login" + "\">Login here</a></body></html>",
+                };
                 return;
             }
-
         }
 
         private bool UserIsAuthorized(Role[] roles)

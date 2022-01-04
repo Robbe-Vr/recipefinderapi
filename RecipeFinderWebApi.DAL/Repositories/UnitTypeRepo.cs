@@ -27,7 +27,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public UnitType GetByName(string name)
@@ -35,7 +35,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Ingredients)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && !x.Deleted);
+                .FirstOrDefault(x => (x.Name == name) && !x.Deleted);
         }
 
         public override int Create(UnitType unitType)
@@ -94,14 +94,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(UnitType obj)
         {
-            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(UnitType obj)
         {
-            UnitType restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+            UnitType restorable = db.FirstOrDefault(x => (x.Name == obj.Name) && x.Deleted);
 
             if (restorable == null) { return false; }
 

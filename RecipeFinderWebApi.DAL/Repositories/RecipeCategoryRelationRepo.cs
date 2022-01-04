@@ -29,7 +29,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Recipe)
                 .Include(x => x.Category)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public RecipeCategoryRelation GetByRecipeIdAndCategoryId(string recipeId, int categoryId)
@@ -38,7 +38,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Recipe)
                 .Include(x => x.Category)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.RecipeId == recipeId && x.CategoryId == categoryId);
+                .FirstOrDefault(x => (x.RecipeId == recipeId && x.CategoryId == categoryId) && !x.Deleted);
         }
 
         public override int CreateRelation(RecipeCategoryRelation relation)
@@ -119,14 +119,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(RecipeCategoryRelation obj)
         {
-            return db.Any(x => x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId && !x.Deleted) ? -1 :
-                db.Any(x => x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId && x.Deleted) ? -2 :
+            return db.Any(x => (x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(RecipeCategoryRelation obj)
         {
-            RecipeCategoryRelation restorable = db.FirstOrDefault(x => x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId && x.Deleted);
+            RecipeCategoryRelation restorable = db.FirstOrDefault(x => (x.RecipeId == obj.RecipeId && x.CategoryId == x.CategoryId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

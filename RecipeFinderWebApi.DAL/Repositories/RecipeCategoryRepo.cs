@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RecipeFinderWebApi.DAL.Mergers;
 
 namespace RecipeFinderWebApi.DAL.Repositories
 {
@@ -20,6 +21,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Recipes)
                 .AsNoTracking()
+                .ToList().AddExternalRecipeCategories().Select((x, index) => { x.CountId = index; return x; }).Distinct()
                 .Where(x => !x.Deleted);
         }
 
@@ -28,7 +30,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Recipes)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .ToList().AddExternalRecipeCategories().Select((x, index) => { x.CountId = index; return x; }).Distinct()
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public RecipeCategory GetByName(string name)
@@ -36,7 +39,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Recipes)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name & !x.Deleted);
+                .ToList().AddExternalRecipeCategories().Select((x, index) => { x.CountId = index; return x; }).Distinct()
+                .FirstOrDefault(x => (x.Name == name) & !x.Deleted);
         }
 
         public override int Create(RecipeCategory category)
@@ -95,14 +99,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(RecipeCategory obj)
         {
-            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(RecipeCategory obj)
         {
-            RecipeCategory restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+            RecipeCategory restorable = db.FirstOrDefault(x => (x.Name == obj.Name) && x.Deleted);
 
             if (restorable == null) { return false; }
 

@@ -33,7 +33,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(k => k.UnitType)
                 .Include(k => k.User)
                 .AsNoTracking()
-                .FirstOrDefault(k => k.CountId == id && !k.Deleted);
+                .FirstOrDefault(k => (k.CountId == id) && !k.Deleted);
         }
 
         public Kitchen GetByUserId(string id)
@@ -44,7 +44,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(k => k.UnitType)
                 .Include(k => k.User)
                 .AsNoTracking()
-                .Where(k => k.UserId == id && !k.Deleted);
+                .Where(k => (k.UserId == id) && !k.Deleted);
 
             var user = ingredients.FirstOrDefault()?.User;
 
@@ -64,7 +64,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                  .Include(k => k.UnitType)
                  .Include(k => k.User)
                  .AsNoTracking()
-                 .Where(k => k.User.Name == name && !k.Deleted);
+                 .Where(k => (k.User.Name == name) && !k.Deleted);
 
             var user = ingredients.FirstOrDefault().User;
 
@@ -138,14 +138,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(KitchenIngredient obj)
         {
-            return db.Any(x => x.UserId == obj.UserId && x.IngredientId == obj.IngredientId && !x.Deleted) ? -1 :
-                db.Any(x => x.UserId == obj.UserId && x.IngredientId == obj.IngredientId && x.Deleted) ? -2 :
+            return db.Any(x => (x.UserId == obj.UserId && x.IngredientId == obj.IngredientId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.UserId == obj.UserId && x.IngredientId == obj.IngredientId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(KitchenIngredient obj)
         {
-            KitchenIngredient restorable = db.FirstOrDefault(x => x.UserId == obj.UserId && x.IngredientId == obj.IngredientId && x.Deleted);
+            KitchenIngredient restorable = db.FirstOrDefault(x => (x.UserId == obj.UserId && x.IngredientId == obj.IngredientId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

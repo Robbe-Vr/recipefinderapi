@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeFinderWebApi.DAL.Mergers;
 using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.Exchange.Interfaces.Repos;
 using System;
@@ -20,6 +21,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
+                .ToList().AddExternalIngredients()
                 .Where(x => !x.Deleted);
         }
 
@@ -29,7 +31,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .ToList().AddExternalIngredients()
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public Ingredient GetById(string id)
@@ -38,7 +41,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .ToList().AddExternalIngredients()
+                .FirstOrDefault(x => (x.Id == id) && !x.Deleted);
         }
 
         public Ingredient GetByName(string name)
@@ -47,7 +51,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.UnitTypes)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && !x.Deleted);
+                .ToList().AddExternalIngredients()
+                .FirstOrDefault(x => (x.Name == name) && !x.Deleted);
         }
 
         public override int Create(Ingredient ingredient)
@@ -133,14 +138,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(Ingredient obj)
         {
-            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(Ingredient obj)
         {
-            Ingredient restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+            Ingredient restorable = db.FirstOrDefault(x => (x.Name == obj.Name) && x.Deleted);
 
             if (restorable == null) { return false; }
 

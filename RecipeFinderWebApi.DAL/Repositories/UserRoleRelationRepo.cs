@@ -29,7 +29,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.User)
                 .Include(x => x.Role)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public UserRoleRelation GetByUserIdAndRoleId(string userId, string roleId)
@@ -38,7 +38,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.User)
                 .Include(x => x.Role)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.UserId == userId && x.RoleId == roleId);
+                .FirstOrDefault(x => (x.UserId == userId && x.RoleId == roleId) && !x.Deleted);
         }
 
         public override int CreateRelation(UserRoleRelation relation)
@@ -119,14 +119,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(UserRoleRelation obj)
         {
-            return db.Any(x => x.UserId == obj.UserId && x.RoleId == obj.RoleId && !x.Deleted) ? -1 :
-                db.Any(x => x.UserId == obj.UserId && x.RoleId == obj.RoleId && x.Deleted) ? -2 :
+            return db.Any(x => (x.UserId == obj.UserId && x.RoleId == obj.RoleId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.UserId == obj.UserId && x.RoleId == obj.RoleId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(UserRoleRelation obj)
         {
-            UserRoleRelation restorable = db.FirstOrDefault(x => x.UserId == obj.UserId && x.RoleId == obj.RoleId && x.Deleted);
+            UserRoleRelation restorable = db.FirstOrDefault(x => (x.UserId == obj.UserId && x.RoleId == obj.RoleId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

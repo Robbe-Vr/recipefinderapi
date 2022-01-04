@@ -29,7 +29,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Ingredient)
                 .Include(x => x.UnitType)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public IngredientUnitTypeRelation GetByIngredientIdAndUnitTypeId(string ingredientId, int unitTypeId)
@@ -38,7 +38,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Ingredient)
                 .Include(x => x.UnitType)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.IngredientId == ingredientId && x.UnitTypeId == unitTypeId);
+                .FirstOrDefault(x => (x.IngredientId == ingredientId && x.UnitTypeId == unitTypeId) && !x.Deleted);
         }
 
         public override int CreateRelation(IngredientUnitTypeRelation relation)
@@ -120,14 +120,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(IngredientUnitTypeRelation obj)
         {
-            return db.Any(x => x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId && !x.Deleted) ? -1 :
-                db.Any(x => x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId && x.Deleted) ? -2 :
+            return db.Any(x => (x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(IngredientUnitTypeRelation obj)
         {
-            IngredientUnitTypeRelation restorable = db.FirstOrDefault(x => x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId && x.Deleted);
+            IngredientUnitTypeRelation restorable = db.FirstOrDefault(x => (x.IngredientId == obj.IngredientId && x.UnitTypeId == obj.UnitTypeId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

@@ -45,7 +45,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             {
                 Ingredients = context.Kitchens
                     .AsNoTracking()
-                    .Where(x => x.UserId == id && !x.Deleted).ToList(),
+                    .Where(x => (x.UserId == id) && !x.Deleted).ToList(),
                 UserId = id,
             };
         }
@@ -55,7 +55,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public User GetById(string id)
@@ -63,7 +63,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .FirstOrDefault(x => (x.Id == id) && !x.Deleted);
         }
 
         public User GetByName(string name)
@@ -71,7 +71,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name || x.EMAIL_NORMALIZED == name.ToUpper() && !x.Deleted);
+                .FirstOrDefault(x => (x.Name == name || x.EMAIL_NORMALIZED == name.ToUpper()) && !x.Deleted);
         }
 
         public IEnumerable<Role> GetRolesByUserId(string id)
@@ -79,7 +79,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.Roles)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted)
+                .FirstOrDefault(x => (x.Id == id) && !x.Deleted)
                 .Roles;
         }
 
@@ -184,7 +184,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override bool TryRestore(User obj)
         {
-            User restorable = db.FirstOrDefault(x => x.Name == obj.Name || x.EMAIL_NORMALIZED == obj.EMAIL_NORMALIZED && x.Deleted);
+            User restorable = db.FirstOrDefault(x => (x.Name == obj.Name || x.EMAIL_NORMALIZED == obj.EMAIL_NORMALIZED) && x.Deleted);
 
             if (restorable == null) { return false; }
 

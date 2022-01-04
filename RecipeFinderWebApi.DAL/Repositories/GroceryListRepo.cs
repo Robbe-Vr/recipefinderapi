@@ -27,7 +27,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.User)
                 .AsNoTracking()
-                .Where(x => x.UserId == id && !x.Deleted);
+                .Where(x => (x.UserId == id) && !x.Deleted);
         }
 
         public override GroceryList GetById(int id)
@@ -35,7 +35,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public GroceryList GetById(string id)
@@ -43,7 +43,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .FirstOrDefault(x => (x.Id == id) && !x.Deleted);
         }
 
         public GroceryList GetByName(string name)
@@ -51,7 +51,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
             return db
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && !x.Deleted);
+                .FirstOrDefault(x => (x.Name == name) && !x.Deleted);
         }
 
         public override int Create(GroceryList list)
@@ -114,14 +114,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(GroceryList obj)
         {
-            return db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name && x.UserId == obj.UserId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name && x.UserId == obj.UserId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(GroceryList obj)
         {
-            GroceryList restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted);
+            GroceryList restorable = db.FirstOrDefault(x => (x.Name == obj.Name && x.UserId == obj.UserId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

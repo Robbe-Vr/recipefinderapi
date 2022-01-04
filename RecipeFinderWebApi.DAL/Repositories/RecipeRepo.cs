@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeFinderWebApi.DAL.Mergers;
 using RecipeFinderWebApi.Exchange.DTOs;
 using RecipeFinderWebApi.Exchange.Interfaces.Repos;
 using System;
@@ -23,6 +24,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
+                .ToList().AddExternalRecipes()
                 .Where(x => (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
         }
 
@@ -32,7 +34,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .Where(x => x.UserId == userId && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
+                .ToList().AddExternalRecipes()
+                .Where(x => (x.UserId == userId && (x.IsPublic || x.UserId == currentUser.Id)) && !x.Deleted);
         }
 
         public override Recipe GetById(int id)
@@ -41,7 +44,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
+                .ToList().AddExternalRecipes()
+                .FirstOrDefault(x => (x.CountId == id && (x.IsPublic || x.UserId == currentUser.Id)) && !x.Deleted);
         }
 
         public Recipe GetById(string id)
@@ -50,7 +54,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
+                .ToList().AddExternalRecipes()
+                .FirstOrDefault(x => (x.Id == id && (x.IsPublic || x.UserId == currentUser.Id)) && !x.Deleted);
         }
 
         public Recipe GetByName(string name)
@@ -59,7 +64,8 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.Categories)
                 .Include(x => x.User)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && (x.IsPublic || x.UserId == currentUser.Id) && !x.Deleted);
+                .ToList().AddExternalRecipes()
+                .FirstOrDefault(x => (x.Name == name && (x.IsPublic || x.UserId == currentUser.Id)) && !x.Deleted);
         }
 
         public override int Create(Recipe recipe)
@@ -127,14 +133,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(Recipe obj)
         {
-            return db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name && x.UserId == obj.UserId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name && x.UserId == obj.UserId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(Recipe obj)
         {
-            Recipe restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.UserId == obj.UserId && x.Deleted);
+            Recipe restorable = db.FirstOrDefault(x => (x.Name == obj.Name && x.UserId == obj.UserId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

@@ -33,7 +33,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public IEnumerable<RequirementsListIngredient> GetByRecipeId(string id)
@@ -44,7 +44,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
                 .AsNoTracking()
-                .Where(x => x.RecipeId == id && !x.Deleted);
+                .Where(x => (x.RecipeId == id) && !x.Deleted);
 
             return ingredients;
         }
@@ -57,7 +57,7 @@ namespace RecipeFinderWebApi.DAL.Repositories
                 .Include(x => x.UnitType)
                 .Include(x => x.Recipe)
                 .AsNoTracking()
-                .Where(x => x.Recipe.Name == name && !x.Deleted);
+                .Where(x => (x.Recipe.Name == name) && !x.Deleted);
 
             return ingredients;
         }
@@ -124,14 +124,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(RequirementsListIngredient obj)
         {
-            return db.Any(x => x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId && !x.Deleted) ? -1 :
-                db.Any(x => x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId && x.Deleted) ? -2 :
+            return db.Any(x => (x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId) && !x.Deleted) ? -1 :
+                db.Any(x => (x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(RequirementsListIngredient obj)
         {
-            RequirementsListIngredient restorable = db.FirstOrDefault(x => x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId && x.Deleted);
+            RequirementsListIngredient restorable = db.FirstOrDefault(x => (x.RecipeId == obj.RecipeId && x.IngredientId == obj.IngredientId) && x.Deleted);
 
             if (restorable == null) { return false; }
 

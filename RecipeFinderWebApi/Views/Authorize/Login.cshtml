@@ -38,6 +38,9 @@
                 <div>
                     or <a class="btn-link" asp-action="Register" asp-route-ReturnUrl="@Model.Input.ReturnUrl">register</a> if you dont have an account yet.
                 </div>
+                <div>
+                    <a class="btn-link" asp-action="Login" asp-route-ReturnUrl="@Url.Action("ReturnUrl", "Management")">manage</a>
+                </div>
                 @*
                     <div class="form-group">
                         <p>

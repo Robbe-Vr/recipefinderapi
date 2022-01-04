@@ -31,6 +31,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using RecipeFinderWebApi.UI.Auth;
 using RecipeFinderWebApi.Logic;
+using RecipeFinderWebApi.DAL.Mergers;
 
 namespace RecipeFinderWebApi.UI
 {
@@ -53,8 +54,8 @@ namespace RecipeFinderWebApi.UI
                 options.AddPolicy(name: RFCorsPolicy,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.29:3000", "https://192.168.2.29:3000",
-                                            "http://localhost:3001", "https://localhost:3001", "http://192.168.2.29:3001", "https://192.168.2.29:3001",
+                        builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://192.168.2.101:3000", "https://192.168.2.101:3000",
+                                            "http://localhost:3001", "https://localhost:3001", "http://192.168.2.101:3001", "https://192.168.2.101:3001",
                                             "https://recipefinder.sywapps.com")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
@@ -108,6 +109,9 @@ namespace RecipeFinderWebApi.UI
                     algorithm);
                 return recipeHandler;
             });
+
+            ExternalDatabaseSettings.LoadExternalDatabases = false;
+
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new IngredientCategoryHandler(new IngredientCategoryRepo(context), new IngredientCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new RecipeCategoryHandler(new RecipeCategoryRepo(context), new RecipeCategoryRelationRepo(context)); });
             services.AddScoped(x => { RecipeFinderDbContext context = new RecipeFinderDbContext(RecipeFinderDbContext.ops.dbOptions); return new UnitTypeHandler(new UnitTypeRepo(context), new IngredientUnitTypeRelationRepo(context)); });
@@ -129,15 +133,11 @@ namespace RecipeFinderWebApi.UI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseStaticFiles();
 
             app.UseCors(RFCorsPolicy);
-
-            
 
             app.Use((HttpContext context, Func<Task> next) =>
             {

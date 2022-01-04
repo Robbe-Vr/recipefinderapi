@@ -25,21 +25,21 @@ namespace RecipeFinderWebApi.DAL.Repositories
         {
             return db
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CountId == id && !x.Deleted);
+                .FirstOrDefault(x => (x.CountId == id) && !x.Deleted);
         }
 
         public Role GetById(string id)
         {
             return db
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Id == id && !x.Deleted);
+                .FirstOrDefault(x => (x.Id == id) && !x.Deleted);
         }
 
         public Role GetByName(string name)
         {
             return db
                 .AsNoTracking()
-                .FirstOrDefault(x => x.Name == name && !x.Deleted);
+                .FirstOrDefault(x => (x.Name == name) && !x.Deleted);
         }
 
         public override int Create(Role role)
@@ -100,14 +100,14 @@ namespace RecipeFinderWebApi.DAL.Repositories
 
         public override int ValidateOriginality(Role obj)
         {
-            return db.Any(x => x.Name == obj.Name && !x.Deleted) ? -1 :
-                db.Any(x => x.Name == obj.Name && x.Deleted) ? -2 :
+            return db.Any(x => (x.Name == obj.Name) && !x.Deleted) ? -1 :
+                db.Any(x => (x.Name == obj.Name) && x.Deleted) ? -2 :
                 0;
         }
 
         public override bool TryRestore(Role obj)
         {
-            Role restorable = db.FirstOrDefault(x => x.Name == obj.Name && x.Deleted);
+            Role restorable = db.FirstOrDefault(x => (x.Name == obj.Name) && x.Deleted);
 
             if (restorable == null) { return false; }
 

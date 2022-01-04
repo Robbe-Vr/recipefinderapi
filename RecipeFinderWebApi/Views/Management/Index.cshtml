@@ -1,0 +1,59 @@
+﻿@model ManagementSettings
+
+@{
+    ViewData["Title"] = "Manage Api Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form name="settings">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="LoadExternalDatabases">
+                            <input asp-for="LoadExternalDatabases" value="@Model.LoadExternalDatabases" />
+                            @Html.DisplayNameFor(x => x.LoadExternalDatabases)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" name="submit" class="btn btn-info mb-3" style="width:auto">Update</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+<script type="text/javascript">
+    function onSubmitSettings(e) {
+        var form = $('form[name="settings"]').first();
+        var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+        var loadExternalDatabases = $('input[name="LoadExternalDatabases"]', form).val();
+
+        $.ajax({
+            url: "/Management/SetManagementSettings",
+            type: 'POST',
+            headers: {
+                RecipeFinder_AccessToken: '@Model.Token',
+            },
+            data: {
+                __RequestVerificationToken: token,
+                Token: '@Model.Token',
+                LoadExternalDatabases: loadExternalDatabases,
+            },
+            success: function (data) {
+                console.log("Successfully updated settings")
+            },
+            error: function (error) {
+                console.log("Fail updating settings! Error: " + error);
+            }
+        });
+    };
+
+    $('button[name="submit"]').on('click', onSubmitSettings);
+</script>
+}
